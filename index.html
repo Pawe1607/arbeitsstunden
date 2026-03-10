@@ -1,84 +1,96 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Arbeitsstunden App</title>
 
-<script src="https://accounts.google.com/gsi/client"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Arbeitsstunden</title>
 
 <style>
 
 body{
-font-family:system-ui;
-background:linear-gradient(135deg,#141414,#1f1f1f);
+font-family:-apple-system,BlinkMacSystemFont;
+background:#121212;
 color:white;
 margin:0;
-padding:20px;
-max-width:1100px;
-margin:auto;
+padding:15px;
 }
 
-h1{text-align:center}
+h1{
+text-align:center;
+margin-bottom:20px;
+}
 
 .card{
 background:#1e1e1e;
-padding:18px;
-border-radius:12px;
-margin-bottom:20px;
-box-shadow:0 5px 20px rgba(0,0,0,0.4);
+border-radius:14px;
+padding:15px;
+margin-bottom:15px;
 }
 
-input,select{
-padding:10px;
+.inputs{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+input{
+padding:14px;
 border:none;
-border-radius:6px;
+border-radius:10px;
 background:#2a2a2a;
 color:white;
-margin:5px;
+font-size:16px;
 }
 
 button{
-background:#ff3b3b;
+padding:15px;
 border:none;
-padding:10px 16px;
-border-radius:8px;
+border-radius:12px;
+background:#ff3b3b;
 color:white;
+font-size:16px;
 font-weight:bold;
-cursor:pointer;
-margin:5px;
-}
-
-button:hover{
-background:#ff2020;
 }
 
 .stats{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:15px;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:15px;
 }
 
 .stat{
-background:#222;
-padding:15px;
-border-radius:10px;
+background:#1e1e1e;
+padding:12px;
+border-radius:12px;
 text-align:center;
 }
 
 .stat b{
-font-size:22px;
+font-size:20px;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
+.shift{
+background:#1e1e1e;
+padding:15px;
+border-radius:12px;
+margin-bottom:10px;
 }
 
-th,td{
-padding:10px;
-border-bottom:1px solid #333;
-text-align:center;
+.shift-top{
+display:flex;
+justify-content:space-between;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.delete{
+background:#333;
+padding:6px 10px;
+border-radius:8px;
+font-size:14px;
 }
 
 </style>
@@ -87,38 +99,33 @@ text-align:center;
 
 <body>
 
-<h1>💼 Arbeitsstunden Tracker</h1>
+<h1>💼 Arbeitsstunden</h1>
 
 <div class="card">
 
-<label>Stundenlohn</label>
-<input type="number" id="stundenlohn" value="1">
+<div class="inputs">
+
+<input type="number" id="stundenlohn" placeholder="Stundenlohn (€)" value="1">
+
+</div>
 
 </div>
 
 <div class="card">
 
-<h3>➕ Neue Schicht</h3>
+<h3>Neue Schicht</h3>
+
+<div class="inputs">
 
 <input type="date" id="datum">
 <input type="time" id="von">
 <input type="time" id="bis">
-<input type="number" id="pause" placeholder="Pause (min)">
-<input type="number" id="tip" placeholder="Trinkgeld">
+<input type="number" id="pause" placeholder="Pause Minuten">
+<input type="number" id="tip" placeholder="Trinkgeld €">
 
-<button onclick="addShift()">Speichern</button>
+<button onclick="addShift()">Schicht speichern</button>
 
 </div>
-
-<div class="card">
-
-<h3>🎉 Event / Pauschal</h3>
-
-<input type="date" id="eventDatum">
-<input type="number" id="eventLohn" placeholder="Lohn">
-<input type="number" id="eventTip" placeholder="Trinkgeld">
-
-<button onclick="addEvent()">Event speichern</button>
 
 </div>
 
@@ -135,7 +142,7 @@ Gehalt<br>
 </div>
 
 <div class="stat">
-Trinkgeld<br>
+Tip<br>
 <b id="tips">0€</b>
 </div>
 
@@ -146,55 +153,11 @@ Gesamt<br>
 
 </div>
 
-<div class="card">
-
-<h3>📋 Schichten</h3>
-
-<table>
-
-<thead>
-<tr>
-<th>Datum</th>
-<th>Von</th>
-<th>Bis</th>
-<th>Pause</th>
-<th>Std</th>
-<th>Lohn</th>
-<th>Tip</th>
-<th></th>
-</tr>
-</thead>
-
-<tbody id="liste"></tbody>
-
-</table>
-
-</div>
-
-<div class="card">
-
-<h3>☁️ Google Drive</h3>
-
-<button onclick="googleLogin()">Google verbinden</button>
-<button onclick="backup()">Backup speichern</button>
-<button onclick="restore()">Backup laden</button>
-
-</div>
-
-<div class="card">
-
-<h3>📊 Jahresverdienst</h3>
-<canvas id="chart"></canvas>
-
-</div>
+<div id="liste"></div>
 
 <script>
 
-const CLIENT_ID="707949991470-jh19ccg4joo8u5l27o3oogon40g2p83d.apps.googleusercontent.com"
-
 let data=JSON.parse(localStorage.getItem("arbeitApp"))||{}
-let chart
-let token
 
 function save(){
 localStorage.setItem("arbeitApp",JSON.stringify(data))
@@ -224,19 +187,6 @@ render()
 
 }
 
-function addEvent(){
-
-let datum=document.getElementById("eventDatum").value
-let lohn=parseFloat(document.getElementById("eventLohn").value)||0
-let tip=parseFloat(document.getElementById("eventTip").value)||0
-
-data[Date.now()]={datum,von:"Event",bis:"-",pause:0,stunden:0,lohn,tip}
-
-save()
-render()
-
-}
-
 function deleteShift(id){
 
 delete data[id]
@@ -255,79 +205,42 @@ let totalStunden=0
 let totalLohn=0
 let totalTip=0
 
-let stats=new Array(12).fill(0)
-
 Object.entries(data).forEach(([id,s])=>{
 
-let tr=document.createElement("tr")
+let div=document.createElement("div")
+div.className="shift"
 
-tr.innerHTML=`
-<td>${s.datum}</td>
-<td>${s.von}</td>
-<td>${s.bis}</td>
-<td>${s.pause}</td>
-<td>${s.stunden.toFixed(2)}</td>
-<td>${s.lohn.toFixed(2)}€</td>
-<td>${s.tip}€</td>
-<td><button onclick="deleteShift('${id}')">X</button></td>
+div.innerHTML=`
+
+<div class="shift-top">
+${s.datum}
+<button class="delete" onclick="deleteShift('${id}')">X</button>
+</div>
+
+<div>
+${s.von} - ${s.bis}<br>
+${s.stunden.toFixed(2)} Stunden
+</div>
+
+<div>
+Lohn: ${s.lohn.toFixed(2)}€<br>
+Tip: ${s.tip}€
+</div>
+
 `
 
-liste.appendChild(tr)
+liste.appendChild(div)
 
 totalStunden+=s.stunden
 totalLohn+=s.lohn
 totalTip+=s.tip
 
-let m=new Date(s.datum).getMonth()
-stats[m]+=s.lohn+s.tip
-
 })
 
-stunden.innerText=totalStunden.toFixed(2)
-lohn.innerText=totalLohn.toFixed(2)+"€"
-tips.innerText=totalTip.toFixed(2)+"€"
-gesamt.innerText=(totalLohn+totalTip).toFixed(2)+"€"
-
-drawChart(stats)
-
-}
-
-function drawChart(stats){
-
-if(chart) chart.destroy()
-
-chart=new Chart(document.getElementById("chart"),{
-type:"bar",
-data:{
-labels:["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"],
-datasets:[{label:"Verdienst €",data:stats}]
-}
-})
-
-}
-
-function googleLogin(){
-
-google.accounts.oauth2.initTokenClient({
-client_id:CLIENT_ID,
-scope:"https://www.googleapis.com/auth/drive.file",
-callback:(resp)=>{token=resp.access_token}
-}).requestAccessToken()
-
-}
-
-function backup(){
-
-fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=media",{
-method:"POST",
-headers:{
-Authorization:"Bearer "+token,
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
-})
-
-alert("Backup gespeichert")
+document.getElementById("stunden").innerText=totalStunden.toFixed(2)
+document.getElementById("lohn").innerText=totalLohn.toFixed(2)+"€"
+document.getElementById("tips").innerText=totalTip.toFixed(2)+"€"
+document.getElementById("gesamt").innerText=(totalLohn+totalTip).toFixed(2)+"€"
 
 }
 
