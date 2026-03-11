@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
 
 <meta charset="UTF-8">
@@ -12,24 +13,24 @@
 <style>
 
 body{
-font-family:-apple-system,BlinkMacSystemFont;
+font-family:-apple-system,BlinkMacSystemFont,system-ui;
 margin:0;
-background:#f2f4f7;
-color:#111;
+background:linear-gradient(160deg,#0f172a,#1e293b,#020617);
+color:white;
+min-height:100vh;
 }
 
 header{
 text-align:center;
-padding:15px;
+padding:20px;
+font-size:22px;
 font-weight:600;
-font-size:20px;
-background:white;
-border-bottom:1px solid #ddd;
 }
 
 .page{
 display:none;
-padding:15px;
+padding:16px;
+padding-bottom:90px;
 }
 
 .page.active{
@@ -37,56 +38,62 @@ display:block;
 }
 
 .card{
-background:white;
-padding:15px;
-border-radius:14px;
-margin-bottom:15px;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(14px);
+padding:18px;
+border-radius:18px;
+margin-bottom:16px;
+border:1px solid rgba(255,255,255,0.08);
 }
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+}
+
+.stat{
+border-radius:18px;
+padding:16px;
+text-align:center;
+}
+
+.stat b{
+font-size:24px;
+}
+
+.stat:nth-child(1){background:linear-gradient(135deg,#38bdf8,#2563eb);}
+.stat:nth-child(2){background:linear-gradient(135deg,#34d399,#059669);}
+.stat:nth-child(3){background:linear-gradient(135deg,#facc15,#f59e0b);}
+.stat:nth-child(4){background:linear-gradient(135deg,#fb7185,#e11d48);}
 
 label{
 font-size:13px;
-color:#666;
+opacity:0.7;
 display:block;
 margin-bottom:4px;
 }
 
 input{
 width:100%;
-padding:11px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ddd;
+padding:13px;
+border-radius:12px;
+border:none;
+background:rgba(255,255,255,0.08);
+color:white;
 font-size:16px;
+margin-bottom:12px;
 }
 
 button{
 width:100%;
 padding:14px;
 border:none;
-border-radius:10px;
-background:#111;
-color:white;
-font-size:15px;
+border-radius:14px;
+font-size:16px;
 font-weight:600;
-}
-
-.stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.stat{
-background:white;
-padding:12px;
-border-radius:10px;
-text-align:center;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
-}
-
-.stat b{
-font-size:20px;
+background:linear-gradient(90deg,#6366f1,#8b5cf6);
+color:white;
 }
 
 .month{
@@ -94,12 +101,16 @@ margin-bottom:20px;
 }
 
 .month h3{
-margin-bottom:8px;
+opacity:0.8;
+margin-bottom:10px;
 }
 
 .shift{
-padding:8px 0;
-border-bottom:1px solid #eee;
+background:rgba(255,255,255,0.05);
+padding:10px;
+border-radius:10px;
+margin-bottom:6px;
+font-size:14px;
 }
 
 .bottomnav{
@@ -107,16 +118,16 @@ position:fixed;
 bottom:0;
 left:0;
 right:0;
+background:rgba(15,23,42,0.9);
 display:flex;
-background:white;
-border-top:1px solid #ddd;
+border-top:1px solid rgba(255,255,255,0.1);
 }
 
 .navbtn{
 flex:1;
 text-align:center;
 padding:10px;
-font-size:14px;
+font-size:13px;
 }
 
 canvas{
@@ -124,13 +135,14 @@ margin-top:20px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>Arbeitsstunden</header>
 
-<!-- Statistik -->
+<!-- Stats -->
 
 <div class="page active" id="stats">
 
@@ -176,14 +188,16 @@ Gesamt<br>
 
 <div class="card">
 
+<h3>Normale Schicht</h3>
+
 <label>Datum</label>
 <input type="date" id="datum">
 
 <label>Von (z.B. 17:30)</label>
-<input type="text" id="von">
+<input type="text" id="von" placeholder="17:30">
 
 <label>Bis</label>
-<input type="text" id="bis">
+<input type="text" id="bis" placeholder="23:00">
 
 <label>Pause Minuten</label>
 <input type="number" id="pause">
@@ -194,7 +208,7 @@ Gesamt<br>
 <label>Stundenlohn €</label>
 <input type="number" id="lohnstunde" value="1">
 
-<button onclick="addShift()">Normale Schicht speichern</button>
+<button onclick="addShift()">Schicht speichern</button>
 
 </div>
 
@@ -221,11 +235,17 @@ Gesamt<br>
 
 <div class="bottomnav">
 
-<div class="navbtn" onclick="openPage('stats')">📊<br>Stats</div>
+<div class="navbtn" onclick="openPage('stats')">
+📊<br>Stats
+</div>
 
-<div class="navbtn" onclick="openPage('shifts')">📅<br>Schichten</div>
+<div class="navbtn" onclick="openPage('shifts')">
+📅<br>Schichten
+</div>
 
-<div class="navbtn" onclick="openPage('add')">➕<br>Neu</div>
+<div class="navbtn" onclick="openPage('add')">
+➕<br>Neu
+</div>
 
 </div>
 
@@ -290,7 +310,6 @@ let liste=document.getElementById("liste")
 liste.innerHTML=""
 
 let months={}
-
 let totalH=0
 let totalL=0
 let totalT=0
@@ -310,7 +329,6 @@ Object.entries(months).sort().reverse().forEach(([m,arr])=>{
 let div=document.createElement("div")
 
 div.className="month"
-
 div.innerHTML="<h3>"+m+"</h3>"
 
 arr.forEach(s=>{
@@ -343,20 +361,23 @@ document.getElementById("lohn").innerText=totalL.toFixed(2)+"€"
 document.getElementById("tips").innerText=totalT.toFixed(2)+"€"
 document.getElementById("gesamt").innerText=(totalL+totalT).toFixed(2)+"€"
 
-drawChart(totalH,totalL,totalT)
+drawChart(totalL,totalT)
 
 }
 
-function drawChart(h,l,t){
+function drawChart(lohn,tip){
 
 new Chart(document.getElementById("chart"),{
+
 type:"doughnut",
+
 data:{
-labels:["Stunden","Lohn","Trinkgeld"],
+labels:["Gehalt","Trinkgeld"],
 datasets:[{
-data:[h,l,t]
+data:[lohn,tip]
 }]
 }
+
 })
 
 }
