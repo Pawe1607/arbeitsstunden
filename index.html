@@ -111,6 +111,18 @@ padding:10px;
 border-radius:10px;
 margin-bottom:6px;
 font-size:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.deleteBtn{
+background:#ef4444;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+border:none;
+color:white;
 }
 
 .bottomnav{
@@ -130,6 +142,17 @@ padding:10px;
 font-size:13px;
 }
 
+#msg{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#22c55e;
+padding:10px 18px;
+border-radius:10px;
+display:none;
+}
+
 canvas{
 margin-top:20px;
 }
@@ -141,6 +164,8 @@ margin-top:20px;
 <body>
 
 <header>Arbeitsstunden</header>
+
+<div id="msg">Schicht gespeichert ✔</div>
 
 <!-- Stats -->
 
@@ -177,9 +202,7 @@ Gesamt<br>
 <!-- Schichten -->
 
 <div class="page" id="shifts">
-
 <div id="liste"></div>
-
 </div>
 
 <!-- Neue Schicht -->
@@ -193,7 +216,7 @@ Gesamt<br>
 <label>Datum</label>
 <input type="date" id="datum">
 
-<label>Von (z.B. 17:30)</label>
+<label>Von</label>
 <input type="text" id="von" placeholder="17:30">
 
 <label>Bis</label>
@@ -235,26 +258,25 @@ Gesamt<br>
 
 <div class="bottomnav">
 
-<div class="navbtn" onclick="openPage('stats')">
-📊<br>Stats
-</div>
-
-<div class="navbtn" onclick="openPage('shifts')">
-📅<br>Schichten
-</div>
-
-<div class="navbtn" onclick="openPage('add')">
-➕<br>Neu
-</div>
+<div class="navbtn" onclick="openPage('stats')">📊<br>Stats</div>
+<div class="navbtn" onclick="openPage('shifts')">📅<br>Schichten</div>
+<div class="navbtn" onclick="openPage('add')">➕<br>Neu</div>
 
 </div>
 
 <script>
 
 let data=JSON.parse(localStorage.getItem("arbeit"))||{}
+let chart
 
 function save(){
 localStorage.setItem("arbeit",JSON.stringify(data))
+}
+
+function showMsg(){
+let m=document.getElementById("msg")
+m.style.display="block"
+setTimeout(()=>m.style.display="none",2000)
 }
 
 function openPage(id){
@@ -284,10 +306,13 @@ stunden-=pause/60
 
 let lohn=stunden*lohnstunde
 
-data[Date.now()]={datum,stunden,lohn,tip}
+let id=Date.now()
+
+data[id]={datum,stunden,lohn,tip}
 
 save()
 render()
+showMsg()
 
 }
 
@@ -297,7 +322,19 @@ let datum=document.getElementById("eventDatum").value
 let lohn=parseFloat(document.getElementById("eventLohn").value)||0
 let tip=parseFloat(document.getElementById("eventTip").value)||0
 
-data[Date.now()]={datum,stunden:0,lohn,tip,event:true}
+let id=Date.now()
+
+data[id]={datum,stunden:0,lohn,tip,event:true}
+
+save()
+render()
+showMsg()
+
+}
+
+function deleteShift(id){
+
+delete data[id]
 
 save()
 render()
@@ -314,34 +351,36 @@ let totalH=0
 let totalL=0
 let totalT=0
 
-Object.values(data).forEach(s=>{
+Object.entries(data).forEach(([id,s])=>{
 
 let m=s.datum.slice(0,7)
 
 if(!months[m]) months[m]=[]
 
-months[m].push(s)
+months[m].push({id,...s})
 
 })
 
 Object.entries(months).sort().reverse().forEach(([m,arr])=>{
 
 let div=document.createElement("div")
-
 div.className="month"
 div.innerHTML="<h3>"+m+"</h3>"
 
 arr.forEach(s=>{
 
 let row=document.createElement("div")
-
 row.className="shift"
 
 row.innerHTML=`
+<div>
 ${s.datum} |
 ${s.stunden.toFixed(2)}h |
-Lohn ${s.lohn.toFixed(2)}€ |
+${s.lohn.toFixed(2)}€ |
 Tip ${s.tip}€
+</div>
+
+<button class="deleteBtn" onclick="deleteShift('${s.id}')">Löschen</button>
 `
 
 div.appendChild(row)
@@ -367,7 +406,9 @@ drawChart(totalL,totalT)
 
 function drawChart(lohn,tip){
 
-new Chart(document.getElementById("chart"),{
+if(chart) chart.destroy()
+
+chart=new Chart(document.getElementById("chart"),{
 
 type:"doughnut",
 
