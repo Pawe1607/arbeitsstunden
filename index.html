@@ -3,131 +3,136 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Arbeitsstunden</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
 body{
 font-family:-apple-system,BlinkMacSystemFont;
-background:#121212;
-color:white;
 margin:0;
+background:#f2f4f7;
+color:#111;
+}
+
+header{
+text-align:center;
+padding:15px;
+font-weight:600;
+font-size:20px;
+background:white;
+border-bottom:1px solid #ddd;
+}
+
+.page{
+display:none;
 padding:15px;
 }
 
-h1{
-text-align:center;
-margin-bottom:20px;
+.page.active{
+display:block;
 }
 
 .card{
-background:#1e1e1e;
-border-radius:14px;
+background:white;
 padding:15px;
+border-radius:14px;
 margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
-.inputs{
-display:flex;
-flex-direction:column;
-gap:10px;
+label{
+font-size:13px;
+color:#666;
+display:block;
+margin-bottom:4px;
 }
 
 input{
-padding:14px;
-border:none;
-border-radius:10px;
-background:#2a2a2a;
-color:white;
+width:100%;
+padding:11px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ddd;
 font-size:16px;
 }
 
 button{
-padding:15px;
+width:100%;
+padding:14px;
 border:none;
-border-radius:12px;
-background:#ff3b3b;
+border-radius:10px;
+background:#111;
 color:white;
-font-size:16px;
-font-weight:bold;
+font-size:15px;
+font-weight:600;
 }
 
 .stats{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
-margin-bottom:15px;
 }
 
 .stat{
-background:#1e1e1e;
+background:white;
 padding:12px;
-border-radius:12px;
+border-radius:10px;
 text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
 .stat b{
 font-size:20px;
 }
 
+.month{
+margin-bottom:20px;
+}
+
+.month h3{
+margin-bottom:8px;
+}
+
 .shift{
-background:#1e1e1e;
-padding:15px;
-border-radius:12px;
-margin-bottom:10px;
+padding:8px 0;
+border-bottom:1px solid #eee;
 }
 
-.shift-top{
+.bottomnav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
 display:flex;
-justify-content:space-between;
-font-weight:bold;
-margin-bottom:6px;
+background:white;
+border-top:1px solid #ddd;
 }
 
-.delete{
-background:#333;
-padding:6px 10px;
-border-radius:8px;
+.navbtn{
+flex:1;
+text-align:center;
+padding:10px;
 font-size:14px;
 }
 
-</style>
+canvas{
+margin-top:20px;
+}
 
+</style>
 </head>
 
 <body>
 
-<h1>💼 Arbeitsstunden</h1>
+<header>Arbeitsstunden</header>
 
-<div class="card">
+<!-- Statistik -->
 
-<div class="inputs">
-
-<input type="number" id="stundenlohn" placeholder="Stundenlohn (€)" value="1">
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Neue Schicht</h3>
-
-<div class="inputs">
-
-<input type="date" id="datum">
-<input type="time" id="von">
-<input type="time" id="bis">
-<input type="number" id="pause" placeholder="Pause Minuten">
-<input type="number" id="tip" placeholder="Trinkgeld €">
-
-<button onclick="addShift()">Schicht speichern</button>
-
-</div>
-
-</div>
+<div class="page active" id="stats">
 
 <div class="stats">
 
@@ -142,7 +147,7 @@ Gehalt<br>
 </div>
 
 <div class="stat">
-Tip<br>
+Trinkgeld<br>
 <b id="tips">0€</b>
 </div>
 
@@ -153,14 +158,93 @@ Gesamt<br>
 
 </div>
 
+<canvas id="chart"></canvas>
+
+</div>
+
+<!-- Schichten -->
+
+<div class="page" id="shifts">
+
 <div id="liste"></div>
+
+</div>
+
+<!-- Neue Schicht -->
+
+<div class="page" id="add">
+
+<div class="card">
+
+<label>Datum</label>
+<input type="date" id="datum">
+
+<label>Von (z.B. 17:30)</label>
+<input type="text" id="von">
+
+<label>Bis</label>
+<input type="text" id="bis">
+
+<label>Pause Minuten</label>
+<input type="number" id="pause">
+
+<label>Trinkgeld €</label>
+<input type="number" id="tip">
+
+<label>Stundenlohn €</label>
+<input type="number" id="lohnstunde" value="1">
+
+<button onclick="addShift()">Normale Schicht speichern</button>
+
+</div>
+
+<div class="card">
+
+<h3>Event Schicht</h3>
+
+<label>Datum</label>
+<input type="date" id="eventDatum">
+
+<label>Pauschal Lohn €</label>
+<input type="number" id="eventLohn">
+
+<label>Trinkgeld €</label>
+<input type="number" id="eventTip">
+
+<button onclick="addEvent()">Event speichern</button>
+
+</div>
+
+</div>
+
+<!-- Navigation -->
+
+<div class="bottomnav">
+
+<div class="navbtn" onclick="openPage('stats')">📊<br>Stats</div>
+
+<div class="navbtn" onclick="openPage('shifts')">📅<br>Schichten</div>
+
+<div class="navbtn" onclick="openPage('add')">➕<br>Neu</div>
+
+</div>
 
 <script>
 
-let data=JSON.parse(localStorage.getItem("arbeitApp"))||{}
+let data=JSON.parse(localStorage.getItem("arbeit"))||{}
 
 function save(){
-localStorage.setItem("arbeitApp",JSON.stringify(data))
+localStorage.setItem("arbeit",JSON.stringify(data))
+}
+
+function openPage(id){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active")
+})
+
+document.getElementById(id).classList.add("active")
+
 }
 
 function addShift(){
@@ -170,7 +254,7 @@ let von=document.getElementById("von").value
 let bis=document.getElementById("bis").value
 let pause=parseFloat(document.getElementById("pause").value)||0
 let tip=parseFloat(document.getElementById("tip").value)||0
-let lohnProStunde=parseFloat(document.getElementById("stundenlohn").value)||0
+let lohnstunde=parseFloat(document.getElementById("lohnstunde").value)||0
 
 let start=new Date("1970-01-01T"+von)
 let ende=new Date("1970-01-01T"+bis)
@@ -178,18 +262,22 @@ let ende=new Date("1970-01-01T"+bis)
 let stunden=(ende-start)/1000/60/60
 stunden-=pause/60
 
-let lohn=stunden*lohnProStunde
+let lohn=stunden*lohnstunde
 
-data[Date.now()]={datum,von,bis,pause,stunden,lohn,tip}
+data[Date.now()]={datum,stunden,lohn,tip}
 
 save()
 render()
 
 }
 
-function deleteShift(id){
+function addEvent(){
 
-delete data[id]
+let datum=document.getElementById("eventDatum").value
+let lohn=parseFloat(document.getElementById("eventLohn").value)||0
+let tip=parseFloat(document.getElementById("eventTip").value)||0
+
+data[Date.now()]={datum,stunden:0,lohn,tip,event:true}
 
 save()
 render()
@@ -201,46 +289,75 @@ function render(){
 let liste=document.getElementById("liste")
 liste.innerHTML=""
 
-let totalStunden=0
-let totalLohn=0
-let totalTip=0
+let months={}
 
-Object.entries(data).forEach(([id,s])=>{
+let totalH=0
+let totalL=0
+let totalT=0
 
-let div=document.createElement("div")
-div.className="shift"
+Object.values(data).forEach(s=>{
 
-div.innerHTML=`
+let m=s.datum.slice(0,7)
 
-<div class="shift-top">
-${s.datum}
-<button class="delete" onclick="deleteShift('${id}')">X</button>
-</div>
+if(!months[m]) months[m]=[]
 
-<div>
-${s.von} - ${s.bis}<br>
-${s.stunden.toFixed(2)} Stunden
-</div>
-
-<div>
-Lohn: ${s.lohn.toFixed(2)}€<br>
-Tip: ${s.tip}€
-</div>
-
-`
-
-liste.appendChild(div)
-
-totalStunden+=s.stunden
-totalLohn+=s.lohn
-totalTip+=s.tip
+months[m].push(s)
 
 })
 
-document.getElementById("stunden").innerText=totalStunden.toFixed(2)
-document.getElementById("lohn").innerText=totalLohn.toFixed(2)+"€"
-document.getElementById("tips").innerText=totalTip.toFixed(2)+"€"
-document.getElementById("gesamt").innerText=(totalLohn+totalTip).toFixed(2)+"€"
+Object.entries(months).sort().reverse().forEach(([m,arr])=>{
+
+let div=document.createElement("div")
+
+div.className="month"
+
+div.innerHTML="<h3>"+m+"</h3>"
+
+arr.forEach(s=>{
+
+let row=document.createElement("div")
+
+row.className="shift"
+
+row.innerHTML=`
+${s.datum} |
+${s.stunden.toFixed(2)}h |
+Lohn ${s.lohn.toFixed(2)}€ |
+Tip ${s.tip}€
+`
+
+div.appendChild(row)
+
+totalH+=s.stunden
+totalL+=s.lohn
+totalT+=s.tip
+
+})
+
+liste.appendChild(div)
+
+})
+
+document.getElementById("stunden").innerText=totalH.toFixed(2)
+document.getElementById("lohn").innerText=totalL.toFixed(2)+"€"
+document.getElementById("tips").innerText=totalT.toFixed(2)+"€"
+document.getElementById("gesamt").innerText=(totalL+totalT).toFixed(2)+"€"
+
+drawChart(totalH,totalL,totalT)
+
+}
+
+function drawChart(h,l,t){
+
+new Chart(document.getElementById("chart"),{
+type:"doughnut",
+data:{
+labels:["Stunden","Lohn","Trinkgeld"],
+datasets:[{
+data:[h,l,t]
+}]
+}
+})
 
 }
 
