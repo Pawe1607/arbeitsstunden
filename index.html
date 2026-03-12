@@ -55,43 +55,35 @@
             }
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             padding-top: var(--safe-top);
             padding-bottom: calc(110px + var(--safe-bottom)); 
-            overflow-x: hidden;
         }
 
         .tab-content { display: none; padding: 20px; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { font-size: 34px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
-        h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
-        .section-title { font-size: 14px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin: 0 0 12px 4px; }
+        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 20px 0 10px 4px; }
 
-        .card {
-            background: var(--card-bg);
+        .alltime-card {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            padding: 24px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
         }
+        .alltime-card h2 { font-size: 14px; text-transform: uppercase; opacity: 0.9; margin-bottom: 8px; font-weight: 600; }
+        .alltime-card p { font-size: 36px; font-weight: 800; }
 
-        #history-list { padding: 0; overflow: hidden; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.04); }
 
         select.ios-select {
             background-color: var(--card-bg);
@@ -102,7 +94,6 @@
             border-radius: 14px;
             border: 1px solid var(--border-color);
             width: 100%;
-            margin-bottom: 20px;
             appearance: none;
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
@@ -111,10 +102,10 @@
             background-size: 12px auto;
         }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-        .stat-box { padding: 18px; border-radius: 16px; text-align: left; background: var(--card-bg); }
-        .stat-box h3 { font-size: 12px; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; color: var(--text-muted); }
-        .stat-box p { font-size: 22px; font-weight: 700; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .stat-box { padding: 16px; border-radius: 16px; background: var(--card-bg); }
+        .stat-box h3 { font-size: 11px; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; color: var(--text-muted); }
+        .stat-box p { font-size: 20px; font-weight: 700; }
         
         .stat-box.orange p { color: var(--box-orange-txt); }
         .stat-box.blue p { color: var(--box-blue-txt); }
@@ -122,40 +113,47 @@
         .stat-box.purple p { color: var(--box-purple-txt); }
 
         .input-group { margin-bottom: 16px; display: flex; flex-direction: column; }
-        label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; }
+        label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; }
         input { width: 100%; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 17px; background: transparent; color: var(--text-main); }
         .row { display: flex; gap: 12px; }
-        .row > .input-group { flex: 1; }
 
-        button.primary-btn { background: linear-gradient(135deg, var(--primary), #0056D6); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); }
-        button.small-btn { background-color: var(--border-color); color: var(--primary); border: none; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
-
-        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 20px; right: 20px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border: 0.5px solid rgba(255, 255, 255, 0.2); display: flex; justify-content: space-around; align-items: center; padding: 8px 10px; z-index: 1000; }
-        .tab-item { flex: 1; text-align: center; padding: 8px 0; color: var(--text-muted); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; }
+        button.primary-btn { background: linear-gradient(135deg, var(--primary), #0056D6); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 700; width: 100%; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); }
+        
+        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 20px; right: 20px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 24px; display: flex; justify-content: space-around; padding: 8px 10px; z-index: 1000; border: 0.5px solid rgba(255, 255, 255, 0.2); }
+        .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; }
         .tab-item.active { color: var(--primary); }
-        .tab-icon svg { width: 26px; height: 26px; stroke-width: 2.2; margin-bottom: 4px; }
+        .tab-icon svg { width: 24px; height: 24px; margin-bottom: 4px; stroke-width: 2.5; }
 
-        .history-item-wrapper { position: relative; border-bottom: 1px solid var(--border-color); overflow: hidden; }
-        .history-action-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 90px; background-color: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; z-index: 0; }
-        .history-item-fg { position: relative; background-color: var(--card-bg); z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; transition: transform 0.25s ease; width: 100%; }
+        .history-item-wrapper { position: relative; border-bottom: 1px solid var(--border-color); }
+        .history-item-fg { background-color: var(--card-bg); display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; width: 100%; }
+        .delete-btn { color: var(--danger); font-size: 13px; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div id="tab-dashboard" class="tab-content active">
         <h1>Stundenheld</h1>
+        
+        <div class="alltime-card">
+            <h2>Gesamtverdienst (All-Time)</h2>
+            <p id="alltime-total">0,00 €</p>
+        </div>
+
         <div class="section-title">Monatsübersicht</div>
-        <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboardStats()"></select>
+        <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select>
+        
         <div class="stats-grid">
             <div class="stat-box orange"><h3>Stunden</h3><p id="month-hours">0.00 h</p></div>
             <div class="stat-box blue"><h3>Lohn</h3><p id="month-wage">0 €</p></div>
             <div class="stat-box green"><h3>Trinkgeld</h3><p id="month-tip">0 €</p></div>
             <div class="stat-box purple"><h3>Schichten</h3><p id="month-shifts">0</p></div>
         </div>
-        <div class="card"><canvas id="monthChart"></canvas></div>
-        <div class="card row" style="gap: 10px;">
-            <button class="small-btn" onclick="exportData()" style="flex: 1; background: var(--box-blue-bg);">Sichern</button>
-            <button class="small-btn" onclick="document.getElementById('file-input').click()" style="flex: 1;">Laden</button>
+        
+        <div class="card" style="margin-top: 20px;"><canvas id="monthChart"></canvas></div>
+        
+        <div class="row" style="margin-top: 10px;">
+            <button onclick="exportData()" style="flex:1; padding:12px; border-radius:12px; border:none; background:var(--box-blue-bg); color:var(--primary); font-weight:600;">Sichern</button>
+            <button onclick="document.getElementById('file-input').click()" style="flex:1; padding:12px; border-radius:12px; border:none; background:var(--border-color); color:var(--text-main); font-weight:600;">Laden</button>
             <input type="file" id="file-input" style="display:none;" onchange="importData(event)">
         </div>
     </div>
@@ -166,7 +164,7 @@
             <div class="input-group">
                 <label>Typ</label>
                 <select id="shift-type" class="ios-select" onchange="toggleShiftType()">
-                    <option value="normal">Schicht</option>
+                    <option value="normal">Normale Schicht</option>
                     <option value="event">Event / Pauschal</option>
                 </select>
             </div>
@@ -192,20 +190,20 @@
     <div id="tab-history" class="tab-content">
         <h1>Verlauf</h1>
         <select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select>
-        <div class="card" id="history-list"></div>
+        <div class="card" id="history-list" style="padding:0; overflow:hidden;"></div>
     </div>
 
     <div class="tab-bar">
         <div class="tab-item active" onclick="switchTab('dashboard', this)">
-            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
-            Übersicht
+            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>
+            Home
         </div>
         <div class="tab-item" onclick="switchTab('add', this)">
             <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>
             Eintragen
         </div>
         <div class="tab-item" onclick="switchTab('history', this)">
-            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></span>
             Verlauf
         </div>
     </div>
@@ -223,32 +221,10 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
-            if(!element) {
-                const names = ['dashboard', 'add', 'history'];
-                element = document.querySelectorAll('.tab-item')[names.indexOf(tabName)];
-            }
-            element.classList.add('active');
+            if(element) element.classList.add('active');
             if(tabName === 'dashboard') updateDashboard();
             if(tabName === 'history') renderHistory();
         }
-
-        // SWIPE TAB NAV
-        let startX = 0, startY = 0;
-        document.addEventListener('touchstart', e => {
-            startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-        }, {passive: true});
-
-        document.addEventListener('touchend', e => {
-            const diffX = startX - e.changedTouches[0].clientX;
-            const diffY = startY - e.changedTouches[0].clientY;
-            if (Math.abs(diffX) > 70 && Math.abs(diffX) > Math.abs(diffY) * 2) {
-                const tabs = ['dashboard', 'add', 'history'];
-                const current = document.querySelector('.tab-content.active').id.replace('tab-', '');
-                let idx = tabs.indexOf(current);
-                if (diffX > 0 && idx < 2) switchTab(tabs[idx+1]);
-                else if (diffX < 0 && idx > 0) switchTab(tabs[idx-1]);
-            }
-        }, {passive: true});
 
         function toggleShiftType() {
             const type = document.getElementById('shift-type').value;
@@ -261,6 +237,7 @@
             const date = document.getElementById('shift-date').value;
             const tip = parseFloat(document.getElementById('shift-tip').value) || 0;
             if(!date) return;
+
             let newShift = { id: Date.now(), type, date, tip, hours: 0, wageEarned: 0 };
             if(type === 'normal') {
                 const sT = document.getElementById('time-start').value;
@@ -278,7 +255,7 @@
             shifts.push(newShift);
             localStorage.setItem('myShifts', JSON.stringify(shifts));
             updateMonthDropdowns();
-            switchTab('dashboard');
+            switchTab('dashboard', document.querySelectorAll('.tab-item')[0]);
         }
 
         function updateMonthDropdowns() {
@@ -287,13 +264,19 @@
             const hist = document.getElementById('history-month-filter');
             let html = months.map(m => `<option value="${m}">${m}</option>`).join('');
             dash.innerHTML = html || `<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;
-            hist.innerHTML = '<option value="all">Gesamter Verlauf</option>' + html;
+            hist.innerHTML = '<option value="all">Alle anzeigen</option>' + html;
         }
 
         function updateDashboard() {
+            // All-Time
+            const allTotal = shifts.reduce((sum, s) => sum + s.wageEarned + s.tip, 0);
+            document.getElementById('alltime-total').innerText = allTotal.toLocaleString('de-DE', {style: 'currency', currency: 'EUR'});
+
+            // Month
             const m = document.getElementById('dashboard-month-filter').value;
             const filtered = shifts.filter(s => s.date.startsWith(m));
             const stats = filtered.reduce((acc, s) => { acc.h += s.hours; acc.w += s.wageEarned; acc.t += s.tip; return acc; }, {h:0, w:0, t:0});
+            
             document.getElementById('month-hours').innerText = stats.h.toFixed(2) + ' h';
             document.getElementById('month-wage').innerText = stats.w.toFixed(2) + ' €';
             document.getElementById('month-tip').innerText = stats.t.toFixed(2) + ' €';
@@ -308,7 +291,7 @@
                 type: 'bar',
                 data: {
                     labels: data.map(s => s.date.split('-')[2]),
-                    datasets: [{ label: 'Lohn+Tipp', data: data.map(s => s.wageEarned + s.tip), backgroundColor: '#007AFF', borderRadius: 6 }]
+                    datasets: [{ label: 'Verdienst €', data: data.map(s => s.wageEarned + s.tip), backgroundColor: '#007AFF', borderRadius: 6 }]
                 },
                 options: { plugins: { legend: { display: false } } }
             });
@@ -320,20 +303,22 @@
             const filtered = filter === 'all' ? shifts : shifts.filter(s => s.date.startsWith(filter));
             list.innerHTML = filtered.sort((a,b) => b.id - a.id).map(s => `
                 <div class="history-item-wrapper">
-                    <div class="history-action-bg" onclick="deleteShift(${s.id})">Löschen</div>
-                    <div class="history-item-fg" ontouchstart="this.style.transform='translateX(-90px)'" ontouchend="setTimeout(()=>this.style.transform='translateX(0)', 3000)">
+                    <div class="history-item-fg">
                         <div>
                             <strong>${new Date(s.date).toLocaleDateString()}</strong><br>
                             <span style="font-size:12px; color:var(--text-muted)">${s.hours.toFixed(2)}h | Lohn: ${s.wageEarned.toFixed(2)}€ | Tipp: ${s.tip.toFixed(2)}€</span>
                         </div>
-                        <div style="font-weight:700">${(s.wageEarned+s.tip).toFixed(2)}€</div>
+                        <div style="text-align:right">
+                            <div style="font-weight:700">${(s.wageEarned+s.tip).toFixed(2)}€</div>
+                            <div class="delete-btn" onclick="deleteShift(${s.id})">Löschen</div>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
         function deleteShift(id) {
-            if(confirm('Löschen?')) {
+            if(confirm('Eintrag löschen?')) {
                 shifts = shifts.filter(s => s.id !== id);
                 localStorage.setItem('myShifts', JSON.stringify(shifts));
                 renderHistory();
@@ -342,8 +327,7 @@
         }
 
         function exportData() {
-            const data = JSON.stringify(shifts);
-            const blob = new Blob([data], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(shifts)], {type: 'application/json'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'stundenheld_backup.json'; a.click();
         }
 
