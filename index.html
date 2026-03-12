@@ -19,7 +19,7 @@
             --text-muted: #8E8E93;
             --primary: #007AFF;
             --border-color: rgba(60, 60, 67, 0.1);
-            --tab-bar-bg: rgba(255, 255, 255, 0.85);
+            --tab-bar-bg: rgba(255, 255, 255, 0.9);
             --safe-bottom: env(safe-area-inset-bottom, 20px);
             --safe-top: env(safe-area-inset-top, 47px);
             
@@ -36,30 +36,30 @@
                 --text-main: #FFFFFF;
                 --text-muted: #98989D;
                 --border-color: rgba(235, 235, 245, 0.15);
-                --tab-bar-bg: rgba(28, 28, 30, 0.85);
+                --tab-bar-bg: rgba(28, 28, 30, 0.9);
             }
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(150px + var(--safe-bottom)); }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(160px + var(--safe-bottom)); }
 
         .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 { font-size: 34px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; padding-left: 4px; }
-        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 35px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
+        h1 { font-size: 34px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; padding-left: 4px; }
+        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 40px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
         .section-title::after { content: ""; height: 1px; background: var(--border-color); flex-grow: 1; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-        .stat-box { padding: 18px; border-radius: 22px; background: var(--card-bg); border: 1px solid var(--border-color); }
-        .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; color: var(--text-muted); }
-        .stat-box p { font-size: 20px; font-weight: 800; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { padding: 20px; border-radius: 22px; background: var(--card-bg); border: 1px solid var(--border-color); }
+        .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; color: var(--text-muted); }
+        .stat-box p { font-size: 22px; font-weight: 800; }
 
-        .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .card { background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--border-color); }
         
-        .input-group { margin-bottom: 22px; }
-        label { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; font-weight: 700; display: block; padding-left: 4px; }
+        .input-group { margin-bottom: 25px; }
+        label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; font-weight: 700; display: block; padding-left: 4px; }
         
         select.ios-select, input {
             background-color: var(--card-bg); color: var(--text-main); font-size: 17px; font-weight: 600; padding: 16px;
@@ -67,18 +67,18 @@
         }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button.primary-btn { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 18px; font-size: 17px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.2); margin-top: 5px; }
-        button.sec-btn { background: var(--border-color); color: var(--text-main); border: none; padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 600; width: 100%; }
+        button.primary-btn { background: var(--primary); color: white; border: none; padding: 20px; border-radius: 18px; font-size: 18px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); margin-top: 10px; }
+        button.sec-btn { background: var(--border-color); color: var(--text-main); border: none; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: 700; width: 100%; }
         
-        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 15px; right: 15px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 30px; display: flex; justify-content: space-around; padding: 12px; z-index: 1000; border: 0.5px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 15px; right: 15px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 30px; display: flex; justify-content: space-around; padding: 14px; z-index: 1000; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 9px; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-transform: uppercase; }
         .tab-item.active { color: var(--primary); }
-        .tab-icon svg { width: 22px; height: 22px; margin-bottom: 4px; stroke-width: 2.3; }
+        .tab-icon svg { width: 24px; height: 24px; margin-bottom: 5px; stroke-width: 2.3; }
 
-        .history-item, .preset-item { background: var(--card-bg); padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .action-links { display: flex; gap: 12px; margin-top: 8px; justify-content: flex-end; }
-        .delete-link { color: #FF3B30; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .edit-link { color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .history-item, .preset-item { background: var(--card-bg); padding: 22px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .action-links { display: flex; gap: 15px; margin-top: 10px; justify-content: flex-end; }
+        .delete-link { color: #FF3B30; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .edit-link { color: var(--primary); font-size: 11px; font-weight: 800; text-transform: uppercase; }
 
         .stat-box.orange { background: var(--box-orange-bg); } .stat-box.orange p { color: var(--box-orange-txt); }
         .stat-box.blue { background: var(--box-blue-bg); } .stat-box.blue p { color: var(--box-blue-txt); }
@@ -97,14 +97,17 @@
         <div class="stats-grid">
             <div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div>
             <div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div>
-            <div class="stat-box green"><h3>Tipp</h3><p id="m-tip">0 €</p></div>
+            <div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div>
             <div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div>
         </div>
         <div class="card"><canvas id="monthChart"></canvas></div>
-        <div class="section-title">All-Time</div>
+        
+        <div class="section-title">All-Time Karriere</div>
         <div class="stats-grid">
-            <div class="stat-box blue"><h3>Lohn</h3><p id="a-wage">0 €</p></div>
-            <div class="stat-box green"><h3>Tipp</h3><p id="a-tip">0 €</p></div>
+            <div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div>
+            <div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div>
+            <div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div>
+            <div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div>
         </div>
         <div class="card"><canvas id="allTimeChart"></canvas></div>
     </div>
@@ -113,51 +116,56 @@
         <h1>Eintragen</h1>
         <div class="card">
             <div class="input-group">
-                <label>Modus</label>
+                <label>Abrechnungs-Modus</label>
                 <select id="entry-mode" class="ios-select" onchange="toggleEntryMode()">
-                    <option value="normal">Normaler Tag</option>
+                    <option value="normal">Normaler Arbeitstag</option>
                     <option value="pauschal">Event / Pauschal</option>
                 </select>
             </div>
             <div id="preset-container" class="input-group">
-                <label>Vorlage</label>
+                <label>Schnell-Vorlage wählen</label>
                 <select id="preset-select" class="ios-select" onchange="applyPreset()">
-                    <option value="">-- Keine --</option>
+                    <option value="">-- Keine Vorlage --</option>
                 </select>
             </div>
             <div class="input-group"><label>Datum</label><input type="date" id="shift-date"></div>
+            
             <div id="normal-fields">
                 <div class="grid-2">
-                    <div class="input-group"><label>Start</label><input type="time" id="time-start"></div>
+                    <div class="input-group"><label>Beginn</label><input type="time" id="time-start"></div>
                     <div class="input-group"><label>Ende</label><input type="time" id="time-end"></div>
                 </div>
                 <div class="grid-2">
                     <div class="input-group"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div>
-                    <div class="input-group"><label>€/h</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
+                    <div class="input-group"><label>€ / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
                 </div>
             </div>
+
             <div id="pauschal-fields" style="display:none;">
-                <div class="input-group"><label>Pauschal (€)</label><input type="number" id="flat-amount" placeholder="100"></div>
+                <div class="input-group"><label>Pauschal-Betrag (€)</label><input type="number" id="flat-amount" placeholder="100"></div>
             </div>
+
             <div class="input-group"><label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0"></div>
-            <button class="primary-btn" onclick="saveShift()">SPEICHERN</button>
+            <button class="primary-btn" onclick="saveShift()">EINTRAG SPEICHERN</button>
         </div>
     </div>
 
     <div id="tab-presets" class="tab-content">
-        <h1>Vorlagen</h1>
+        <h1>Tools</h1>
+        <div class="section-title">Neue Vorlage</div>
         <div class="card">
-            <div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Früh"></div>
+            <div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div>
             <div class="grid-2">
                 <div class="input-group"><label>Start</label><input type="time" id="p-start"></div>
                 <div class="input-group"><label>Ende</label><input type="time" id="p-end"></div>
             </div>
             <div class="grid-2">
                 <div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div>
-                <div class="input-group"><label>€/h</label><input type="number" id="p-wage" placeholder="14"></div>
+                <div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14"></div>
             </div>
             <button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button>
         </div>
+        
         <div id="preset-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color); margin-bottom: 30px;"></div>
 
         <div class="section-title">Datensicherung</div>
@@ -239,11 +247,12 @@
             const n = document.getElementById('p-name').value; if(!n) return;
             presets.push({ id: Date.now(), name: n, start: document.getElementById('p-start').value, end: document.getElementById('p-end').value, break: document.getElementById('p-break').value, wage: document.getElementById('p-wage').value });
             localStorage.setItem('myPresets', JSON.stringify(presets)); renderPresets();
+            document.getElementById('p-name').value = '';
         }
 
         function renderPresets() {
-            document.getElementById('preset-list').innerHTML = presets.map(p => `<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end}</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');
-            document.getElementById('preset-select').innerHTML = '<option value="">-- Keine --</option>' + presets.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            document.getElementById('preset-list').innerHTML = presets.map(p => `<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');
+            document.getElementById('preset-select').innerHTML = '<option value="">-- Keine Vorlage --</option>' + presets.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
         }
 
         function applyPreset() {
@@ -258,7 +267,7 @@
             const d = document.getElementById('dashboard-month-filter'), h = document.getElementById('history-month-filter');
             let o = mths.map(m => `<option value="${m}">${m}</option>`).join('');
             d.innerHTML = o || `<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;
-            h.innerHTML = '<option value="all">Alle</option>' + o;
+            h.innerHTML = '<option value="all">Alle Monate</option>' + o;
         }
 
         function updateDashboard() {
@@ -269,21 +278,24 @@
             document.getElementById('m-wage').innerText = mst.w.toFixed(2)+'€';
             document.getElementById('m-tip').innerText = mst.t.toFixed(2)+'€';
             document.getElementById('m-shifts').innerText = ms.length;
-            const ast = shifts.reduce((a, s) => { a.w += s.wageEarned; a.t += s.tip; return a; }, {w:0, t:0});
-            document.getElementById('a-wage').innerText = ast.w.toFixed(0)+'€';
-            document.getElementById('a-tip').innerText = ast.t.toFixed(0)+'€';
+
+            const ast = shifts.reduce((a, s) => { a.h += s.hours; a.w += s.wageEarned; a.t += s.tip; return a; }, {h:0, w:0, t:0});
+            document.getElementById('a-hours').innerText = ast.h.toFixed(2)+'h';
+            document.getElementById('a-wage').innerText = ast.w.toFixed(2)+'€';
+            document.getElementById('a-tip').innerText = ast.t.toFixed(2)+'€';
+            document.getElementById('a-shifts').innerText = shifts.length;
             renderCharts(ms.sort((a,b) => a.date.localeCompare(b.date)));
         }
 
         function renderCharts(ms) {
             const ctxM = document.getElementById('monthChart').getContext('2d');
             if(mChart) mChart.destroy();
-            mChart = new Chart(ctxM, { type: 'bar', data: { labels: ms.map(s => s.date.split('-')[2]), datasets: [{ label: '€', data: ms.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 5 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+            mChart = new Chart(ctxM, { type: 'bar', data: { labels: ms.map(s => s.date.split('-')[2]), datasets: [{ label: '€', data: ms.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 6 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
             const ctxA = document.getElementById('allTimeChart').getContext('2d');
             if(aChart) aChart.destroy();
             const grp = shifts.reduce((acc, s) => { const m = s.date.substring(0, 7); acc[m] = (acc[m] || 0) + s.wageEarned + s.tip; return acc; }, {});
             const lbs = Object.keys(grp).sort();
-            aChart = new Chart(ctxA, { type: 'bar', data: { labels: lbs, datasets: [{ data: lbs.map(l => grp[l]), backgroundColor: '#34C759', borderRadius: 5 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+            aChart = new Chart(ctxA, { type: 'bar', data: { labels: lbs, datasets: [{ data: lbs.map(l => grp[l]), backgroundColor: '#34C759', borderRadius: 6 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
         }
 
         function renderHistory() {
@@ -293,7 +305,7 @@
                 <div class="history-item">
                     <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit'})}</strong><br><small>${s.type==='pauschal'?'Event':s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
                     <div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br>
-                        <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp</span><span class="delete-link" onclick="deleteShift(${s.id})">X</span></div>
+                        <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span><span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div>
                     </div>
                 </div>
             `).join('');
@@ -317,8 +329,8 @@
                     if(data.presets) presets = data.presets;
                     localStorage.setItem('myShifts', JSON.stringify(shifts));
                     localStorage.setItem('myPresets', JSON.stringify(presets));
-                    alert("Import erfolgreich!"); location.reload();
-                } catch(err) { alert("Fehler beim Import!"); }
+                    alert("Backup erfolgreich geladen!"); location.reload();
+                } catch(err) { alert("Datei ungültig!"); }
             };
             reader.readAsText(event.target.files[0]);
         }
