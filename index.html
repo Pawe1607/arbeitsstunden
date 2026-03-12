@@ -47,11 +47,15 @@
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 { font-size: 34px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; padding-left: 4px; }
-        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 40px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
+        h1 { font-size: 34px; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; padding-left: 4px; }
+        
+        /* Korrektur des Filters */
+        .filter-container { margin-bottom: 30px; margin-top: 10px; } 
+
+        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 45px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
         .section-title::after { content: ""; height: 1px; background: var(--border-color); flex-grow: 1; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .stat-box { padding: 20px; border-radius: 22px; background: var(--card-bg); border: 1px solid var(--border-color); }
         .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; color: var(--text-muted); }
         .stat-box p { font-size: 22px; font-weight: 800; }
@@ -90,10 +94,11 @@
 
     <div id="tab-dashboard" class="tab-content active">
         <h1>Stundenheld</h1>
-        <div class="section-title">Dein Monat</div>
         <div class="filter-container">
             <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select>
         </div>
+        
+        <div class="section-title">Dein Monat</div>
         <div class="stats-grid">
             <div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div>
             <div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div>
