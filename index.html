@@ -23,10 +23,10 @@
             --safe-bottom: env(safe-area-inset-bottom, 20px);
             --safe-top: env(safe-area-inset-top, 47px);
             
-            --box-orange: #FF9500;
-            --box-blue: #007AFF;
-            --box-green: #34C759;
-            --box-purple: #AF52DE;
+            --box-orange-bg: rgba(255, 149, 0, 0.1); --box-orange-txt: #FF9500;
+            --box-blue-bg: rgba(0, 122, 255, 0.1); --box-blue-txt: #007AFF;
+            --box-green-bg: rgba(52, 199, 89, 0.1); --box-green-txt: #34C759;
+            --box-purple-bg: rgba(175, 82, 222, 0.1); --box-purple-txt: #AF52DE;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -41,45 +41,55 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(120px + var(--safe-bottom)); }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(130px + var(--safe-bottom)); }
 
         .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 { font-size: 34px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
-        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 30px 0 12px 4px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        h1 { font-size: 34px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; padding-left: 4px; }
+        .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 35px 0 12px 4px; display: flex; align-items: center; gap: 8px; }
+        .section-title::after { content: ""; height: 1px; background: var(--border-color); flex-grow: 1; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-box { padding: 18px; border-radius: 20px; background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        /* Dashboard Kacheln */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 15px; }
+        .stat-box { padding: 16px; border-radius: 22px; background: var(--card-bg); border: 1px solid var(--border-color); }
         .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; color: var(--text-muted); }
-        .stat-box p { font-size: 19px; font-weight: 800; }
+        .stat-box p { font-size: 20px; font-weight: 800; }
         
-        .stat-box.orange p { color: var(--box-orange); }
-        .stat-box.blue p { color: var(--box-blue); }
-        .stat-box.green p { color: var(--box-green); }
-        .stat-box.purple p { color: var(--box-purple); }
+        .stat-box.orange { background: var(--box-orange-bg); border-color: transparent; } .stat-box.orange p { color: var(--box-orange-txt); }
+        .stat-box.blue { background: var(--box-blue-bg); border-color: transparent; } .stat-box.blue p { color: var(--box-blue-txt); }
+        .stat-box.green { background: var(--box-green-bg); border-color: transparent; } .stat-box.green p { color: var(--box-green-txt); }
+        .stat-box.purple { background: var(--box-purple-bg); border-color: transparent; } .stat-box.purple p { color: var(--box-purple-txt); }
 
-        .card { background: var(--card-bg); border-radius: 20px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .card { background: var(--card-bg); border-radius: 24px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border-color); }
 
+        /* Eingabe-Formular Fix */
+        .input-group { margin-bottom: 18px; }
+        label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; display: block; padding-left: 4px; }
+        
+        select.ios-select, input {
+            background-color: var(--card-bg); color: var(--text-main); font-size: 17px; font-weight: 600; padding: 16px;
+            border-radius: 14px; border: 1px solid var(--border-color); width: 100%; appearance: none; -webkit-appearance: none;
+        }
         select.ios-select {
-            background-color: var(--card-bg); color: var(--primary); font-size: 17px; font-weight: 700; padding: 14px 16px;
-            border-radius: 14px; border: 1px solid var(--border-color); width: 100%; margin-bottom: 15px; appearance: none; -webkit-appearance: none;
+            color: var(--primary);
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
         }
 
-        input { width: 100%; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 17px; background: transparent; color: var(--text-main); margin-bottom: 15px; }
-        label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; display: block; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        button.primary-btn { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 700; width: 100%; margin-top: 10px; }
+        button.primary-btn { background: var(--primary); color: white; border: none; padding: 20px; border-radius: 18px; font-size: 18px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); margin-top: 10px; }
         
-        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 20px; right: 20px; background: var(--tab-bar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 24px; display: flex; justify-content: space-around; padding: 10px; z-index: 1000; border: 0.5px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-transform: uppercase; }
+        /* Tab Bar */
+        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 20px; right: 20px; background: var(--tab-bar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 26px; display: flex; justify-content: space-around; padding: 12px; z-index: 1000; border: 0.5px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+        .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; }
         .tab-item.active { color: var(--primary); }
-        .tab-icon svg { width: 24px; height: 24px; margin-bottom: 4px; stroke-width: 2.5; }
+        .tab-icon svg { width: 24px; height: 24px; margin-bottom: 4px; stroke-width: 2.3; }
 
-        .history-item { background: var(--card-bg); padding: 16px; border-bottom: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .history-item { background: var(--card-bg); padding: 18px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .delete-link { color: #FF3B30; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; display: block; }
     </style>
 </head>
 <body>
@@ -87,28 +97,29 @@
     <div id="tab-dashboard" class="tab-content active">
         <h1>Stundenheld</h1>
         
-        <div class="section-title">Monatsübersicht</div>
+        <div class="section-title">Dein Monat</div>
         <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select>
+        
         <div class="stats-grid">
-            <div class="stat-box orange"><h3>Monat Std</h3><p id="m-hours">0.00 h</p></div>
+            <div class="stat-box orange"><h3>Monat Stunden</h3><p id="m-hours">0.00 h</p></div>
             <div class="stat-box blue"><h3>Monat Lohn</h3><p id="m-wage">0 €</p></div>
             <div class="stat-box green"><h3>Monat Tipp</h3><p id="m-tip">0 €</p></div>
             <div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div>
         </div>
         <div class="card"><canvas id="monthChart"></canvas></div>
 
-        <div class="section-title">All-Time Statistik</div>
+        <div class="section-title">All-Time Karriere</div>
         <div class="stats-grid">
-            <div class="stat-box orange"><h3>Gesamt Std</h3><p id="a-hours">0.00 h</p></div>
+            <div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div>
             <div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div>
             <div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div>
-            <div class="stat-box purple"><h3>Gesamt Jobs</h3><p id="a-shifts">0</p></div>
+            <div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div>
         </div>
         <div class="card"><canvas id="allTimeChart"></canvas></div>
         
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="exportData()" style="flex:1; padding:12px; border-radius:12px; border:none; background:var(--border-color); color:var(--text-main); font-weight:600; font-size:11px;">BACKUP</button>
-            <button onclick="document.getElementById('file-input').click()" style="flex:1; padding:12px; border-radius:12px; border:none; background:var(--border-color); color:var(--text-main); font-weight:600; font-size:11px;">IMPORT</button>
+        <div class="grid-2" style="margin-top: 25px;">
+            <button onclick="exportData()" style="padding:14px; border-radius:14px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); font-weight:700; font-size:12px;">BACKUP</button>
+            <button onclick="document.getElementById('file-input').click()" style="padding:14px; border-radius:14px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); font-weight:700; font-size:12px;">IMPORT</button>
             <input type="file" id="file-input" style="display:none;" onchange="importData(event)">
         </div>
     </div>
@@ -116,34 +127,50 @@
     <div id="tab-add" class="tab-content">
         <h1>Eintragen</h1>
         <div class="card">
-            <label>Schicht-Typ</label>
-            <select id="shift-type" class="ios-select" onchange="toggleShiftType()">
-                <option value="normal">Reguläre Schicht</option>
-                <option value="event">Event / Pauschal</option>
-            </select>
-            <label>Datum</label><input type="date" id="shift-date">
+            <div class="input-group">
+                <label>Was für eine Schicht?</label>
+                <select id="shift-type" class="ios-select" onchange="toggleShiftType()">
+                    <option value="normal">Normaler Arbeitstag</option>
+                    <option value="event">Event / Pauschalbetrag</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Datum</label>
+                <input type="date" id="shift-date">
+            </div>
+
             <div id="normal-inputs">
-                <div style="display:flex; gap:10px">
-                    <div style="flex:1"><label>Start</label><input type="time" id="time-start"></div>
-                    <div style="flex:1"><label>Ende</label><input type="time" id="time-end"></div>
+                <div class="grid-2">
+                    <div class="input-group"><label>Beginn</label><input type="time" id="time-start"></div>
+                    <div class="input-group"><label>Ende</label><input type="time" id="time-end"></div>
                 </div>
-                <div style="display:flex; gap:10px">
-                    <div style="flex:1"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div>
-                    <div style="flex:1"><label>€ / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
+                <div class="grid-2">
+                    <div class="input-group"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div>
+                    <div class="input-group"><label>Lohn / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
                 </div>
             </div>
+
             <div id="event-inputs" style="display: none;">
-                <label>Pauschale (€)</label><input type="number" id="flat-wage" placeholder="150">
+                <div class="input-group">
+                    <label>Pauschal-Lohn (€)</label>
+                    <input type="number" id="flat-wage" placeholder="150">
+                </div>
             </div>
-            <label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0">
-            <button class="primary-btn" onclick="saveShift()">SPEICHERN</button>
+
+            <div class="input-group">
+                <label>Trinkgeld erhalten (€)</label>
+                <input type="number" id="shift-tip" placeholder="0">
+            </div>
+
+            <button class="primary-btn" onclick="saveShift()">SCHICHT SPEICHERN</button>
         </div>
     </div>
 
     <div id="tab-history" class="tab-content">
         <h1>Verlauf</h1>
         <select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select>
-        <div id="history-list" style="border-radius:20px; overflow:hidden; background:var(--card-bg);"></div>
+        <div id="history-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color);"></div>
     </div>
 
     <div class="tab-bar">
@@ -153,10 +180,10 @@
         </div>
         <div class="tab-item" onclick="switchTab('add', this)">
             <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>
-            Neu
+            Plus
         </div>
         <div class="tab-item" onclick="switchTab('history', this)">
-            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><circle cx="3" cy="6" r="1"></circle><circle cx="3" cy="12" r="1"></circle><circle cx="3" cy="18" r="1"></circle></svg></span>
+            <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>
             Liste
         </div>
     </div>
@@ -211,7 +238,7 @@
             const dash = document.getElementById('dashboard-month-filter'), hist = document.getElementById('history-month-filter');
             let h = months.map(m => `<option value="${m}">${m}</option>`).join('');
             dash.innerHTML = h || `<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;
-            hist.innerHTML = '<option value="all">Alle Einträge</option>' + h;
+            hist.innerHTML = '<option value="all">Alle Monate</option>' + h;
         }
 
         function updateDashboard() {
@@ -240,9 +267,9 @@
                 type: 'bar',
                 data: {
                     labels: mShifts.map(s => s.date.split('-')[2]),
-                    datasets: [{ label: 'Tag (€)', data: mShifts.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 5 }]
+                    datasets: [{ label: 'Verdienst (€)', data: mShifts.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 6 }]
                 },
-                options: { plugins: { title: { display: true, text: 'Monat Tage' } } }
+                options: { responsive: true, plugins: { title: { display: true, text: 'Tagesübersicht Monat', font: { weight: 'bold' } }, legend: { display: false } } }
             });
 
             const ctxA = document.getElementById('allTimeChart').getContext('2d');
@@ -257,9 +284,9 @@
                 type: 'bar',
                 data: {
                     labels: labels.map(l => l),
-                    datasets: [{ label: 'Monat (€)', data: labels.map(l => grouped[l]), backgroundColor: ['#34C759', '#FF9500', '#AF52DE', '#007AFF'], borderRadius: 8 }]
+                    datasets: [{ label: 'Monatssumme (€)', data: labels.map(l => grouped[l]), backgroundColor: ['#FF9500', '#34C759', '#AF52DE', '#007AFF'], borderRadius: 8 }]
                 },
-                options: { plugins: { title: { display: true, text: 'Alle Monate' } } }
+                options: { responsive: true, plugins: { title: { display: true, text: 'Monatsvergleich All-Time', font: { weight: 'bold' } }, legend: { display: false } } }
             });
         }
 
@@ -269,14 +296,20 @@
             const filtered = f === 'all' ? shifts : shifts.filter(s => s.date.startsWith(f));
             l.innerHTML = filtered.sort((a,b) => b.id - a.id).map(s => `
                 <div class="history-item">
-                    <div><strong>${s.date}</strong><br><small>${s.hours.toFixed(2)}h | Tipp: ${s.tip}€</small></div>
-                    <div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br><small onclick="deleteShift(${s.id})" style="color:red">Löschen</small></div>
+                    <div>
+                        <strong style="font-size:16px">${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit', month:'2-digit'})}</strong><br>
+                        <small style="color:var(--text-muted)">${s.hours.toFixed(2)}h | Lohn: ${s.wageEarned.toFixed(2)}€</small>
+                    </div>
+                    <div style="text-align:right">
+                        <strong style="font-size:17px; color:var(--text-main)">${(s.wageEarned+s.tip).toFixed(2)}€</strong>
+                        <span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span>
+                    </div>
                 </div>
             `).join('');
         }
 
         function deleteShift(id) {
-            if(confirm('Löschen?')) {
+            if(confirm('Möchtest du diese Schicht wirklich löschen?')) {
                 shifts = shifts.filter(s => s.id !== id);
                 localStorage.setItem('myShifts', JSON.stringify(shifts));
                 renderHistory(); updateDashboard();
@@ -285,7 +318,7 @@
 
         function exportData() {
             const b = new Blob([JSON.stringify(shifts)], {type:'application/json'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='stundenheld.json'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='stundenheld_backup.json'; a.click();
         }
 
         function importData(e) {
