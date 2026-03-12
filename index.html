@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Stundenheld">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/PJtc4Nz0/icon-arbeit.png">
     
-    <title>Stundenheld</title>
+    <title>Stundenheld Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -41,14 +41,13 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(140px + var(--safe-bottom)); }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(150px + var(--safe-bottom)); }
 
         .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { font-size: 34px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; padding-left: 4px; }
-        .filter-container { margin-bottom: 28px; } 
         .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 35px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
         .section-title::after { content: ""; height: 1px; background: var(--border-color); flex-grow: 1; }
 
@@ -64,17 +63,12 @@
         
         select.ios-select, input {
             background-color: var(--card-bg); color: var(--text-main); font-size: 17px; font-weight: 600; padding: 16px;
-            border-radius: 14px; border: 1px solid var(--border-color); width: 100%; appearance: none; -webkit-appearance: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        select.ios-select {
-            color: var(--primary);
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
+            border-radius: 14px; border: 1px solid var(--border-color); width: 100%; appearance: none;
         }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button.primary-btn { background: var(--primary); color: white; border: none; padding: 20px; border-radius: 18px; font-size: 18px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); margin-top: 10px; }
+        button.primary-btn { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 18px; font-size: 17px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.2); margin-top: 5px; }
+        button.sec-btn { background: var(--border-color); color: var(--text-main); border: none; padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 600; width: 100%; }
         
         .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 15px; right: 15px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 30px; display: flex; justify-content: space-around; padding: 12px; z-index: 1000; border: 0.5px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 9px; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-transform: uppercase; }
@@ -101,18 +95,16 @@
             <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select>
         </div>
         <div class="stats-grid">
-            <div class="stat-box orange"><h3>Monat Stunden</h3><p id="m-hours">0.00 h</p></div>
-            <div class="stat-box blue"><h3>Monat Lohn</h3><p id="m-wage">0 €</p></div>
-            <div class="stat-box green"><h3>Monat Tipp</h3><p id="m-tip">0 €</p></div>
+            <div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div>
+            <div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div>
+            <div class="stat-box green"><h3>Tipp</h3><p id="m-tip">0 €</p></div>
             <div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div>
         </div>
         <div class="card"><canvas id="monthChart"></canvas></div>
-        <div class="section-title">All-Time Karriere</div>
+        <div class="section-title">All-Time</div>
         <div class="stats-grid">
-            <div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div>
-            <div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div>
-            <div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div>
-            <div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div>
+            <div class="stat-box blue"><h3>Lohn</h3><p id="a-wage">0 €</p></div>
+            <div class="stat-box green"><h3>Tipp</h3><p id="a-tip">0 €</p></div>
         </div>
         <div class="card"><canvas id="allTimeChart"></canvas></div>
     </div>
@@ -121,66 +113,61 @@
         <h1>Eintragen</h1>
         <div class="card">
             <div class="input-group">
-                <label>Abrechnungs-Modus</label>
+                <label>Modus</label>
                 <select id="entry-mode" class="ios-select" onchange="toggleEntryMode()">
-                    <option value="normal">Normaler Arbeitstag</option>
+                    <option value="normal">Normaler Tag</option>
                     <option value="pauschal">Event / Pauschal</option>
                 </select>
             </div>
-
             <div id="preset-container" class="input-group">
-                <label>Schnell-Vorlage wählen</label>
+                <label>Vorlage</label>
                 <select id="preset-select" class="ios-select" onchange="applyPreset()">
-                    <option value="">-- Keine Vorlage --</option>
+                    <option value="">-- Keine --</option>
                 </select>
             </div>
-
-            <div class="input-group">
-                <label>Datum</label>
-                <input type="date" id="shift-date">
-            </div>
-
+            <div class="input-group"><label>Datum</label><input type="date" id="shift-date"></div>
             <div id="normal-fields">
                 <div class="grid-2">
-                    <div class="input-group"><label>Beginn</label><input type="time" id="time-start"></div>
+                    <div class="input-group"><label>Start</label><input type="time" id="time-start"></div>
                     <div class="input-group"><label>Ende</label><input type="time" id="time-end"></div>
                 </div>
                 <div class="grid-2">
                     <div class="input-group"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div>
-                    <div class="input-group"><label>€ / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
+                    <div class="input-group"><label>€/h</label><input type="number" id="hourly-wage" placeholder="13.50"></div>
                 </div>
             </div>
-
             <div id="pauschal-fields" style="display:none;">
-                <div class="input-group">
-                    <label>Pauschal-Betrag (€)</label>
-                    <input type="number" id="flat-amount" placeholder="z.B. 100">
-                </div>
+                <div class="input-group"><label>Pauschal (€)</label><input type="number" id="flat-amount" placeholder="100"></div>
             </div>
-
-            <div class="input-group">
-                <label>Trinkgeld (€)</label>
-                <input type="number" id="shift-tip" placeholder="0">
-            </div>
-            <button class="primary-btn" onclick="saveShift()">EINTRAG SPEICHERN</button>
+            <div class="input-group"><label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0"></div>
+            <button class="primary-btn" onclick="saveShift()">SPEICHERN</button>
         </div>
     </div>
 
     <div id="tab-presets" class="tab-content">
         <h1>Vorlagen</h1>
         <div class="card">
-            <div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Frühschicht"></div>
+            <div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Früh"></div>
             <div class="grid-2">
                 <div class="input-group"><label>Start</label><input type="time" id="p-start"></div>
                 <div class="input-group"><label>Ende</label><input type="time" id="p-end"></div>
             </div>
             <div class="grid-2">
                 <div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div>
-                <div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14.00"></div>
+                <div class="input-group"><label>€/h</label><input type="number" id="p-wage" placeholder="14"></div>
             </div>
             <button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button>
         </div>
-        <div id="preset-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color);"></div>
+        <div id="preset-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color); margin-bottom: 30px;"></div>
+
+        <div class="section-title">Datensicherung</div>
+        <div class="card">
+            <div class="grid-2">
+                <button class="sec-btn" onclick="exportData()">EXPORT (.json)</button>
+                <button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button>
+            </div>
+            <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+        </div>
     </div>
 
     <div id="tab-history" class="tab-content">
@@ -192,7 +179,7 @@
     <div class="tab-bar">
         <div class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Home</div>
         <div class="tab-item" onclick="switchTab('add', this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Neu</div>
-        <div class="tab-item" onclick="switchTab('presets', this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Vorlagen</div>
+        <div class="tab-item" onclick="switchTab('presets', this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Tools</div>
         <div class="tab-item" onclick="switchTab('history', this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Liste</div>
     </div>
 
@@ -202,9 +189,7 @@
         let mChart = null, aChart = null;
 
         document.getElementById('shift-date').valueAsDate = new Date();
-        updateMonthDropdowns();
-        updateDashboard();
-        renderPresets();
+        updateMonthDropdowns(); updateDashboard(); renderPresets();
 
         function switchTab(t, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -216,23 +201,10 @@
         }
 
         function toggleEntryMode() {
-            const mode = document.getElementById('entry-mode').value;
-            document.getElementById('normal-fields').style.display = mode === 'normal' ? 'block' : 'none';
-            document.getElementById('pauschal-fields').style.display = mode === 'pauschal' ? 'block' : 'none';
-            document.getElementById('preset-container').style.display = mode === 'normal' ? 'block' : 'none';
-        }
-
-        function editTip(id) {
-            const shift = shifts.find(s => s.id === id);
-            if(shift) {
-                const newTip = prompt("Neues Trinkgeld (€):", shift.tip);
-                if(newTip !== null) {
-                    shift.tip = parseFloat(newTip) || 0;
-                    localStorage.setItem('myShifts', JSON.stringify(shifts));
-                    renderHistory();
-                    updateDashboard();
-                }
-            }
+            const m = document.getElementById('entry-mode').value;
+            document.getElementById('normal-fields').style.display = m === 'normal' ? 'block' : 'none';
+            document.getElementById('pauschal-fields').style.display = m === 'pauschal' ? 'block' : 'none';
+            document.getElementById('preset-container').style.display = m === 'normal' ? 'block' : 'none';
         }
 
         function saveShift() {
@@ -240,39 +212,38 @@
             const date = document.getElementById('shift-date').value;
             const tip = parseFloat(document.getElementById('shift-tip').value) || 0;
             if(!date) return;
-
-            let newShift = { id: Date.now(), date, tip, hours: 0, wageEarned: 0, type: mode };
-
+            let s = { id: Date.now(), date, tip, hours: 0, wageEarned: 0, type: mode };
             if(mode === 'normal') {
                 const st = document.getElementById('time-start').value, en = document.getElementById('time-end').value;
                 const wg = parseFloat(document.getElementById('hourly-wage').value) || 0, br = parseFloat(document.getElementById('shift-break').value) || 0;
                 if(!st || !en) return;
                 let sD = new Date(`1970-01-01T${st}`), eD = new Date(`1970-01-01T${en}`);
                 if(eD < sD) eD.setDate(eD.getDate() + 1);
-                newShift.hours = (eD - sD) / 3600000 - (br/60);
-                newShift.wageEarned = newShift.hours * wg;
-            } else {
-                newShift.wageEarned = parseFloat(document.getElementById('flat-amount').value) || 0;
-            }
-
-            shifts.push(newShift);
-            localStorage.setItem('myShifts', JSON.stringify(shifts));
-            document.getElementById('shift-tip').value = '';
-            updateMonthDropdowns();
+                s.hours = (eD - sD) / 3600000 - (br/60);
+                s.wageEarned = s.hours * wg;
+            } else { s.wageEarned = parseFloat(document.getElementById('flat-amount').value) || 0; }
+            shifts.push(s); localStorage.setItem('myShifts', JSON.stringify(shifts));
+            document.getElementById('shift-tip').value = ''; updateMonthDropdowns();
             switchTab('dashboard', document.querySelector('.tab-item'));
         }
 
+        function editTip(id) {
+            const s = shifts.find(x => x.id === id);
+            if(s) {
+                const n = prompt("Neues Trinkgeld (€):", s.tip);
+                if(n !== null) { s.tip = parseFloat(n) || 0; localStorage.setItem('myShifts', JSON.stringify(shifts)); renderHistory(); updateDashboard(); }
+            }
+        }
+
         function savePreset() {
-            const name = document.getElementById('p-name').value;
-            if(!name) return;
-            presets.push({ id: Date.now(), name, start: document.getElementById('p-start').value, end: document.getElementById('p-end').value, break: document.getElementById('p-break').value, wage: document.getElementById('p-wage').value });
-            localStorage.setItem('myPresets', JSON.stringify(presets));
-            renderPresets();
+            const n = document.getElementById('p-name').value; if(!n) return;
+            presets.push({ id: Date.now(), name: n, start: document.getElementById('p-start').value, end: document.getElementById('p-end').value, break: document.getElementById('p-break').value, wage: document.getElementById('p-wage').value });
+            localStorage.setItem('myPresets', JSON.stringify(presets)); renderPresets();
         }
 
         function renderPresets() {
-            document.getElementById('preset-list').innerHTML = presets.map(p => `<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} | ${p.wage}€</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Löschen</span></div>`).join('');
-            document.getElementById('preset-select').innerHTML = '<option value="">-- Keine Vorlage --</option>' + presets.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            document.getElementById('preset-list').innerHTML = presets.map(p => `<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end}</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');
+            document.getElementById('preset-select').innerHTML = '<option value="">-- Keine --</option>' + presets.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
         }
 
         function applyPreset() {
@@ -283,66 +254,74 @@
         function deletePreset(id) { presets = presets.filter(p => p.id !== id); localStorage.setItem('myPresets', JSON.stringify(presets)); renderPresets(); }
 
         function updateMonthDropdowns() {
-            const months = [...new Set(shifts.map(s => s.date.substring(0, 7)))].sort().reverse();
-            const dash = document.getElementById('dashboard-month-filter'), hist = document.getElementById('history-month-filter');
-            let h = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            dash.innerHTML = h || `<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;
-            hist.innerHTML = '<option value="all">Alle Monate</option>' + h;
+            const mths = [...new Set(shifts.map(s => s.date.substring(0, 7)))].sort().reverse();
+            const d = document.getElementById('dashboard-month-filter'), h = document.getElementById('history-month-filter');
+            let o = mths.map(m => `<option value="${m}">${m}</option>`).join('');
+            d.innerHTML = o || `<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;
+            h.innerHTML = '<option value="all">Alle</option>' + o;
         }
 
         function updateDashboard() {
-            const selM = document.getElementById('dashboard-month-filter').value;
-            const mShifts = shifts.filter(s => s.date.startsWith(selM)).sort((a,b) => a.date.localeCompare(b.date));
-            const mStats = mShifts.reduce((a, s) => { a.h += s.hours; a.w += s.wageEarned; a.t += s.tip; return a; }, {h:0, w:0, t:0});
-            document.getElementById('m-hours').innerText = mStats.h.toFixed(2)+'h';
-            document.getElementById('m-wage').innerText = mStats.w.toFixed(2)+'€';
-            document.getElementById('m-tip').innerText = mStats.t.toFixed(2)+'€';
-            document.getElementById('m-shifts').innerText = mShifts.length;
-            const aStats = shifts.reduce((a, s) => { a.h += s.hours; a.w += s.wageEarned; a.t += s.tip; return a; }, {h:0, w:0, t:0});
-            document.getElementById('a-hours').innerText = aStats.h.toFixed(2)+'h';
-            document.getElementById('a-wage').innerText = aStats.w.toFixed(2)+'€';
-            document.getElementById('a-tip').innerText = aStats.t.toFixed(2)+'€';
-            document.getElementById('a-shifts').innerText = shifts.length;
-            renderCharts(mShifts);
+            const sel = document.getElementById('dashboard-month-filter').value;
+            const ms = shifts.filter(s => s.date.startsWith(sel));
+            const mst = ms.reduce((a, s) => { a.h += s.hours; a.w += s.wageEarned; a.t += s.tip; return a; }, {h:0, w:0, t:0});
+            document.getElementById('m-hours').innerText = mst.h.toFixed(2)+'h';
+            document.getElementById('m-wage').innerText = mst.w.toFixed(2)+'€';
+            document.getElementById('m-tip').innerText = mst.t.toFixed(2)+'€';
+            document.getElementById('m-shifts').innerText = ms.length;
+            const ast = shifts.reduce((a, s) => { a.w += s.wageEarned; a.t += s.tip; return a; }, {w:0, t:0});
+            document.getElementById('a-wage').innerText = ast.w.toFixed(0)+'€';
+            document.getElementById('a-tip').innerText = ast.t.toFixed(0)+'€';
+            renderCharts(ms.sort((a,b) => a.date.localeCompare(b.date)));
         }
 
-        function renderCharts(mShifts) {
+        function renderCharts(ms) {
             const ctxM = document.getElementById('monthChart').getContext('2d');
             if(mChart) mChart.destroy();
-            mChart = new Chart(ctxM, {
-                type: 'bar',
-                data: { labels: mShifts.map(s => s.date.split('-')[2]), datasets: [{ label: 'Verdienst (€)', data: mShifts.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 6 }] },
-                options: { responsive: true, plugins: { title: { display: true, text: 'Tagesübersicht (€)' }, legend: { display: false } } }
-            });
+            mChart = new Chart(ctxM, { type: 'bar', data: { labels: ms.map(s => s.date.split('-')[2]), datasets: [{ label: '€', data: ms.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 5 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
             const ctxA = document.getElementById('allTimeChart').getContext('2d');
             if(aChart) aChart.destroy();
-            const grouped = shifts.reduce((acc, s) => { const m = s.date.substring(0, 7); acc[m] = (acc[m] || 0) + s.wageEarned + s.tip; return acc; }, {});
-            const labels = Object.keys(grouped).sort();
-            aChart = new Chart(ctxA, {
-                type: 'bar',
-                data: { labels: labels, datasets: [{ label: 'Monatssumme (€)', data: labels.map(l => grouped[l]), backgroundColor: ['#FF9500', '#34C759', '#AF52DE', '#007AFF'], borderRadius: 8 }] },
-                options: { responsive: true, plugins: { title: { display: true, text: 'Monatsvergleich (€)' }, legend: { display: false } } }
-            });
+            const grp = shifts.reduce((acc, s) => { const m = s.date.substring(0, 7); acc[m] = (acc[m] || 0) + s.wageEarned + s.tip; return acc; }, {});
+            const lbs = Object.keys(grp).sort();
+            aChart = new Chart(ctxA, { type: 'bar', data: { labels: lbs, datasets: [{ data: lbs.map(l => grp[l]), backgroundColor: '#34C759', borderRadius: 5 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
         }
 
         function renderHistory() {
             const f = document.getElementById('history-month-filter').value;
-            const filtered = f === 'all' ? shifts : shifts.filter(s => s.date.startsWith(f));
-            document.getElementById('history-list').innerHTML = filtered.sort((a,b) => b.id - a.id).map(s => `
+            const res = f === 'all' ? shifts : shifts.filter(s => s.date.startsWith(f));
+            document.getElementById('history-list').innerHTML = res.sort((a,b) => b.id - a.id).map(s => `
                 <div class="history-item">
-                    <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit'})}</strong><br><small>${s.type === 'pauschal' ? 'Event' : s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
-                    <div style="text-align:right">
-                        <strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br>
-                        <div class="action-links">
-                            <span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span>
-                            <span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span>
-                        </div>
+                    <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit'})}</strong><br><small>${s.type==='pauschal'?'Event':s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
+                    <div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br>
+                        <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp</span><span class="delete-link" onclick="deleteShift(${s.id})">X</span></div>
                     </div>
                 </div>
             `).join('');
         }
 
         function deleteShift(id) { if(confirm('Löschen?')) { shifts = shifts.filter(s => s.id !== id); localStorage.setItem('myShifts', JSON.stringify(shifts)); renderHistory(); updateDashboard(); } }
+
+        function exportData() {
+            const data = { shifts, presets };
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+        }
+
+        function importData(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(data.shifts) shifts = data.shifts;
+                    if(data.presets) presets = data.presets;
+                    localStorage.setItem('myShifts', JSON.stringify(shifts));
+                    localStorage.setItem('myPresets', JSON.stringify(presets));
+                    alert("Import erfolgreich!"); location.reload();
+                } catch(err) { alert("Fehler beim Import!"); }
+            };
+            reader.readAsText(event.target.files[0]);
+        }
     </script>
 </body>
 </html>
