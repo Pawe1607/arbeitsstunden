@@ -1,431 +1,436 @@
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Schicht Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #000000;
+            --text-muted: #8E8E93;
+            --primary: #007AFF;
+            --danger: #FF3B30;
+            --border-color: #E5E5EA;
+            --tab-bar-bg: rgba(255, 255, 255, 0.85);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --safe-top: env(safe-area-inset-top, 47px);
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+        /* Automatischer iOS Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --card-bg: #1C1C1E;
+                --text-main: #FFFFFF;
+                --text-muted: #98989D;
+                --border-color: #38383A;
+                --tab-bar-bg: rgba(28, 28, 30, 0.85);
+            }
+        }
 
-<title>Arbeitsstunden</title>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-top: var(--safe-top);
+            padding-bottom: calc(80px + var(--safe-bottom));
+        }
 
-<style>
+        .tab-content { display: none; padding: 20px; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
 
-body{
-font-family:-apple-system,BlinkMacSystemFont,system-ui;
-margin:0;
-background:linear-gradient(160deg,#0f172a,#1e293b,#020617);
-color:white;
-min-height:100vh;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-header{
-text-align:center;
-padding:20px;
-font-size:22px;
-font-weight:600;
-}
+        h1 { font-size: 34px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.5px; }
 
-.page{
-display:none;
-padding:16px;
-padding-bottom:90px;
-}
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
 
-.page.active{
-display:block;
-}
+        .input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .input-group:last-child { margin-bottom: 0; }
 
-.card{
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(14px);
-padding:18px;
-border-radius:18px;
-margin-bottom:16px;
-border:1px solid rgba(255,255,255,0.08);
-}
+        label {
+            font-size: 14px; color: var(--text-muted); margin-bottom: 5px;
+            text-transform: uppercase; font-weight: 500; letter-spacing: 0.5px;
+        }
 
-.stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:14px;
-}
+        input, select {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 17px; background: var(--bg-color);
+            color: var(--text-main); appearance: none; -webkit-appearance: none;
+        }
 
-.stat{
-border-radius:18px;
-padding:16px;
-text-align:center;
-}
+        input:focus, select:focus { outline: none; border-color: var(--primary); }
 
-.stat b{
-font-size:24px;
-}
+        .row { display: flex; gap: 10px; }
+        .row > .input-group { flex: 1; }
 
-.stat:nth-child(1){background:linear-gradient(135deg,#38bdf8,#2563eb);}
-.stat:nth-child(2){background:linear-gradient(135deg,#34d399,#059669);}
-.stat:nth-child(3){background:linear-gradient(135deg,#facc15,#f59e0b);}
-.stat:nth-child(4){background:linear-gradient(135deg,#fb7185,#e11d48);}
+        button.primary-btn {
+            background-color: var(--primary); color: white; border: none;
+            padding: 14px; border-radius: 12px; font-size: 17px;
+            font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        button.small-btn {
+            background-color: var(--border-color); color: var(--primary);
+            border: none; padding: 6px 12px; border-radius: 6px;
+            font-size: 14px; font-weight: 600;
+        }
+        button.danger-btn { color: var(--danger); }
 
-label{
-font-size:13px;
-opacity:0.7;
-display:block;
-margin-bottom:4px;
-}
+        .tab-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--tab-bar-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid var(--border-color);
+            display: flex; justify-content: space-around;
+            padding-bottom: var(--safe-bottom); z-index: 1000;
+        }
 
-input{
-width:100%;
-padding:13px;
-border-radius:12px;
-border:none;
-background:rgba(255,255,255,0.08);
-color:white;
-font-size:16px;
-margin-bottom:12px;
-}
+        .tab-item {
+            flex: 1; text-align: center; padding: 10px 0;
+            color: var(--text-muted); font-size: 11px; font-weight: 500;
+        }
+        .tab-item.active { color: var(--primary); }
+        .tab-icon { font-size: 24px; display: block; margin-bottom: 2px; }
 
-button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:14px;
-font-size:16px;
-font-weight:600;
-background:linear-gradient(90deg,#6366f1,#8b5cf6);
-color:white;
-}
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding: 12px 0;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-details p { font-size: 15px; margin-bottom: 2px; }
+        .history-details .date { font-weight: 600; font-size: 17px; margin-bottom: 4px; }
+        .history-actions { display: flex; gap: 8px; flex-direction: column; }
 
-.month{
-margin-bottom:20px;
-}
-
-.month h3{
-opacity:0.8;
-margin-bottom:10px;
-}
-
-.shift{
-background:rgba(255,255,255,0.05);
-padding:10px;
-border-radius:10px;
-margin-bottom:6px;
-font-size:14px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.deleteBtn{
-background:#ef4444;
-padding:6px 10px;
-border-radius:8px;
-font-size:12px;
-border:none;
-color:white;
-}
-
-.bottomnav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:rgba(15,23,42,0.9);
-display:flex;
-border-top:1px solid rgba(255,255,255,0.1);
-}
-
-.navbtn{
-flex:1;
-text-align:center;
-padding:10px;
-font-size:13px;
-}
-
-#msg{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-background:#22c55e;
-padding:10px 18px;
-border-radius:10px;
-display:none;
-}
-
-canvas{
-margin-top:20px;
-}
-
-</style>
-
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
+        }
+        .stat-box {
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .stat-box h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;}
+        .stat-box p { font-size: 22px; font-weight: 700; color: var(--text-main); }
+        .stat-box p.accent { color: #34C759; }
+    </style>
 </head>
-
 <body>
 
-<header>Arbeitsstunden</header>
-
-<div id="msg">Schicht gespeichert ✔</div>
-
-<!-- Stats -->
-
-<div class="page active" id="stats">
-
-<div class="stats">
-
-<div class="stat">
-Stunden<br>
-<b id="stunden">0</b>
-</div>
-
-<div class="stat">
-Gehalt<br>
-<b id="lohn">0€</b>
-</div>
-
-<div class="stat">
-Trinkgeld<br>
-<b id="tips">0€</b>
-</div>
-
-<div class="stat">
-Gesamt<br>
-<b id="gesamt">0€</b>
-</div>
-
-</div>
-
-<canvas id="chart"></canvas>
-
-</div>
-
-<!-- Schichten -->
-
-<div class="page" id="shifts">
-<div id="liste"></div>
-</div>
-
-<!-- Neue Schicht -->
-
-<div class="page" id="add">
-
-<div class="card">
-
-<h3>Normale Schicht</h3>
-
-<label>Datum</label>
-<input type="date" id="datum">
-
-<label>Von</label>
-<input type="text" id="von" placeholder="17:30">
-
-<label>Bis</label>
-<input type="text" id="bis" placeholder="23:00">
-
-<label>Pause Minuten</label>
-<input type="number" id="pause">
-
-<label>Trinkgeld €</label>
-<input type="number" id="tip">
-
-<label>Stundenlohn €</label>
-<input type="number" id="lohnstunde" value="1">
-
-<button onclick="addShift()">Schicht speichern</button>
-
-</div>
-
-<div class="card">
-
-<h3>Event Schicht</h3>
-
-<label>Datum</label>
-<input type="date" id="eventDatum">
-
-<label>Pauschal Lohn €</label>
-<input type="number" id="eventLohn">
-
-<label>Trinkgeld €</label>
-<input type="number" id="eventTip">
-
-<button onclick="addEvent()">Event speichern</button>
-
-</div>
-
-</div>
-
-<!-- Navigation -->
-
-<div class="bottomnav">
-
-<div class="navbtn" onclick="openPage('stats')">📊<br>Stats</div>
-<div class="navbtn" onclick="openPage('shifts')">📅<br>Schichten</div>
-<div class="navbtn" onclick="openPage('add')">➕<br>Neu</div>
-
-</div>
-
-<script>
-
-let data=JSON.parse(localStorage.getItem("arbeit"))||{}
-let chart
-
-function save(){
-localStorage.setItem("arbeit",JSON.stringify(data))
-}
-
-function showMsg(){
-let m=document.getElementById("msg")
-m.style.display="block"
-setTimeout(()=>m.style.display="none",2000)
-}
-
-function openPage(id){
-
-document.querySelectorAll(".page").forEach(p=>{
-p.classList.remove("active")
-})
-
-document.getElementById(id).classList.add("active")
-
-}
-
-function addShift(){
-
-let datum=document.getElementById("datum").value
-let von=document.getElementById("von").value
-let bis=document.getElementById("bis").value
-let pause=parseFloat(document.getElementById("pause").value)||0
-let tip=parseFloat(document.getElementById("tip").value)||0
-let lohnstunde=parseFloat(document.getElementById("lohnstunde").value)||0
-
-let start=new Date("1970-01-01T"+von)
-let ende=new Date("1970-01-01T"+bis)
-
-let stunden=(ende-start)/1000/60/60
-stunden-=pause/60
-
-let lohn=stunden*lohnstunde
-
-let id=Date.now()
-
-data[id]={datum,stunden,lohn,tip}
-
-save()
-render()
-showMsg()
-
-}
-
-function addEvent(){
-
-let datum=document.getElementById("eventDatum").value
-let lohn=parseFloat(document.getElementById("eventLohn").value)||0
-let tip=parseFloat(document.getElementById("eventTip").value)||0
-
-let id=Date.now()
-
-data[id]={datum,stunden:0,lohn,tip,event:true}
-
-save()
-render()
-showMsg()
-
-}
-
-function deleteShift(id){
-
-delete data[id]
-
-save()
-render()
-
-}
-
-function render(){
-
-let liste=document.getElementById("liste")
-liste.innerHTML=""
-
-let months={}
-let totalH=0
-let totalL=0
-let totalT=0
-
-Object.entries(data).forEach(([id,s])=>{
-
-let m=s.datum.slice(0,7)
-
-if(!months[m]) months[m]=[]
-
-months[m].push({id:id,...s})
-
-})
-
-Object.entries(months).sort().reverse().forEach(([m,arr])=>{
-
-let div=document.createElement("div")
-div.className="month"
-div.innerHTML="<h3>"+m+"</h3>"
-
-arr.forEach(s=>{
-
-let row=document.createElement("div")
-row.className="shift"
-
-row.innerHTML=`
-<div>
-${s.datum} |
-${s.stunden.toFixed(2)}h |
-${s.lohn.toFixed(2)}€ |
-Tip ${s.tip}€
-</div>
-
-<button class="deleteBtn" onclick="deleteShift('${s.id}')">Löschen</button>
-`
-
-div.appendChild(row)
-
-totalH+=s.stunden
-totalL+=s.lohn
-totalT+=s.tip
-
-})
-
-liste.appendChild(div)
-
-})
-
-document.getElementById("stunden").innerText=totalH.toFixed(2)
-document.getElementById("lohn").innerText=totalL.toFixed(2)+"€"
-document.getElementById("tips").innerText=totalT.toFixed(2)+"€"
-document.getElementById("gesamt").innerText=(totalL+totalT).toFixed(2)+"€"
-
-drawChart(totalL,totalT)
-
-}
-
-function drawChart(lohn,tip){
-
-if(chart) chart.destroy()
-
-chart=new Chart(document.getElementById("chart"),{
-
-type:"doughnut",
-
-data:{
-labels:["Gehalt","Trinkgeld"],
-datasets:[{
-data:[lohn,tip]
-}]
-}
-
-})
-
-}
-
-render()
-
-</script>
-
+    <div id="tab-dashboard" class="tab-content active">
+        <h1>Übersicht</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>Gesamt Lohn</h3>
+                <p id="total-wage">0 €</p>
+            </div>
+            <div class="stat-box">
+                <h3>Gesamt Trinkgeld</h3>
+                <p id="total-tip" class="accent">0 €</p>
+            </div>
+            <div class="stat-box">
+                <h3>Echter Std.-Lohn</h3>
+                <p id="avg-hourly">0 €</p>
+            </div>
+            <div class="stat-box">
+                <h3>Schichten</h3>
+                <p id="total-shifts">0</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <canvas id="earningsChart"></canvas>
+        </div>
+    </div>
+
+    <div id="tab-add" class="tab-content">
+        <h1>Neue Schicht</h1>
+        
+        <div class="card">
+            <div class="input-group">
+                <label>Schicht-Art</label>
+                <select id="shift-type" onchange="toggleShiftType()">
+                    <option value="normal">Stundenlohn</option>
+                    <option value="event">Event (Pauschal)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Datum</label>
+                <input type="date" id="shift-date">
+            </div>
+
+            <div id="normal-inputs">
+                <div class="row">
+                    <div class="input-group">
+                        <label>Von</label>
+                        <input type="time" id="time-start">
+                    </div>
+                    <div class="input-group">
+                        <label>Bis</label>
+                        <input type="time" id="time-end">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Pause (Min)</label>
+                        <input type="number" id="shift-break" placeholder="z.B. 30" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label>Std.-Lohn (€)</label>
+                        <input type="number" id="hourly-wage" placeholder="z.B. 13.50" step="0.5">
+                    </div>
+                </div>
+            </div>
+
+            <div id="event-inputs" style="display: none;">
+                <div class="input-group">
+                    <label>Pauschallohn (€)</label>
+                    <input type="number" id="flat-wage" placeholder="z.B. 150" step="1">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Trinkgeld (€)</label>
+                <input type="number" id="shift-tip" placeholder="0" step="0.5">
+            </div>
+
+            <button class="primary-btn" onclick="saveShift()">Schicht speichern</button>
+        </div>
+    </div>
+
+    <div id="tab-history" class="tab-content">
+        <h1>Verlauf</h1>
+        <div class="card" id="history-list"></div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchTab('dashboard', this)">
+            <span class="tab-icon">📊</span>
+            Übersicht
+        </div>
+        <div class="tab-item" onclick="switchTab('add', this)">
+            <span class="tab-icon">➕</span>
+            Eintragen
+        </div>
+        <div class="tab-item" onclick="switchTab('history', this)">
+            <span class="tab-icon">🕒</span>
+            Verlauf
+        </div>
+    </div>
+
+    <script>
+        let shifts = JSON.parse(localStorage.getItem('myShifts')) || [];
+        let myChart = null;
+
+        document.getElementById('shift-date').valueAsDate = new Date();
+        updateDashboard();
+        renderHistory();
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            element.classList.add('active');
+            if(tabName === 'dashboard') updateDashboard();
+            if(tabName === 'history') renderHistory();
+        }
+
+        function toggleShiftType() {
+            const type = document.getElementById('shift-type').value;
+            document.getElementById('normal-inputs').style.display = type === 'normal' ? 'block' : 'none';
+            document.getElementById('event-inputs').style.display = type === 'event' ? 'block' : 'none';
+        }
+
+        function saveShift() {
+            const type = document.getElementById('shift-type').value;
+            const date = document.getElementById('shift-date').value;
+            let tip = parseFloat(document.getElementById('shift-tip').value) || 0;
+            
+            if(!date) return alert("Bitte Datum wählen!");
+
+            let newShift = { id: Date.now(), type: type, date: date, tip: tip, wageEarned: 0, hours: 0, breakMins: 0 };
+
+            if (type === 'normal') {
+                const start = document.getElementById('time-start').value;
+                const end = document.getElementById('time-end').value;
+                const wage = parseFloat(document.getElementById('hourly-wage').value) || 0;
+                const breakMins = parseFloat(document.getElementById('shift-break').value) || 0;
+                
+                if(!start || !end || wage <= 0) return alert("Bitte Zeiten und Lohn eingeben!");
+
+                let startTime = new Date(`1970-01-01T${start}:00`);
+                let endTime = new Date(`1970-01-01T${end}:00`);
+                if(endTime < startTime) endTime.setDate(endTime.getDate() + 1);
+                
+                let totalHours = (endTime - startTime) / (1000 * 60 * 60);
+                let netHours = totalHours - (breakMins / 60);
+
+                if (netHours < 0) return alert("Die Pause kann nicht länger als die Schicht sein!");
+
+                newShift.hours = netHours;
+                newShift.breakMins = breakMins;
+                newShift.wageEarned = netHours * wage;
+                newShift.start = start;
+                newShift.end = end;
+                newShift.hourlyWage = wage;
+            } else {
+                const flatWage = parseFloat(document.getElementById('flat-wage').value) || 0;
+                if(flatWage <= 0) return alert("Bitte Pauschallohn eingeben!");
+                newShift.wageEarned = flatWage;
+            }
+
+            shifts.push(newShift);
+            saveData();
+            alert("Schicht gespeichert!");
+            
+            document.getElementById('shift-tip').value = '';
+            document.getElementById('time-start').value = '';
+            document.getElementById('time-end').value = '';
+            document.getElementById('shift-break').value = '';
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+
+            if(shifts.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 20px;">Noch keine Schichten eingetragen.</p>';
+                return;
+            }
+
+            let sortedShifts = [...shifts].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            sortedShifts.forEach(shift => {
+                let formattedDate = new Date(shift.date).toLocaleDateString('de-DE');
+                let totalEarned = shift.wageEarned + shift.tip;
+                
+                let detailsHtml = shift.type === 'normal' 
+                    ? `${shift.start} - ${shift.end} Uhr (${shift.hours.toFixed(2)}h gearbeitet, ${shift.breakMins}m Pause) <br> Lohn: ${shift.wageEarned.toFixed(2)}€`
+                    : `Event (Pauschal) <br> Lohn: ${shift.wageEarned.toFixed(2)}€`;
+
+                let item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-details">
+                        <div class="date">${formattedDate}</div>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 6px;">${detailsHtml}</p>
+                        <p><strong>Trinkgeld:</strong> ${shift.tip.toFixed(2)} €</p>
+                        <p style="color: var(--primary); font-weight: 600; margin-top: 4px;">Gesamt: ${totalEarned.toFixed(2)} €</p>
+                    </div>
+                    <div class="history-actions">
+                        <button class="small-btn" onclick="editTip(${shift.id})">✏️ Trinkgeld</button>
+                        <button class="small-btn danger-btn" onclick="deleteShift(${shift.id})">🗑️ Löschen</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function deleteShift(id) {
+            if(confirm("Willst du diese Schicht löschen?")) {
+                shifts = shifts.filter(s => s.id !== id);
+                saveData();
+                renderHistory();
+            }
+        }
+
+        function editTip(id) {
+            let shift = shifts.find(s => s.id === id);
+            let newTip = prompt(`Neues Trinkgeld eingeben:`, shift.tip);
+            if(newTip !== null && !isNaN(newTip)) {
+                shift.tip = parseFloat(newTip);
+                saveData();
+                renderHistory();
+                updateDashboard();
+            }
+        }
+
+        function saveData() { localStorage.setItem('myShifts', JSON.stringify(shifts)); }
+
+        function updateDashboard() {
+            let totalWage = 0, totalTip = 0, totalHours = 0;
+
+            shifts.forEach(s => {
+                totalWage += s.wageEarned;
+                totalTip += s.tip;
+                totalHours += s.hours; 
+            });
+
+            document.getElementById('total-wage').innerText = totalWage.toFixed(2) + ' €';
+            document.getElementById('total-tip').innerText = totalTip.toFixed(2) + ' €';
+            document.getElementById('total-shifts').innerText = shifts.length;
+            
+            let totalEarned = totalWage + totalTip;
+            let avgPerHour = totalHours > 0 ? (totalEarned / totalHours).toFixed(2) : 0;
+            document.getElementById('avg-hourly').innerText = avgPerHour + ' €';
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const monthlyData = {};
+            shifts.forEach(shift => {
+                const date = new Date(shift.date);
+                const monthYear = `${date.toLocaleString('de-DE', { month: 'short' })} ${date.getFullYear()}`;
+                if(!monthlyData[monthYear]) monthlyData[monthYear] = { wage: 0, tip: 0 };
+                monthlyData[monthYear].wage += shift.wageEarned;
+                monthlyData[monthYear].tip += shift.tip;
+            });
+
+            const labels = Object.keys(monthlyData).reverse(); // Älteste links, neueste rechts
+            const wageData = labels.map(l => monthlyData[l].wage);
+            const tipData = labels.map(l => monthlyData[l].tip);
+
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            
+            // Textfarbe für Chart an Dark Mode anpassen
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
+
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', borderRadius: 4 },
+                        { label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
+                        y: { stacked: true, ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : '#E5E5EA' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: chartTextColor } }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
