@@ -63,6 +63,7 @@
             color: var(--text-main);
             padding-top: var(--safe-top);
             padding-bottom: calc(110px + var(--safe-bottom)); 
+            overflow-x: hidden; /* Verhindert seitliches Scrollen vom Browser */
         }
 
         .tab-content { display: none; padding: 20px; }
@@ -84,6 +85,9 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.04);
         }
+
+        /* Verlauf-Karte (ohne normales Padding für den Swipe-Effekt) */
+        #history-list { padding: 0; overflow: hidden; }
 
         select.ios-select {
             background-color: var(--card-bg);
@@ -120,11 +124,7 @@
         .stat-box.orange h3, .stat-box.orange p { color: var(--box-orange-txt); }
         .stat-box.purple h3, .stat-box.purple p { color: var(--box-purple-txt); }
 
-        .section-divider {
-            border: none; height: 1px; background-color: var(--border-color);
-            margin: 32px 0;
-        }
-
+        .section-divider { border: none; height: 1px; background-color: var(--border-color); margin: 32px 0; }
         .input-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         .input-group:last-child { margin-bottom: 0; }
         label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.8px; }
@@ -135,54 +135,42 @@
 
         button.primary-btn { background: linear-gradient(135deg, var(--primary), #0056D6); color: white; border: none; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); transition: transform 0.1s; }
         button.primary-btn:active { transform: scale(0.97); }
-        button.small-btn { background-color: var(--border-color); color: var(--text-main); border: none; padding: 12px 14px; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: background-color 0.2s; }
+        button.small-btn { background-color: var(--border-color); color: var(--primary); border: none; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: background-color 0.2s; }
         button.small-btn:active { background-color: rgba(0,0,0,0.1); }
-        button.danger-btn { color: var(--danger); background-color: rgba(255, 59, 48, 0.1); }
 
+        /* SCHWEBENDE TAB BAR */
         .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 20px; right: 20px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border: 0.5px solid rgba(255, 255, 255, 0.2); display: flex; justify-content: space-around; align-items: center; padding: 8px 10px; z-index: 1000; }
         .tab-item { flex: 1; text-align: center; padding: 8px 0; color: var(--text-muted); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: color 0.2s; }
         .tab-item.active { color: var(--primary); }
         .tab-icon { margin-bottom: 4px; display: flex; align-items: center; justify-content: center; }
         .tab-icon svg { width: 26px; height: 26px; stroke-width: 2.2; }
 
-        .history-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding: 16px 0; }
-        .history-item:last-child { border-bottom: none; }
+        /* SWIPE-TO-DELETE CSS */
+        .history-item-wrapper { position: relative; border-bottom: 1px solid var(--border-color); overflow: hidden; background: var(--card-bg); }
+        .history-item-wrapper:last-child { border-bottom: none; }
+        
+        .history-action-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 90px; background-color: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; cursor: pointer; z-index: 0; }
+        
+        .history-item-fg { position: relative; background-color: var(--card-bg); z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); width: 100%; }
+        
         .history-details p { font-size: 15px; margin-bottom: 4px; }
         .history-details .date { font-weight: 600; font-size: 18px; margin-bottom: 6px; }
-        .history-actions { display: flex; gap: 10px; flex-direction: column; }
     </style>
 </head>
 <body>
 
     <div id="tab-dashboard" class="tab-content active">
-        
         <div>
             <h1>Abrechnung</h1>
             <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboardStats()"></select>
-            
             <div class="stats-grid">
-                <div class="stat-box orange">
-                    <h3>Stunden</h3>
-                    <p id="month-hours">0.00 h</p>
-                </div>
-                <div class="stat-box blue">
-                    <h3>Lohn</h3>
-                    <p id="month-wage">0 €</p>
-                </div>
-                <div class="stat-box green">
-                    <h3>Trinkgeld</h3>
-                    <p id="month-tip">0 €</p>
-                </div>
-                <div class="stat-box purple">
-                    <h3>Schichten</h3>
-                    <p id="month-shifts">0</p>
-                </div>
+                <div class="stat-box orange"><h3>Stunden</h3><p id="month-hours">0.00 h</p></div>
+                <div class="stat-box blue"><h3>Lohn</h3><p id="month-wage">0 €</p></div>
+                <div class="stat-box green"><h3>Trinkgeld</h3><p id="month-tip">0 €</p></div>
+                <div class="stat-box purple"><h3>Schichten</h3><p id="month-shifts">0</p></div>
             </div>
-
             <div class="section-title">Diagramm (Tage im Monat)</div>
-            <div class="card">
-                <canvas id="monthChart"></canvas>
-            </div>
+            <div class="card"><canvas id="monthChart"></canvas></div>
         </div>
 
         <hr class="section-divider">
@@ -190,50 +178,27 @@
         <div>
             <h2>Gesamt (All-Time)</h2>
             <div class="stats-grid">
-                <div class="stat-box blue">
-                    <h3>Gesamt Lohn</h3>
-                    <p id="total-wage">0 €</p>
-                </div>
-                <div class="stat-box green">
-                    <h3>Trinkgeld</h3>
-                    <p id="total-tip">0 €</p>
-                </div>
-                <div class="stat-box orange">
-                    <h3>Ø Std.-Lohn</h3>
-                    <p id="avg-hourly">0 €</p>
-                </div>
-                <div class="stat-box purple">
-                    <h3>Schichten</h3>
-                    <p id="total-shifts">0</p>
-                </div>
+                <div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="total-wage">0 €</p></div>
+                <div class="stat-box green"><h3>Trinkgeld</h3><p id="total-tip">0 €</p></div>
+                <div class="stat-box orange"><h3>Ø Std.-Lohn</h3><p id="avg-hourly">0 €</p></div>
+                <div class="stat-box purple"><h3>Schichten</h3><p id="total-shifts">0</p></div>
             </div>
-
             <div class="section-title">Diagramm (Monate im Jahr)</div>
-            <div class="card">
-                <canvas id="allTimeChart"></canvas>
-            </div>
+            <div class="card"><canvas id="allTimeChart"></canvas></div>
         </div>
 
         <hr class="section-divider">
 
         <div class="section-title">Daten & Sicherheit</div>
         <div class="card row" style="padding: 16px;">
-            <button class="small-btn" onclick="exportData()" style="flex: 1; background-color: var(--box-blue-bg); color: var(--box-blue-txt);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                Sichern
-            </button>
-            <button class="small-btn" onclick="document.getElementById('file-input').click()" style="flex: 1;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Laden
-            </button>
+            <button class="small-btn" onclick="exportData()" style="flex: 1; background-color: var(--box-blue-bg); color: var(--box-blue-txt);">Sichern</button>
+            <button class="small-btn" onclick="document.getElementById('file-input').click()" style="flex: 1;">Laden</button>
             <input type="file" id="file-input" style="display:none;" accept=".json" onchange="importData(event)">
         </div>
-        
     </div>
 
     <div id="tab-add" class="tab-content">
         <h1>Neue Schicht</h1>
-        
         <div class="card">
             <div class="input-group">
                 <label>Schicht-Art</label>
@@ -242,12 +207,7 @@
                     <option value="event">Event (Pauschal)</option>
                 </select>
             </div>
-
-            <div class="input-group">
-                <label>Datum</label>
-                <input type="date" id="shift-date">
-            </div>
-
+            <div class="input-group"><label>Datum</label><input type="date" id="shift-date"></div>
             <div id="normal-inputs">
                 <div class="row">
                     <div class="input-group"><label>Von</label><input type="time" id="time-start"></div>
@@ -258,24 +218,19 @@
                     <div class="input-group"><label>Std.-Lohn (€)</label><input type="number" id="hourly-wage" placeholder="z.B. 13.50" step="0.5"></div>
                 </div>
             </div>
-
             <div id="event-inputs" style="display: none;">
                 <div class="input-group"><label>Pauschallohn (€)</label><input type="number" id="flat-wage" placeholder="z.B. 150" step="1"></div>
             </div>
-
             <div class="input-group"><label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0" step="0.5"></div>
-
             <button class="primary-btn" onclick="saveShift()">Schicht speichern</button>
         </div>
     </div>
 
     <div id="tab-history" class="tab-content">
         <h1>Verlauf</h1>
-        
         <div class="input-group" style="margin-bottom: 20px;">
             <select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select>
         </div>
-
         <div class="card" id="history-list"></div>
     </div>
 
@@ -308,17 +263,80 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            // Wenn kein Element übergeben wurde (beim Swipen), das richtige in der Leiste finden
+            if(!element) {
+                const tabs = ['dashboard', 'add', 'history'];
+                let index = tabs.indexOf(tabName);
+                element = document.querySelectorAll('.tab-item')[index];
+            }
             element.classList.add('active');
             
-            if(tabName === 'dashboard') {
-                updateMonthDropdowns();
-                updateDashboard();
-            }
-            if(tabName === 'history') {
-                updateMonthDropdowns();
-                renderHistory();
+            // Ansicht zurücksetzen und scrollen
+            window.scrollTo(0,0);
+            
+            if(tabName === 'dashboard') { updateMonthDropdowns(); updateDashboard(); }
+            if(tabName === 'history') { updateMonthDropdowns(); renderHistory(); }
+        }
+
+        // --- GESTEN / SWIPES LOGIK ---
+        const tabNames = ['dashboard', 'add', 'history'];
+        let globalStartX = 0, globalStartY = 0;
+        let histStartX = 0;
+
+        // 1. History Swipe (Nach links wischen für Löschen)
+        function histTouchStart(e) {
+            histStartX = e.touches[0].clientX;
+        }
+        function histTouchEnd(e, element) {
+            let diffX = histStartX - e.changedTouches[0].clientX;
+            // Wenn nach links gewischt (mehr als 40px)
+            if(diffX > 40) {
+                document.querySelectorAll('.history-item-fg').forEach(el => el.style.transform = 'translateX(0)'); // Alle anderen schließen
+                element.style.transform = 'translateX(-90px)'; // Rote Box öffnen
+            } else if (diffX < -40) {
+                element.style.transform = 'translateX(0)'; // Wieder schließen
             }
         }
+
+        // 2. Globale Tab-Navigation (Überall auf dem Bildschirm)
+        document.addEventListener('touchstart', e => {
+            // Ignoriere Diagramme, Eingabefelder und den History-Bereich für den globalen Swipe
+            if(e.target.closest('canvas') || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            if(e.target.closest('.history-item-wrapper')) return; 
+
+            globalStartX = e.touches[0].clientX;
+            globalStartY = e.touches[0].clientY;
+        }, {passive: true});
+
+        document.addEventListener('touchend', e => {
+            if(e.target.closest('canvas') || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            
+            // Wenn irgendwohin getippt wird, schließe alle offenen Löschen-Buttons
+            if(!e.target.closest('.history-item-wrapper')) {
+                document.querySelectorAll('.history-item-fg').forEach(el => el.style.transform = 'translateX(0)');
+            }
+
+            if(e.target.closest('.history-item-wrapper')) return;
+
+            let diffX = globalStartX - e.changedTouches[0].clientX;
+            let diffY = globalStartY - e.changedTouches[0].clientY;
+
+            // Wenn es eindeutig ein horizontaler Wisch war (und nicht nach oben/unten scrollen)
+            if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 2) {
+                let activeTabEl = document.querySelector('.tab-content.active');
+                if(!activeTabEl) return;
+                let currentTabName = activeTabEl.id.replace('tab-', '');
+                let currentIndex = tabNames.indexOf(currentTabName);
+                
+                if (diffX > 0 && currentIndex < tabNames.length - 1) { 
+                    switchTab(tabNames[currentIndex + 1]); // Wisch nach links -> Nächster Tab
+                } else if (diffX < 0 && currentIndex > 0) { 
+                    switchTab(tabNames[currentIndex - 1]); // Wisch nach rechts -> Vorheriger Tab
+                }
+            }
+        }, {passive: true});
+
 
         function toggleShiftType() {
             const type = document.getElementById('shift-type').value;
@@ -415,7 +433,6 @@
 
         function updateDashboardStats() {
             const selectedMonth = document.getElementById('dashboard-month-filter').value;
-            
             let mHours = 0, mWage = 0, mTip = 0, mShifts = 0;
             
             shifts.forEach(s => {
@@ -439,7 +456,6 @@
 
         function updateDashboard() {
             updateDashboardStats();
-
             let totalWage = 0, totalTip = 0, totalHours = 0;
             shifts.forEach(s => { totalWage += s.wageEarned; totalTip += s.tip; totalHours += s.hours; });
 
@@ -454,10 +470,8 @@
             renderAllTimeChart();
         }
 
-        // --- DIAGRAMME ---
         function renderMonthChart(selectedMonth) {
             const dailyData = {};
-            
             shifts.forEach(shift => {
                 const d = new Date(shift.date);
                 const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -480,7 +494,6 @@
             const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
 
             if (monthChartInstance) monthChartInstance.destroy();
-            
             monthChartInstance = new Chart(ctx, {
                 data: {
                     labels: labels,
@@ -490,15 +503,7 @@
                         { type: 'bar', label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', yAxisID: 'y', borderRadius: 4 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
-                        y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } },
-                        y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } }
-                    },
-                    plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } }
-                }
+                options: { responsive: true, scales: { x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } }, y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } }, y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } } }, plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } } }
             });
         }
 
@@ -523,7 +528,6 @@
             const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
 
             if (allTimeChartInstance) allTimeChartInstance.destroy();
-            
             allTimeChartInstance = new Chart(ctx, {
                 data: {
                     labels: labels,
@@ -533,15 +537,7 @@
                         { type: 'bar', label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', yAxisID: 'y', borderRadius: 4 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
-                        y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } },
-                        y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } }
-                    },
-                    plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } }
-                }
+                options: { responsive: true, scales: { x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } }, y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } }, y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } } }, plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } } }
             });
         }
 
@@ -564,8 +560,7 @@
             }
 
             let sortedShifts = [...filteredShifts].sort((a,b) => new Date(b.date) - new Date(a.date));
-            const editIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
-            const trashIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+            const editIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
 
             sortedShifts.forEach(shift => {
                 let formattedDate = new Date(shift.date).toLocaleDateString('de-DE');
@@ -575,17 +570,19 @@
                     : `Event (Pauschal) <br> Lohn: ${shift.wageEarned.toFixed(2)}€`;
 
                 let item = document.createElement('div');
-                item.className = 'history-item';
+                item.className = 'history-item-wrapper';
                 item.innerHTML = `
-                    <div class="history-details">
-                        <div class="date">${formattedDate}</div>
-                        <p style="font-size: 15px; line-height: 1.4; margin-bottom: 8px;">${detailsHtml}</p>
-                        <p><strong>Trinkgeld:</strong> <span style="color:var(--box-green-txt);">${shift.tip.toFixed(2)} €</span></p>
-                        <p style="color: var(--text-main); font-weight: 700; margin-top: 6px; font-size: 17px;">Gesamt: ${totalEarned.toFixed(2)} €</p>
-                    </div>
-                    <div class="history-actions">
-                        <button class="small-btn" onclick="editTip(${shift.id})">${editIcon} Tipp</button>
-                        <button class="small-btn danger-btn" onclick="deleteShift(${shift.id})">${trashIcon} Löschen</button>
+                    <div class="history-action-bg" onclick="deleteShift(${shift.id})">Löschen</div>
+                    <div class="history-item-fg" ontouchstart="histTouchStart(event)" ontouchend="histTouchEnd(event, this)">
+                        <div class="history-details">
+                            <div class="date">${formattedDate}</div>
+                            <p style="font-size: 15px; line-height: 1.4; margin-bottom: 8px;">${detailsHtml}</p>
+                            <p><strong>Trinkgeld:</strong> <span style="color:var(--box-green-txt);">${shift.tip.toFixed(2)} €</span></p>
+                            <p style="color: var(--text-main); font-weight: 700; margin-top: 6px; font-size: 17px;">Gesamt: ${totalEarned.toFixed(2)} €</p>
+                        </div>
+                        <div class="history-actions">
+                            <button class="small-btn" onclick="editTip(${shift.id})">${editIcon} Tipp</button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(item);
