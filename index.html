@@ -85,7 +85,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.04);
         }
 
-        /* Schönere, weiße/helle Auswahl für den Monat (Volle Breite = Kein Überlappen) */
         select.ios-select {
             background-color: var(--card-bg);
             color: var(--primary);
@@ -99,7 +98,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.03);
             appearance: none;
             -webkit-appearance: none;
-            /* Kleiner Pfeil nach unten im Dropdown */
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
             background-position: right 16px top 50%;
@@ -163,20 +161,20 @@
             <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboardStats()"></select>
             
             <div class="stats-grid">
-                <div class="stat-box">
-                    <h3 style="color: var(--text-muted);">Stunden</h3>
+                <div class="stat-box orange">
+                    <h3>Stunden</h3>
                     <p id="month-hours">0.00 h</p>
                 </div>
-                <div class="stat-box">
-                    <h3 style="color: var(--text-muted);">Lohn</h3>
+                <div class="stat-box blue">
+                    <h3>Lohn</h3>
                     <p id="month-wage">0 €</p>
                 </div>
-                <div class="stat-box">
-                    <h3 style="color: var(--text-muted);">Trinkgeld</h3>
-                    <p id="month-tip" style="color: var(--box-green-txt);">0 €</p>
+                <div class="stat-box green">
+                    <h3>Trinkgeld</h3>
+                    <p id="month-tip">0 €</p>
                 </div>
-                <div class="stat-box">
-                    <h3 style="color: var(--text-muted);">Schichten</h3>
+                <div class="stat-box purple">
+                    <h3>Schichten</h3>
                     <p id="month-shifts">0</p>
                 </div>
             </div>
@@ -240,7 +238,7 @@
             <div class="input-group">
                 <label>Schicht-Art</label>
                 <select id="shift-type" class="ios-select" style="margin-bottom:0;" onchange="toggleShiftType()">
-                    <option value="normal">Stundenlohn</option>
+                    <option value="normal">Schicht</option>
                     <option value="event">Event (Pauschal)</option>
                 </select>
             </div>
@@ -460,7 +458,6 @@
         function renderMonthChart(selectedMonth) {
             const dailyData = {};
             
-            // Tage filtern
             shifts.forEach(shift => {
                 const d = new Date(shift.date);
                 const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -473,7 +470,6 @@
                 }
             });
 
-            // Aufsteigend nach Tagen sortieren
             const labels = Object.keys(dailyData).sort((a, b) => parseInt(a) - parseInt(b));
             const wageData = labels.map(l => dailyData[l].wage);
             const tipData = labels.map(l => dailyData[l].tip);
@@ -517,7 +513,6 @@
                 monthlyData[monthYear].hours += shift.hours;
             });
 
-            // Alte Monate links, neue rechts
             const labels = Object.keys(monthlyData).reverse();
             const wageData = labels.map(l => monthlyData[l].wage);
             const tipData = labels.map(l => monthlyData[l].tip);
