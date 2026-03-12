@@ -9,169 +9,85 @@
     <meta name="apple-mobile-web-app-title" content="Stundenheld">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/PJtc4Nz0/icon-arbeit.png">
     
-    <title>Stundenheld Pro Glass</title>
+    <title>Stundenheld Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.4);
-            --text-main: #1d1d1f;
-            --text-muted: #6e6e73;
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #000000;
+            --text-muted: #8E8E93;
             --primary: #007AFF;
+            --border-color: rgba(60, 60, 67, 0.1);
+            --tab-bar-bg: rgba(255, 255, 255, 0.9);
             --safe-bottom: env(safe-area-inset-bottom, 20px);
             --safe-top: env(safe-area-inset-top, 47px);
             
-            --box-orange: #FF9500;
-            --box-blue: #007AFF;
-            --box-green: #34C759;
-            --box-purple: #AF52DE;
+            --box-orange-bg: rgba(255, 149, 0, 0.12); --box-orange-txt: #FF9500;
+            --box-blue-bg: rgba(0, 122, 255, 0.12); --box-blue-txt: #007AFF;
+            --box-green-bg: rgba(52, 199, 89, 0.12); --box-green-txt: #34C759;
+            --box-purple-bg: rgba(175, 82, 222, 0.12); --box-purple-txt: #AF52DE;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-gradient: linear-gradient(135deg, #000000 0%, #1c1c1e 100%);
-                --glass-bg: rgba(28, 28, 30, 0.75);
-                --glass-border: rgba(255, 255, 255, 0.1);
+                --bg-color: #000000;
+                --card-bg: #1C1C1E;
                 --text-main: #FFFFFF;
-                --text-muted: #98989d;
+                --text-muted: #98989D;
+                --border-color: rgba(235, 235, 245, 0.15);
+                --tab-bar-bg: rgba(28, 28, 30, 0.9);
             }
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: var(--bg-gradient); 
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: var(--text-main); 
-            padding-top: var(--safe-top); 
-            padding-bottom: calc(160px + var(--safe-bottom)); 
-        }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-top: var(--safe-top); padding-bottom: calc(160px + var(--safe-bottom)); }
 
         .tab-content { display: none; padding: 20px; }
-        .tab-content.active { 
-            display: block; 
-            animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
-        }
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { font-size: 34px; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; padding-left: 4px; }
         
+        /* Korrektur des Filters */
         .filter-container { margin-bottom: 30px; margin-top: 10px; } 
 
         .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 45px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
-        .section-title::after { content: ""; height: 1px; background: var(--glass-border); flex-grow: 1; }
+        .section-title::after { content: ""; height: 1px; background: var(--border-color); flex-grow: 1; }
 
-        /* Glass Cards */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 22px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-box { padding: 20px; border-radius: 22px; background: var(--card-bg); border: 1px solid var(--border-color); }
+        .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; color: var(--text-muted); }
+        .stat-box p { font-size: 22px; font-weight: 800; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .stat-box { 
-            padding: 18px; 
-            border-radius: 20px; 
-            border: 1px solid var(--glass-border);
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .stat-box h3 { font-size: 10px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; color: var(--text-muted); }
-        .stat-box p { font-size: 20px; font-weight: 800; }
-
-        .stat-box.orange p { color: var(--box-orange); }
-        .stat-box.blue p { color: var(--box-blue); }
-        .stat-box.green p { color: var(--box-green); }
-        .stat-box.purple p { color: var(--box-purple); }
-
-        .input-group { margin-bottom: 20px; }
-        label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; display: block; padding-left: 4px; }
+        .card { background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        
+        .input-group { margin-bottom: 25px; }
+        label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; font-weight: 700; display: block; padding-left: 4px; }
         
         select.ios-select, input {
-            background: rgba(255,255,255,0.1); 
-            color: var(--text-main); 
-            font-size: 17px; 
-            font-weight: 600; 
-            padding: 14px;
-            border-radius: 14px; 
-            border: 1px solid var(--glass-border); 
-            width: 100%; 
-            appearance: none;
+            background-color: var(--card-bg); color: var(--text-main); font-size: 17px; font-weight: 600; padding: 16px;
+            border-radius: 14px; border: 1px solid var(--border-color); width: 100%; appearance: none;
         }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button.primary-btn { background: var(--primary); color: white; border: none; padding: 20px; border-radius: 18px; font-size: 18px; font-weight: 700; width: 100%; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); margin-top: 10px; }
+        button.sec-btn { background: var(--border-color); color: var(--text-main); border: none; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: 700; width: 100%; }
         
-        button.primary-btn { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 18px; 
-            border-radius: 18px; 
-            font-size: 17px; 
-            font-weight: 700; 
-            width: 100%; 
-            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-            transition: transform 0.1s;
-        }
-        button.primary-btn:active { transform: scale(0.97); }
-
-        button.sec-btn { 
-            background: var(--glass-border); 
-            color: var(--text-main); 
-            border: none; 
-            padding: 14px; 
-            border-radius: 14px; 
-            font-size: 13px; 
-            font-weight: 700; 
-        }
-
-        .tab-bar { 
-            position: fixed; 
-            bottom: calc(var(--safe-bottom) + 10px); 
-            left: 20px; 
-            right: 20px; 
-            background: var(--glass-bg); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px); 
-            border-radius: 35px; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 16px; 
-            z-index: 1000; 
-            border: 1px solid var(--glass-border); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
-        }
-        .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 9px; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-transform: uppercase; transition: color 0.3s; }
+        .tab-bar { position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 15px; right: 15px; background: var(--tab-bar-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 30px; display: flex; justify-content: space-around; padding: 14px; z-index: 1000; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .tab-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 9px; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-transform: uppercase; }
         .tab-item.active { color: var(--primary); }
-        .tab-icon svg { width: 22px; height: 22px; margin-bottom: 5px; stroke-width: 2.3; transition: transform 0.3s; }
-        .tab-item.active .tab-icon svg { transform: translateY(-2px); }
+        .tab-icon svg { width: 24px; height: 24px; margin-bottom: 5px; stroke-width: 2.3; }
 
-        .history-item, .preset-item { 
-            background: transparent; 
-            padding: 20px; 
-            border-bottom: 1px solid var(--glass-border); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        .history-item:last-child { border-bottom: none; }
-
-        .action-links { display: flex; gap: 15px; margin-top: 8px; justify-content: flex-end; }
+        .history-item, .preset-item { background: var(--card-bg); padding: 22px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .action-links { display: flex; gap: 15px; margin-top: 10px; justify-content: flex-end; }
         .delete-link { color: #FF3B30; font-size: 11px; font-weight: 800; text-transform: uppercase; }
         .edit-link { color: var(--primary); font-size: 11px; font-weight: 800; text-transform: uppercase; }
 
-        canvas { max-width: 100% !important; }
+        .stat-box.orange { background: var(--box-orange-bg); } .stat-box.orange p { color: var(--box-orange-txt); }
+        .stat-box.blue { background: var(--box-blue-bg); } .stat-box.blue p { color: var(--box-blue-txt); }
+        .stat-box.green { background: var(--box-green-bg); } .stat-box.green p { color: var(--box-green-txt); }
+        .stat-box.purple { background: var(--box-purple-bg); } .stat-box.purple p { color: var(--box-purple-txt); }
     </style>
 </head>
 <body>
@@ -189,21 +105,21 @@
             <div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div>
             <div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div>
         </div>
-        <div class="glass-card"><canvas id="monthChart"></canvas></div>
+        <div class="card"><canvas id="monthChart"></canvas></div>
         
         <div class="section-title">All-Time Karriere</div>
         <div class="stats-grid">
-            <div class="stat-box orange"><h3>Std Gesamt</h3><p id="a-hours">0.00 h</p></div>
-            <div class="stat-box blue"><h3>Lohn Gesamt</h3><p id="a-wage">0 €</p></div>
-            <div class="stat-box green"><h3>Tipp Gesamt</h3><p id="a-tip">0 €</p></div>
-            <div class="stat-box purple"><h3>Schichten</h3><p id="a-shifts">0</p></div>
+            <div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div>
+            <div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div>
+            <div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div>
+            <div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div>
         </div>
-        <div class="glass-card"><canvas id="allTimeChart"></canvas></div>
+        <div class="card"><canvas id="allTimeChart"></canvas></div>
     </div>
 
     <div id="tab-add" class="tab-content">
         <h1>Eintragen</h1>
-        <div class="glass-card">
+        <div class="card">
             <div class="input-group">
                 <label>Abrechnungs-Modus</label>
                 <select id="entry-mode" class="ios-select" onchange="toggleEntryMode()">
@@ -242,7 +158,7 @@
     <div id="tab-presets" class="tab-content">
         <h1>Tools</h1>
         <div class="section-title">Neue Vorlage</div>
-        <div class="glass-card">
+        <div class="card">
             <div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div>
             <div class="grid-2">
                 <div class="input-group"><label>Start</label><input type="time" id="p-start"></div>
@@ -255,12 +171,12 @@
             <button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button>
         </div>
         
-        <div id="preset-list" class="glass-card" style="padding:0; overflow:hidden;"></div>
+        <div id="preset-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color); margin-bottom: 30px;"></div>
 
         <div class="section-title">Datensicherung</div>
-        <div class="glass-card">
+        <div class="card">
             <div class="grid-2">
-                <button class="sec-btn" onclick="exportData()">EXPORT</button>
+                <button class="sec-btn" onclick="exportData()">EXPORT (.json)</button>
                 <button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button>
             </div>
             <input type="file" id="importFile" style="display:none" onchange="importData(event)">
@@ -270,7 +186,7 @@
     <div id="tab-history" class="tab-content">
         <h1>Verlauf</h1>
         <div class="filter-container"><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div>
-        <div id="history-list" class="glass-card" style="padding:0; overflow:hidden;"></div>
+        <div id="history-list" style="border-radius:24px; overflow:hidden; background:var(--card-bg); border:1px solid var(--border-color);"></div>
     </div>
 
     <div class="tab-bar">
@@ -379,12 +295,12 @@
         function renderCharts(ms) {
             const ctxM = document.getElementById('monthChart').getContext('2d');
             if(mChart) mChart.destroy();
-            mChart = new Chart(ctxM, { type: 'bar', data: { labels: ms.map(s => s.date.split('-')[2]), datasets: [{ label: '€', data: ms.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } });
+            mChart = new Chart(ctxM, { type: 'bar', data: { labels: ms.map(s => s.date.split('-')[2]), datasets: [{ label: '€', data: ms.map(s => s.wageEarned+s.tip), backgroundColor: '#007AFF', borderRadius: 6 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
             const ctxA = document.getElementById('allTimeChart').getContext('2d');
             if(aChart) aChart.destroy();
             const grp = shifts.reduce((acc, s) => { const m = s.date.substring(0, 7); acc[m] = (acc[m] || 0) + s.wageEarned + s.tip; return acc; }, {});
             const lbs = Object.keys(grp).sort();
-            aChart = new Chart(ctxA, { type: 'bar', data: { labels: lbs, datasets: [{ data: lbs.map(l => grp[l]), backgroundColor: '#34C759', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } });
+            aChart = new Chart(ctxA, { type: 'bar', data: { labels: lbs, datasets: [{ data: lbs.map(l => grp[l]), backgroundColor: '#34C759', borderRadius: 6 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
         }
 
         function renderHistory() {
@@ -394,7 +310,7 @@
                 <div class="history-item">
                     <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit'})}</strong><br><small>${s.type==='pauschal'?'Event':s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
                     <div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br>
-                        <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp</span><span class="delete-link" onclick="deleteShift(${s.id})">X</span></div>
+                        <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span><span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div>
                     </div>
                 </div>
             `).join('');
@@ -418,8 +334,8 @@
                     if(data.presets) presets = data.presets;
                     localStorage.setItem('myShifts', JSON.stringify(shifts));
                     localStorage.setItem('myPresets', JSON.stringify(presets));
-                    alert("Import erfolgreich!"); location.reload();
-                } catch(err) { alert("Fehler!"); }
+                    alert("Backup erfolgreich geladen!"); location.reload();
+                } catch(err) { alert("Datei ungültig!"); }
             };
             reader.readAsText(event.target.files[0]);
         }
