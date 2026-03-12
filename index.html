@@ -15,10 +15,20 @@
             --text-muted: #8E8E93;
             --primary: #007AFF;
             --danger: #FF3B30;
-            --border-color: #E5E5EA;
-            --tab-bar-bg: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(60, 60, 67, 0.1);
+            --tab-bar-bg: rgba(255, 255, 255, 0.75);
             --safe-bottom: env(safe-area-inset-bottom, 20px);
             --safe-top: env(safe-area-inset-top, 47px);
+            
+            /* Stat Box Colors */
+            --box-blue-bg: rgba(0, 122, 255, 0.1);
+            --box-blue-txt: #007AFF;
+            --box-green-bg: rgba(52, 199, 89, 0.1);
+            --box-green-txt: #34C759;
+            --box-orange-bg: rgba(255, 149, 0, 0.1);
+            --box-orange-txt: #FF9500;
+            --box-purple-bg: rgba(175, 82, 222, 0.1);
+            --box-purple-txt: #AF52DE;
         }
 
         /* Automatischer iOS Dark Mode */
@@ -28,8 +38,17 @@
                 --card-bg: #1C1C1E;
                 --text-main: #FFFFFF;
                 --text-muted: #98989D;
-                --border-color: #38383A;
-                --tab-bar-bg: rgba(28, 28, 30, 0.85);
+                --border-color: rgba(235, 235, 245, 0.15);
+                --tab-bar-bg: rgba(28, 28, 30, 0.75);
+                
+                --box-blue-bg: rgba(10, 132, 255, 0.15);
+                --box-blue-txt: #0A84FF;
+                --box-green-bg: rgba(48, 209, 88, 0.15);
+                --box-green-txt: #30D158;
+                --box-orange-bg: rgba(255, 159, 10, 0.15);
+                --box-orange-txt: #FF9F0A;
+                --box-purple-bg: rgba(191, 90, 242, 0.15);
+                --box-purple-txt: #BF5AF2;
             }
         }
 
@@ -37,7 +56,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -45,93 +64,117 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             padding-top: var(--safe-top);
-            padding-bottom: calc(80px + var(--safe-bottom));
+            /* Extra Platz für die schwebende Leiste */
+            padding-bottom: calc(110px + var(--safe-bottom)); 
         }
 
         .tab-content { display: none; padding: 20px; }
-        .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        h1 { font-size: 34px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.5px; }
+        h1 { font-size: 34px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.5px; }
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
         }
 
-        .input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .input-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         .input-group:last-child { margin-bottom: 0; }
 
         label {
-            font-size: 14px; color: var(--text-muted); margin-bottom: 5px;
-            text-transform: uppercase; font-weight: 500; letter-spacing: 0.5px;
+            font-size: 13px; color: var(--text-muted); margin-bottom: 6px;
+            text-transform: uppercase; font-weight: 600; letter-spacing: 0.8px;
         }
 
         input, select {
-            width: 100%; padding: 12px; border: 1px solid var(--border-color);
-            border-radius: 8px; font-size: 17px; background: var(--bg-color);
+            width: 100%; padding: 14px; border: 1.5px solid var(--border-color);
+            border-radius: 12px; font-size: 17px; background: transparent;
             color: var(--text-main); appearance: none; -webkit-appearance: none;
+            transition: border-color 0.2s;
         }
 
         input:focus, select:focus { outline: none; border-color: var(--primary); }
 
-        .row { display: flex; gap: 10px; }
+        .row { display: flex; gap: 12px; }
         .row > .input-group { flex: 1; }
 
         button.primary-btn {
-            background-color: var(--primary); color: white; border: none;
-            padding: 14px; border-radius: 12px; font-size: 17px;
-            font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary), #0056D6);
+            color: white; border: none; padding: 16px; border-radius: 14px; 
+            font-size: 17px; font-weight: 600; width: 100%; 
+            cursor: pointer; margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            transition: transform 0.1s;
         }
-        button.small-btn {
-            background-color: var(--border-color); color: var(--primary);
-            border: none; padding: 6px 12px; border-radius: 6px;
-            font-size: 14px; font-weight: 600;
-        }
-        button.danger-btn { color: var(--danger); }
+        button.primary-btn:active { transform: scale(0.97); }
 
+        button.small-btn {
+            background-color: var(--border-color); color: var(--text-main);
+            border: none; padding: 8px 14px; border-radius: 8px;
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        button.danger-btn { color: var(--danger); background-color: rgba(255, 59, 48, 0.1); }
+
+        /* SCHWEBENDE TAB BAR */
         .tab-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
+            position: fixed; 
+            bottom: calc(var(--safe-bottom) + 10px); 
+            left: 20px; 
+            right: 20px;
             background: var(--tab-bar-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 0.5px solid var(--border-color);
-            display: flex; justify-content: space-around;
-            padding-bottom: var(--safe-bottom); z-index: 1000;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 8px 10px; z-index: 1000;
         }
 
         .tab-item {
-            flex: 1; text-align: center; padding: 10px 0;
-            color: var(--text-muted); font-size: 11px; font-weight: 500;
+            flex: 1; text-align: center; padding: 8px 0;
+            color: var(--text-muted); font-size: 11px; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: color 0.2s;
         }
         .tab-item.active { color: var(--primary); }
-        .tab-icon { font-size: 24px; display: block; margin-bottom: 2px; }
+        .tab-icon { margin-bottom: 4px; display: flex; align-items: center; justify-content: center; }
+        .tab-icon svg { width: 26px; height: 26px; stroke-width: 2.2; }
 
         .history-item {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color); padding: 12px 0;
+            border-bottom: 1px solid var(--border-color); padding: 16px 0;
         }
         .history-item:last-child { border-bottom: none; }
-        .history-details p { font-size: 15px; margin-bottom: 2px; }
-        .history-details .date { font-weight: 600; font-size: 17px; margin-bottom: 4px; }
-        .history-actions { display: flex; gap: 8px; flex-direction: column; }
+        .history-details p { font-size: 15px; margin-bottom: 4px; }
+        .history-details .date { font-weight: 600; font-size: 18px; margin-bottom: 6px; }
+        .history-actions { display: flex; gap: 10px; flex-direction: column; }
 
         .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
         }
         .stat-box {
-            background: var(--card-bg); padding: 15px; border-radius: 12px;
-            text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 18px; border-radius: 16px; text-align: left;
         }
-        .stat-box h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;}
-        .stat-box p { font-size: 22px; font-weight: 700; color: var(--text-main); }
-        .stat-box p.accent { color: #34C759; }
+        .stat-box.blue { background: var(--box-blue-bg); }
+        .stat-box.green { background: var(--box-green-bg); }
+        .stat-box.orange { background: var(--box-orange-bg); }
+        .stat-box.purple { background: var(--box-purple-bg); }
+        
+        .stat-box h3 { font-size: 13px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; opacity: 0.8; }
+        .stat-box p { font-size: 24px; font-weight: 700; }
+        
+        .stat-box.blue h3, .stat-box.blue p { color: var(--box-blue-txt); }
+        .stat-box.green h3, .stat-box.green p { color: var(--box-green-txt); }
+        .stat-box.orange h3, .stat-box.orange p { color: var(--box-orange-txt); }
+        .stat-box.purple h3, .stat-box.purple p { color: var(--box-purple-txt); }
     </style>
 </head>
 <body>
@@ -140,19 +183,19 @@
         <h1>Übersicht</h1>
         
         <div class="stats-grid">
-            <div class="stat-box">
+            <div class="stat-box blue">
                 <h3>Gesamt Lohn</h3>
                 <p id="total-wage">0 €</p>
             </div>
-            <div class="stat-box">
-                <h3>Gesamt Trinkgeld</h3>
-                <p id="total-tip" class="accent">0 €</p>
+            <div class="stat-box green">
+                <h3>Trinkgeld</h3>
+                <p id="total-tip">0 €</p>
             </div>
-            <div class="stat-box">
-                <h3>Echter Std.-Lohn</h3>
+            <div class="stat-box orange">
+                <h3>Ø Std.-Lohn</h3>
                 <p id="avg-hourly">0 €</p>
             </div>
-            <div class="stat-box">
+            <div class="stat-box purple">
                 <h3>Schichten</h3>
                 <p id="total-shifts">0</p>
             </div>
@@ -226,15 +269,21 @@
 
     <div class="tab-bar">
         <div class="tab-item active" onclick="switchTab('dashboard', this)">
-            <span class="tab-icon">📊</span>
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            </span>
             Übersicht
         </div>
         <div class="tab-item" onclick="switchTab('add', this)">
-            <span class="tab-icon">➕</span>
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            </span>
             Eintragen
         </div>
         <div class="tab-item" onclick="switchTab('history', this)">
-            <span class="tab-icon">🕒</span>
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </span>
             Verlauf
         </div>
     </div>
@@ -302,7 +351,16 @@
 
             shifts.push(newShift);
             saveData();
-            alert("Schicht gespeichert!");
+            
+            // Cooles visuelles Feedback statt nervigem Alert
+            const btn = document.querySelector('.primary-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "✓ Gespeichert!";
+            btn.style.background = "linear-gradient(135deg, #34C759, #28A745)";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "linear-gradient(135deg, var(--primary), #0056D6)";
+            }, 2000);
             
             document.getElementById('shift-tip').value = '';
             document.getElementById('time-start').value = '';
@@ -315,18 +373,22 @@
             list.innerHTML = '';
 
             if(shifts.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 20px;">Noch keine Schichten eingetragen.</p>';
+                list.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 30px 10px;">Keine Schichten gefunden. Trag deine erste Schicht ein!</p>';
                 return;
             }
 
             let sortedShifts = [...shifts].sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            // SVG Icons für Buttons
+            const editIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+            const trashIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
 
             sortedShifts.forEach(shift => {
                 let formattedDate = new Date(shift.date).toLocaleDateString('de-DE');
                 let totalEarned = shift.wageEarned + shift.tip;
                 
                 let detailsHtml = shift.type === 'normal' 
-                    ? `${shift.start} - ${shift.end} Uhr (${shift.hours.toFixed(2)}h gearbeitet, ${shift.breakMins}m Pause) <br> Lohn: ${shift.wageEarned.toFixed(2)}€`
+                    ? `${shift.start} - ${shift.end} Uhr <span style="color:var(--text-muted); font-size: 13px;">(${shift.hours.toFixed(2)}h, ${shift.breakMins}m Pause)</span> <br> Lohn: ${shift.wageEarned.toFixed(2)}€`
                     : `Event (Pauschal) <br> Lohn: ${shift.wageEarned.toFixed(2)}€`;
 
                 let item = document.createElement('div');
@@ -334,13 +396,13 @@
                 item.innerHTML = `
                     <div class="history-details">
                         <div class="date">${formattedDate}</div>
-                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 6px;">${detailsHtml}</p>
-                        <p><strong>Trinkgeld:</strong> ${shift.tip.toFixed(2)} €</p>
-                        <p style="color: var(--primary); font-weight: 600; margin-top: 4px;">Gesamt: ${totalEarned.toFixed(2)} €</p>
+                        <p style="font-size: 15px; line-height: 1.4; margin-bottom: 8px;">${detailsHtml}</p>
+                        <p><strong>Trinkgeld:</strong> <span style="color:var(--box-green-txt);">${shift.tip.toFixed(2)} €</span></p>
+                        <p style="color: var(--text-main); font-weight: 700; margin-top: 6px; font-size: 17px;">Gesamt: ${totalEarned.toFixed(2)} €</p>
                     </div>
                     <div class="history-actions">
-                        <button class="small-btn" onclick="editTip(${shift.id})">✏️ Trinkgeld</button>
-                        <button class="small-btn danger-btn" onclick="deleteShift(${shift.id})">🗑️ Löschen</button>
+                        <button class="small-btn" onclick="editTip(${shift.id})">${editIcon} Tipp</button>
+                        <button class="small-btn danger-btn" onclick="deleteShift(${shift.id})">${trashIcon} Löschen</button>
                     </div>
                 `;
                 list.appendChild(item);
@@ -348,7 +410,7 @@
         }
 
         function deleteShift(id) {
-            if(confirm("Willst du diese Schicht löschen?")) {
+            if(confirm("Willst du diese Schicht wirklich löschen?")) {
                 shifts = shifts.filter(s => s.id !== id);
                 saveData();
                 renderHistory();
@@ -358,7 +420,7 @@
         function editTip(id) {
             let shift = shifts.find(s => s.id === id);
             let newTip = prompt(`Neues Trinkgeld eingeben:`, shift.tip);
-            if(newTip !== null && !isNaN(newTip)) {
+            if(newTip !== null && !isNaN(newTip) && newTip.trim() !== "") {
                 shift.tip = parseFloat(newTip);
                 saveData();
                 renderHistory();
@@ -398,13 +460,11 @@
                 monthlyData[monthYear].tip += shift.tip;
             });
 
-            const labels = Object.keys(monthlyData).reverse(); // Älteste links, neueste rechts
+            const labels = Object.keys(monthlyData).reverse();
             const wageData = labels.map(l => monthlyData[l].wage);
             const tipData = labels.map(l => monthlyData[l].tip);
 
             const ctx = document.getElementById('earningsChart').getContext('2d');
-            
-            // Textfarbe für Chart an Dark Mode anpassen
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
 
@@ -415,18 +475,18 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', borderRadius: 4 },
-                        { label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', borderRadius: 4 }
+                        { label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', borderRadius: 6 },
+                        { label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', borderRadius: 6 }
                     ]
                 },
                 options: {
                     responsive: true,
                     scales: {
                         x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
-                        y: { stacked: true, ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : '#E5E5EA' } }
+                        y: { stacked: true, ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } }
                     },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: chartTextColor } }
+                        legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } }
                     }
                 }
             });
