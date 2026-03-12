@@ -73,55 +73,46 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        h1 { font-size: 34px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.5px; }
-        .section-title { font-size: 14px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin: 28px 0 12px 4px; }
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+        .section-title { font-size: 14px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin: 0 0 12px 4px; }
 
         .card {
             background: var(--card-bg);
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
         }
 
-        /* Apple Wallet Style Card für die Abrechnung */
-        .wallet-card {
-            background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
-            color: #FFFFFF;
-            border-radius: 24px;
-            padding: 20px;
+        /* Schönere, weiße/helle Auswahl für den Monat (Volle Breite = Kein Überlappen) */
+        select.ios-select {
+            background-color: var(--card-bg);
+            color: var(--primary);
+            font-size: 17px;
+            font-weight: 600;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            width: 100%;
             margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Hellerer Dark Mode / Wallet Style anpassung */
-        @media (prefers-color-scheme: dark) {
-            .wallet-card { background: linear-gradient(135deg, #3A3A3C 0%, #2C2C2E 100%); }
-        }
-
-        .wallet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .wallet-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
-        
-        select.month-select {
-            background: rgba(255, 255, 255, 0.15); color: #FFFFFF;
-            border: none; padding: 8px 12px; border-radius: 10px;
-            font-size: 15px; font-weight: 600; outline: none; -webkit-appearance: none;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+            appearance: none;
+            -webkit-appearance: none;
+            /* Kleiner Pfeil nach unten im Dropdown */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px top 50%;
+            background-size: 12px auto;
         }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0; }
-        .stat-box { padding: 18px; border-radius: 16px; text-align: left; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .stat-box { padding: 18px; border-radius: 16px; text-align: left; background: var(--card-bg); box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
         
-        .stat-box.wallet-style { background: rgba(255, 255, 255, 0.08); padding: 16px; }
-        .stat-box.wallet-style h3 { color: rgba(255, 255, 255, 0.6); font-size: 12px; }
-        .stat-box.wallet-style p { color: #FFFFFF; font-size: 22px; }
-        .stat-box.wallet-style p.highlight { color: #34C759; }
-
-        .stat-box.blue { background: var(--box-blue-bg); }
-        .stat-box.green { background: var(--box-green-bg); }
-        .stat-box.orange { background: var(--box-orange-bg); }
-        .stat-box.purple { background: var(--box-purple-bg); }
+        .stat-box.blue { background: var(--box-blue-bg); box-shadow: none; }
+        .stat-box.green { background: var(--box-green-bg); box-shadow: none; }
+        .stat-box.orange { background: var(--box-orange-bg); box-shadow: none; }
+        .stat-box.purple { background: var(--box-purple-bg); box-shadow: none; }
         
         .stat-box h3 { font-size: 13px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; opacity: 0.8; }
         .stat-box p { font-size: 24px; font-weight: 700; }
@@ -130,6 +121,11 @@
         .stat-box.green h3, .stat-box.green p { color: var(--box-green-txt); }
         .stat-box.orange h3, .stat-box.orange p { color: var(--box-orange-txt); }
         .stat-box.purple h3, .stat-box.purple p { color: var(--box-purple-txt); }
+
+        .section-divider {
+            border: none; height: 1px; background-color: var(--border-color);
+            margin: 32px 0;
+        }
 
         .input-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         .input-group:last-child { margin-bottom: 0; }
@@ -161,58 +157,66 @@
 <body>
 
     <div id="tab-dashboard" class="tab-content active">
-        <h1>Übersicht</h1>
         
-        <div class="wallet-card">
-            <div class="wallet-header">
-                <h2>Abrechnung</h2>
-                <select id="dashboard-month-filter" class="month-select" onchange="updateDashboardStats()"></select>
-            </div>
+        <div>
+            <h1>Abrechnung</h1>
+            <select id="dashboard-month-filter" class="ios-select" onchange="updateDashboardStats()"></select>
             
             <div class="stats-grid">
-                <div class="stat-box wallet-style">
-                    <h3>Stunden</h3>
+                <div class="stat-box">
+                    <h3 style="color: var(--text-muted);">Stunden</h3>
                     <p id="month-hours">0.00 h</p>
                 </div>
-                <div class="stat-box wallet-style">
-                    <h3>Lohn</h3>
+                <div class="stat-box">
+                    <h3 style="color: var(--text-muted);">Lohn</h3>
                     <p id="month-wage">0 €</p>
                 </div>
-                <div class="stat-box wallet-style">
-                    <h3>Trinkgeld</h3>
-                    <p id="month-tip" class="highlight">0 €</p>
+                <div class="stat-box">
+                    <h3 style="color: var(--text-muted);">Trinkgeld</h3>
+                    <p id="month-tip" style="color: var(--box-green-txt);">0 €</p>
                 </div>
-                <div class="stat-box wallet-style">
-                    <h3>Schichten</h3>
+                <div class="stat-box">
+                    <h3 style="color: var(--text-muted);">Schichten</h3>
                     <p id="month-shifts">0</p>
                 </div>
             </div>
+
+            <div class="section-title">Diagramm (Tage im Monat)</div>
+            <div class="card">
+                <canvas id="monthChart"></canvas>
+            </div>
         </div>
 
-        <div class="section-title">Diagramm</div>
-        <div class="card">
-            <canvas id="earningsChart"></canvas>
+        <hr class="section-divider">
+
+        <div>
+            <h2>Gesamt (All-Time)</h2>
+            <div class="stats-grid">
+                <div class="stat-box blue">
+                    <h3>Gesamt Lohn</h3>
+                    <p id="total-wage">0 €</p>
+                </div>
+                <div class="stat-box green">
+                    <h3>Trinkgeld</h3>
+                    <p id="total-tip">0 €</p>
+                </div>
+                <div class="stat-box orange">
+                    <h3>Ø Std.-Lohn</h3>
+                    <p id="avg-hourly">0 €</p>
+                </div>
+                <div class="stat-box purple">
+                    <h3>Schichten</h3>
+                    <p id="total-shifts">0</p>
+                </div>
+            </div>
+
+            <div class="section-title">Diagramm (Monate im Jahr)</div>
+            <div class="card">
+                <canvas id="allTimeChart"></canvas>
+            </div>
         </div>
 
-        <div class="section-title">Gesamt (All-Time)</div>
-        <div class="stats-grid" style="margin-bottom: 24px;">
-            <div class="stat-box blue">
-                <h3>Gesamt Lohn</h3>
-                <p id="total-wage">0 €</p>
-            </div>
-            <div class="stat-box green">
-                <h3>Trinkgeld</h3>
-                <p id="total-tip">0 €</p>
-            </div>
-            <div class="stat-box orange">
-                <h3>Ø Std.-Lohn</h3>
-                <p id="avg-hourly">0 €</p>
-            </div>
-            <div class="stat-box purple">
-                <h3>Schichten</h3>
-                <p id="total-shifts">0</p>
-            </div>
-        </div>
+        <hr class="section-divider">
 
         <div class="section-title">Daten & Sicherheit</div>
         <div class="card row" style="padding: 16px;">
@@ -227,7 +231,6 @@
             <input type="file" id="file-input" style="display:none;" accept=".json" onchange="importData(event)">
         </div>
         
-        <div style="height: 20px;"></div>
     </div>
 
     <div id="tab-add" class="tab-content">
@@ -236,7 +239,7 @@
         <div class="card">
             <div class="input-group">
                 <label>Schicht-Art</label>
-                <select id="shift-type" onchange="toggleShiftType()">
+                <select id="shift-type" class="ios-select" style="margin-bottom:0;" onchange="toggleShiftType()">
                     <option value="normal">Stundenlohn</option>
                     <option value="event">Event (Pauschal)</option>
                 </select>
@@ -272,7 +275,7 @@
         <h1>Verlauf</h1>
         
         <div class="input-group" style="margin-bottom: 20px;">
-            <select id="history-month-filter" onchange="renderHistory()" style="background-color: var(--card-bg); font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: none;"></select>
+            <select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select>
         </div>
 
         <div class="card" id="history-list"></div>
@@ -295,7 +298,8 @@
 
     <script>
         let shifts = JSON.parse(localStorage.getItem('myShifts')) || [];
-        let myChart = null;
+        let monthChartInstance = null;
+        let allTimeChartInstance = null;
 
         document.getElementById('shift-date').valueAsDate = new Date();
         updateMonthDropdowns();
@@ -387,7 +391,6 @@
                 months.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
             });
 
-            // Fallback falls noch gar keine Schichten da sind: Aktuellen Monat nehmen
             if(months.size === 0) {
                 const now = new Date();
                 months.add(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
@@ -412,19 +415,16 @@
             if (Array.from(histFilter.options).some(opt => opt.value === currentHistValue)) histFilter.value = currentHistValue;
         }
 
-        // --- DASHBOARD UPDATE ---
         function updateDashboardStats() {
             const selectedMonth = document.getElementById('dashboard-month-filter').value;
             
-            // Monats-Werte (für das obere Wallet-Feld)
             let mHours = 0, mWage = 0, mTip = 0, mShifts = 0;
             
             shifts.forEach(s => {
                 const d = new Date(s.date);
                 const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                
                 if (m === selectedMonth) {
-                    mHours += s.hours || 0; // Event-Schichten haben 0 hours
+                    mHours += s.hours || 0;
                     mWage += s.wageEarned;
                     mTip += s.tip;
                     mShifts++;
@@ -435,13 +435,13 @@
             document.getElementById('month-wage').innerText = mWage.toFixed(2) + ' €';
             document.getElementById('month-tip').innerText = mTip.toFixed(2) + ' €';
             document.getElementById('month-shifts').innerText = mShifts;
+
+            renderMonthChart(selectedMonth);
         }
 
         function updateDashboard() {
-            // Erst Monats-Werte aktualisieren
             updateDashboardStats();
 
-            // Dann All-Time-Werte (unten)
             let totalWage = 0, totalTip = 0, totalHours = 0;
             shifts.forEach(s => { totalWage += s.wageEarned; totalTip += s.tip; totalHours += s.hours; });
 
@@ -453,7 +453,101 @@
             let avgPerHour = totalHours > 0 ? (totalEarned / totalHours).toFixed(2) : 0;
             document.getElementById('avg-hourly').innerText = avgPerHour + ' €';
 
-            renderChart();
+            renderAllTimeChart();
+        }
+
+        // --- DIAGRAMME ---
+        function renderMonthChart(selectedMonth) {
+            const dailyData = {};
+            
+            // Tage filtern
+            shifts.forEach(shift => {
+                const d = new Date(shift.date);
+                const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                if (m === selectedMonth) {
+                    const day = String(d.getDate()).padStart(2, '0') + '.';
+                    if(!dailyData[day]) dailyData[day] = { wage: 0, tip: 0, hours: 0 };
+                    dailyData[day].wage += shift.wageEarned;
+                    dailyData[day].tip += shift.tip;
+                    dailyData[day].hours += shift.hours;
+                }
+            });
+
+            // Aufsteigend nach Tagen sortieren
+            const labels = Object.keys(dailyData).sort((a, b) => parseInt(a) - parseInt(b));
+            const wageData = labels.map(l => dailyData[l].wage);
+            const tipData = labels.map(l => dailyData[l].tip);
+            const hoursData = labels.map(l => dailyData[l].hours);
+
+            const ctx = document.getElementById('monthChart').getContext('2d');
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
+
+            if (monthChartInstance) monthChartInstance.destroy();
+            
+            monthChartInstance = new Chart(ctx, {
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { type: 'line', label: 'Stunden (h)', data: hoursData, borderColor: '#FF9500', backgroundColor: '#FF9500', yAxisID: 'y1', tension: 0.3, borderWidth: 3, pointRadius: 4 },
+                        { type: 'bar', label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', yAxisID: 'y', borderRadius: 4 },
+                        { type: 'bar', label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', yAxisID: 'y', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
+                        y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } },
+                        y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } }
+                    },
+                    plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } }
+                }
+            });
+        }
+
+        function renderAllTimeChart() {
+            const monthlyData = {};
+            shifts.forEach(shift => {
+                const date = new Date(shift.date);
+                const monthYear = `${date.toLocaleString('de-DE', { month: 'short' })} ${date.getFullYear()}`;
+                if(!monthlyData[monthYear]) monthlyData[monthYear] = { wage: 0, tip: 0, hours: 0 };
+                monthlyData[monthYear].wage += shift.wageEarned;
+                monthlyData[monthYear].tip += shift.tip;
+                monthlyData[monthYear].hours += shift.hours;
+            });
+
+            // Alte Monate links, neue rechts
+            const labels = Object.keys(monthlyData).reverse();
+            const wageData = labels.map(l => monthlyData[l].wage);
+            const tipData = labels.map(l => monthlyData[l].tip);
+            const hoursData = labels.map(l => monthlyData[l].hours);
+
+            const ctx = document.getElementById('allTimeChart').getContext('2d');
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
+
+            if (allTimeChartInstance) allTimeChartInstance.destroy();
+            
+            allTimeChartInstance = new Chart(ctx, {
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { type: 'line', label: 'Stunden (h)', data: hoursData, borderColor: '#FF9500', backgroundColor: '#FF9500', yAxisID: 'y1', tension: 0.3, borderWidth: 3, pointRadius: 4 },
+                        { type: 'bar', label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', yAxisID: 'y', borderRadius: 4 },
+                        { type: 'bar', label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', yAxisID: 'y', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } },
+                        y: { stacked: true, position: 'left', ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } },
+                        y1: { position: 'right', ticks: { color: '#FF9500' }, grid: { drawOnChartArea: false } }
+                    },
+                    plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } }
+                }
+            });
         }
 
         function renderHistory() {
@@ -550,32 +644,6 @@
         }
 
         function saveData() { localStorage.setItem('myShifts', JSON.stringify(shifts)); }
-
-        function renderChart() {
-            const monthlyData = {};
-            shifts.forEach(shift => {
-                const date = new Date(shift.date);
-                const monthYear = `${date.toLocaleString('de-DE', { month: 'short' })} ${date.getFullYear()}`;
-                if(!monthlyData[monthYear]) monthlyData[monthYear] = { wage: 0, tip: 0 };
-                monthlyData[monthYear].wage += shift.wageEarned;
-                monthlyData[monthYear].tip += shift.tip;
-            });
-
-            const labels = Object.keys(monthlyData).reverse();
-            const wageData = labels.map(l => monthlyData[l].wage);
-            const tipData = labels.map(l => monthlyData[l].tip);
-
-            const ctx = document.getElementById('earningsChart').getContext('2d');
-            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const chartTextColor = isDarkMode ? '#98989D' : '#8E8E93';
-
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: labels, datasets: [ { label: 'Lohn (€)', data: wageData, backgroundColor: '#007AFF', borderRadius: 6 }, { label: 'Trinkgeld (€)', data: tipData, backgroundColor: '#34C759', borderRadius: 6 } ] },
-                options: { responsive: true, scales: { x: { stacked: true, ticks: { color: chartTextColor }, grid: { display: false } }, y: { stacked: true, ticks: { color: chartTextColor }, grid: { color: isDarkMode ? '#38383A' : 'rgba(60, 60, 67, 0.1)' } } }, plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, usePointStyle: true, boxWidth: 8 } } } }
-            });
-        }
     </script>
 </body>
 </html>
