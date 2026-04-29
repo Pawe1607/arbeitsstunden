@@ -49,7 +49,6 @@
 
         h1 { font-size: 34px; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; padding-left: 4px; }
         
-        /* Korrektur des Filters */
         .filter-container { margin-bottom: 30px; margin-top: 10px; } 
 
         .section-title { font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin: 45px 0 15px 4px; display: flex; align-items: center; gap: 8px; }
@@ -235,8 +234,14 @@
                 s.hours = (eD - sD) / 3600000 - (br/60);
                 s.wageEarned = s.hours * wg;
             } else { s.wageEarned = parseFloat(document.getElementById('flat-amount').value) || 0; }
-            shifts.push(s); localStorage.setItem('myShifts', JSON.stringify(shifts));
-            document.getElementById('shift-tip').value = ''; updateMonthDropdowns();
+            
+            shifts.push(s);
+            // Sortierung nach Datum aufsteigend für die Datenstruktur
+            shifts.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            localStorage.setItem('myShifts', JSON.stringify(shifts));
+            document.getElementById('shift-tip').value = ''; 
+            updateMonthDropdowns();
             switchTab('dashboard', document.querySelector('.tab-item'));
         }
 
@@ -289,7 +294,7 @@
             document.getElementById('a-wage').innerText = ast.w.toFixed(2)+'€';
             document.getElementById('a-tip').innerText = ast.t.toFixed(2)+'€';
             document.getElementById('a-shifts').innerText = shifts.length;
-            renderCharts(ms.sort((a,b) => a.date.localeCompare(b.date)));
+            renderCharts(ms); // ms ist durch das Haupt-Array bereits sortiert
         }
 
         function renderCharts(ms) {
@@ -305,10 +310,14 @@
 
         function renderHistory() {
             const f = document.getElementById('history-month-filter').value;
-            const res = f === 'all' ? shifts : shifts.filter(s => s.date.startsWith(f));
-            document.getElementById('history-list').innerHTML = res.sort((a,b) => b.id - a.id).map(s => `
+            let res = f === 'all' ? [...shifts] : shifts.filter(s => s.date.startsWith(f));
+            
+            // Für den Verlauf sortieren wir absteigend (neueste oben)
+            res.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            document.getElementById('history-list').innerHTML = res.map(s => `
                 <div class="history-item">
-                    <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit'})}</strong><br><small>${s.type==='pauschal'?'Event':s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
+                    <div><strong>${new Date(s.date).toLocaleDateString('de-DE', {weekday:'short', day:'2-digit', month:'2-digit'})}</strong><br><small>${s.type==='pauschal'?'Event':s.hours.toFixed(2)+'h'} | Tipp: ${s.tip}€</small></div>
                     <div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br>
                         <div class="action-links"><span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span><span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div>
                     </div>
@@ -330,7 +339,11 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if(data.shifts) shifts = data.shifts;
+                    if(data.shifts) {
+                        shifts = data.shifts;
+                        // Beim Import ebenfalls sortieren
+                        shifts.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    }
                     if(data.presets) presets = data.presets;
                     localStorage.setItem('myShifts', JSON.stringify(shifts));
                     localStorage.setItem('myPresets', JSON.stringify(presets));
