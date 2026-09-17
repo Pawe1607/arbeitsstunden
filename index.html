@@ -10,27 +10,458 @@
   <title>Stundenheld Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root { --bg-color:#F2F2F7; --card-bg:#FFF; --text-main:#000; --text-muted:#8E8E93; --primary:#007AFF; --border-color:rgba(60,60,67,.1); --tab-bar-bg:rgba(255,255,255,.9); --safe-bottom:env(safe-area-inset-bottom,20px); --safe-top:env(safe-area-inset-top,47px); --box-orange-bg:rgba(255,149,0,.12); --box-orange-txt:#FF9500; --box-blue-bg:rgba(0,122,255,.12); --box-blue-txt:#007AFF; --box-green-bg:rgba(52,199,89,.12); --box-green-txt:#34C759; --box-purple-bg:rgba(175,82,222,.12); --box-purple-txt:#AF52DE; }
-    @media (prefers-color-scheme:dark) { :root { --bg-color:#000; --card-bg:#1C1C1E; --text-main:#FFF; --text-muted:#98989D; --border-color:rgba(235,235,245,.15); --tab-bar-bg:rgba(28,28,30,.9); } }
-    * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; -webkit-tap-highlight-color:transparent; }
-    body { background:var(--bg-color); color:var(--text-main); padding-top:var(--safe-top); padding-bottom:calc(160px + var(--safe-bottom)); }
-    .tab-content { display:none; padding:20px; } .tab-content.active { display:block; animation:fadeIn .3s ease; } @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
-    h1 { font-size:34px; font-weight:800; margin-bottom:10px; letter-spacing:-1px; padding-left:4px; } .filter-container { margin:10px 0 30px; }
-    .section-title { font-size:13px; text-transform:uppercase; color:var(--text-muted); font-weight:700; letter-spacing:.5px; margin:45px 0 15px 4px; display:flex; align-items:center; gap:8px; } .section-title::after { content:""; height:1px; background:var(--border-color); flex-grow:1; }
-    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px; } .stat-box { padding:20px; border-radius:22px; background:var(--card-bg); border:1px solid var(--border-color); } .stat-box h3 { font-size:10px; text-transform:uppercase; margin-bottom:10px; font-weight:700; color:var(--text-muted); } .stat-box p { font-size:22px; font-weight:800; }
-    .card { background:var(--card-bg); border-radius:24px; padding:24px; margin-bottom:20px; border:1px solid var(--border-color); } .input-group { margin-bottom:25px; } label { font-size:12px; color:var(--text-muted); margin-bottom:12px; text-transform:uppercase; font-weight:700; display:block; padding-left:4px; }
-    select.ios-select,input { background:var(--card-bg); color:var(--text-main); font-size:17px; font-weight:600; padding:16px; border-radius:14px; border:1px solid var(--border-color); width:100%; appearance:none; } .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
-    button.primary-btn { background:var(--primary); color:#fff; border:0; padding:20px; border-radius:18px; font-size:18px; font-weight:700; width:100%; box-shadow:0 8px 20px rgba(0,122,255,.25); margin-top:10px; } button.sec-btn { background:var(--border-color); color:var(--text-main); border:0; padding:16px; border-radius:14px; font-size:14px; font-weight:700; width:100%; }
-    .tab-bar { position:fixed; bottom:calc(var(--safe-bottom) + 10px); left:15px; right:15px; background:var(--tab-bar-bg); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px); border-radius:30px; display:flex; justify-content:space-around; padding:14px; z-index:1000; border:1px solid rgba(255,255,255,.1); box-shadow:0 10px 40px rgba(0,0,0,.2); } .tab-item { flex:1; text-align:center; color:var(--text-muted); font-size:9px; font-weight:700; display:flex; flex-direction:column; align-items:center; text-transform:uppercase; } .tab-item.active { color:var(--primary); } .tab-icon svg { width:24px; height:24px; margin-bottom:5px; stroke-width:2.3; }
-    .history-item,.preset-item { background:var(--card-bg); padding:22px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; } .history-item { flex-wrap:wrap; gap:12px; } .action-links { display:flex; gap:15px; margin-top:10px; justify-content:flex-end; } .delete-link { color:#FF3B30; font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; } .edit-link { color:var(--primary); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; }
-    .history-edit { width:100%; padding-top:18px; border-top:1px solid var(--border-color); } .history-edit .input-group { margin-bottom:15px; } .history-edit input { font-size:15px; padding:12px; } .history-edit button { margin-top:0; } .history-edit .cancel-btn { margin-top:10px; }
-    .stat-box.orange { background:var(--box-orange-bg); } .stat-box.orange p { color:var(--box-orange-txt); } .stat-box.blue { background:var(--box-blue-bg); } .stat-box.blue p { color:var(--box-blue-txt); } .stat-box.green { background:var(--box-green-bg); } .stat-box.green p { color:var(--box-green-txt); } .stat-box.purple { background:var(--box-purple-bg); } .stat-box.purple p { color:var(--box-purple-txt); }
+    :root {
+      --bg-color:#F5F5F7;
+      --blue-strong:#007AFF;
+      --blue:#0A84FF;
+      --blue-light:#5AC8FA;
+      --blue-soft:rgba(0,122,255,.10);
+      --card-bg:#FFFFFF;
+      --text-main:#111113;
+      --text-muted:#8A8A91;
+      --primary:var(--blue-strong);
+      --primary-soft:var(--blue-soft);
+      --border-color:rgba(60,60,67,.10);
+      --tab-bar-bg:rgba(255,255,255,.88);
+      --success:#34C759;
+      --danger:#FF3B30;
+      --safe-bottom:env(safe-area-inset-bottom,20px);
+      --safe-top:env(safe-area-inset-top,47px);
+      --shadow:0 8px 28px rgba(0,0,0,.055);
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root {
+        --bg-color:#000;
+        --card-bg:#1C1C1E;
+        --text-main:#FFF;
+        --text-muted:#98989D;
+        --primary-soft:rgba(10,132,255,.16);
+        --border-color:rgba(235,235,245,.13);
+        --tab-bar-bg:rgba(28,28,30,.88);
+        --shadow:0 8px 28px rgba(0,0,0,.28);
+      }
+    }
+
+    * {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    body {
+      background:var(--bg-color);
+      color:var(--text-main);
+      padding-top:var(--safe-top);
+      padding-bottom:calc(145px + var(--safe-bottom));
+    }
+
+    .tab-content {
+      display:none;
+      padding:18px 18px 24px;
+      max-width:680px;
+      margin:auto;
+    }
+
+    .tab-content.active {
+      display:block;
+      animation:fadeIn .22s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0;transform:translateY(4px)}
+      to {opacity:1;transform:translateY(0)}
+    }
+
+    h1 {
+      font-size:34px;
+      line-height:1.08;
+      font-weight:800;
+      margin:5px 0 18px 2px;
+      letter-spacing:-1.1px;
+    }
+
+    .filter-container {
+      margin:0 0 24px;
+    }
+
+    .section-title {
+      font-size:12px;
+      text-transform:uppercase;
+      color:var(--text-muted);
+      font-weight:750;
+      letter-spacing:.55px;
+      margin:30px 2px 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .section-title::after {
+      content:"";
+      height:1px;
+      background:var(--border-color);
+      flex-grow:1;
+    }
+
+    .stats-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .stat-box {
+      padding:17px;
+      border-radius:18px;
+      background:var(--card-bg);
+      border:1px solid var(--border-color);
+      box-shadow:var(--shadow);
+    }
+
+    .stat-box h3 {
+      font-size:10px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+      font-weight:750;
+      color:var(--text-muted);
+      letter-spacing:.25px;
+    }
+
+    .stat-box p {
+      font-size:21px;
+      font-weight:800;
+      letter-spacing:-.45px;
+    }
+
+    /* Deliberate blue hierarchy: four shades, one visual language. */
+    .stat-box.orange,
+    .stat-box.blue,
+    .stat-box.green,
+    .stat-box.purple {
+      background:var(--card-bg);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .stat-box.orange { border-top:3px solid var(--blue-strong); }
+    .stat-box.blue   { border-top:3px solid var(--blue); }
+    .stat-box.green  { border-top:3px solid var(--blue-light); }
+    .stat-box.purple { border-top:3px solid rgba(0,122,255,.38); }
+
+    .stat-box.orange p { color:var(--blue-strong); }
+    .stat-box.blue p   { color:var(--blue); }
+    .stat-box.green p  { color:#1597D4; }
+    .stat-box.purple p { color:#4F91C9; }
+
+    .stat-box::after {
+      content:"";
+      position:absolute;
+      width:54px;
+      height:54px;
+      border-radius:50%;
+      right:-22px;
+      bottom:-25px;
+      background:var(--primary-soft);
+    }
+
+    .total-card {
+      background:var(--primary);
+      color:#fff;
+      border-radius:20px;
+      padding:20px;
+      margin:12px 0 22px;
+      box-shadow:0 10px 25px rgba(0,122,255,.20);
+    }
+
+    .total-card .total-label {
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.55px;
+      font-weight:750;
+      opacity:.78;
+      margin-bottom:5px;
+    }
+
+    .total-card .total-value {
+      font-size:30px;
+      font-weight:850;
+      letter-spacing:-1px;
+    }
+
+    .total-card .total-sub {
+      margin-top:5px;
+      font-size:12px;
+      opacity:.78;
+    }
+
+    .card {
+      background:var(--card-bg);
+      border-radius:20px;
+      padding:20px;
+      margin-bottom:16px;
+      border:1px solid var(--border-color);
+      box-shadow:var(--shadow);
+    }
+
+    .input-group {
+      margin-bottom:20px;
+    }
+
+    label {
+      font-size:11px;
+      color:var(--text-muted);
+      margin-bottom:9px;
+      text-transform:uppercase;
+      font-weight:750;
+      display:block;
+      padding-left:3px;
+      letter-spacing:.25px;
+    }
+
+    select.ios-select,
+    input {
+      background:var(--card-bg);
+      color:var(--text-main);
+      font-size:16px;
+      font-weight:600;
+      padding:14px;
+      border-radius:13px;
+      border:1px solid var(--border-color);
+      width:100%;
+      appearance:none;
+      outline:none;
+    }
+
+    input:focus,
+    select.ios-select:focus {
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px var(--primary-soft);
+    }
+
+    .grid-2 {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    button.primary-btn {
+      background:var(--primary);
+      color:#fff;
+      border:0;
+      padding:17px;
+      border-radius:15px;
+      font-size:16px;
+      font-weight:750;
+      width:100%;
+      box-shadow:0 7px 18px rgba(0,122,255,.20);
+      margin-top:5px;
+    }
+
+    button.sec-btn {
+      background:var(--primary-soft);
+      color:var(--primary);
+      border:0;
+      padding:14px;
+      border-radius:13px;
+      font-size:13px;
+      font-weight:750;
+      width:100%;
+    }
+
+    .tab-bar {
+      position:fixed;
+      bottom:calc(var(--safe-bottom) + 10px);
+      left:14px;
+      right:14px;
+      max-width:650px;
+      margin:auto;
+      background:var(--tab-bar-bg);
+      backdrop-filter:blur(25px);
+      -webkit-backdrop-filter:blur(25px);
+      border-radius:25px;
+      display:flex;
+      justify-content:space-around;
+      padding:9px 7px;
+      z-index:1000;
+      border:1px solid var(--border-color);
+      box-shadow:0 10px 35px rgba(0,0,0,.16);
+    }
+
+    .tab-item {
+      flex:1;
+      text-align:center;
+      color:var(--text-muted);
+      font-size:10px;
+      font-weight:650;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-transform:none;
+      padding:5px 2px;
+      border-radius:17px;
+    }
+
+    .tab-item.active {
+      color:var(--primary);
+      background:var(--primary-soft);
+    }
+
+    .tab-icon svg {
+      width:22px;
+      height:22px;
+      margin-bottom:3px;
+      stroke-width:2.25;
+    }
+
+    .history-item,
+    .preset-item {
+      background:var(--card-bg);
+      padding:18px;
+      border-bottom:1px solid var(--border-color);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .history-item:first-child,
+    .preset-item:first-child {
+      border-radius:20px 20px 0 0;
+    }
+
+    .history-item:last-child,
+    .preset-item:last-child {
+      border-bottom:0;
+      border-radius:0 0 20px 20px;
+    }
+
+    .history-item {
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .action-links {
+      display:flex;
+      gap:14px;
+      margin-top:8px;
+      justify-content:flex-end;
+    }
+
+    .delete-link,
+    .edit-link {
+      font-size:11px;
+      font-weight:750;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+
+    .delete-link { color:var(--danger); }
+    .edit-link { color:var(--primary); }
+
+    .history-edit {
+      width:100%;
+      padding-top:16px;
+      border-top:1px solid var(--border-color);
+    }
+
+    .history-edit .input-group { margin-bottom:13px; }
+    .history-edit input { font-size:15px; padding:11px; }
+    .history-edit button { margin-top:0; }
+    .history-edit .cancel-btn { margin-top:9px; }
+
+    #preset-list,
+    #history-list {
+      box-shadow:var(--shadow);
+    }
+
+    .card:has(canvas) { padding:18px 16px 14px; position:relative; }
+    .card:has(canvas)::before { content:'VERDIENST'; display:block; font-size:11px; font-weight:750; letter-spacing:.55px; color:var(--text-muted); margin:0 2px 8px; }
+    .card canvas { height:240px !important; max-height:240px; }
+
+    /* Subtle iOS-style motion */
+    @media (prefers-reduced-motion:no-preference) {
+      .tab-content.active {
+        animation:pageIn .24s cubic-bezier(.22,.8,.3,1);
+      }
+
+      @keyframes pageIn {
+        from { opacity:0; transform:translateY(7px); }
+        to { opacity:1; transform:translateY(0); }
+      }
+
+      .stat-box,
+      .total-card,
+      .card,
+      .history-item,
+      .preset-item {
+        animation:cardIn .38s cubic-bezier(.22,.8,.3,1) both;
+      }
+
+      .stat-box:nth-child(1) { animation-delay:.02s; }
+      .stat-box:nth-child(2) { animation-delay:.05s; }
+      .stat-box:nth-child(3) { animation-delay:.08s; }
+      .stat-box:nth-child(4) { animation-delay:.11s; }
+      .total-card { animation-delay:.08s; }
+      .card { animation-delay:.13s; }
+
+      @keyframes cardIn {
+        from { opacity:0; transform:translateY(6px); }
+        to { opacity:1; transform:translateY(0); }
+      }
+
+      button.primary-btn,
+      button.sec-btn,
+      .tab-item,
+      .edit-link,
+      .delete-link {
+        transition:transform .16s ease, opacity .16s ease, background-color .16s ease;
+      }
+
+      button.primary-btn:active,
+      button.sec-btn:active,
+      .tab-item:active {
+        transform:scale(.97);
+      }
+
+      .edit-link:active,
+      .delete-link:active {
+        opacity:.55;
+      }
+
+      .total-card {
+        transition:transform .22s ease, box-shadow .22s ease;
+      }
+
+      .total-card:active {
+        transform:scale(.985);
+      }
+
+      .history-item {
+        transition:background-color .18s ease, transform .18s ease;
+      }
+
+      select.ios-select {
+        transition:border-color .18s ease, box-shadow .18s ease;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after {
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+
   </style>
 </head>
 <body>
   <div id="tab-dashboard" class="tab-content active">
     <h1>Stundenheld</h1><div class="filter-container"><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
-    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="card"><canvas id="monthChart"></canvas></div>
+    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Lohn + Trinkgeld</div></div><div class="card"><canvas id="monthChart"></canvas></div>
     <div class="section-title">All-Time Karriere</div><div class="stats-grid"><div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div><div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div><div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div><div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div></div><div class="card"><canvas id="allTimeChart"></canvas></div>
   </div>
   <div id="tab-add" class="tab-content"><h1>Eintragen</h1><div class="card">
@@ -41,7 +472,7 @@
   </div></div>
   <div id="tab-presets" class="tab-content"><h1>Tools</h1><div class="section-title">Neue Vorlage</div><div class="card"><div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label>Start</label><input type="time" id="p-start"></div><div class="input-group"><label>Ende</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div><div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14"></div></div><button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button></div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Datensicherung</div><div class="card"><div class="grid-2"><button class="sec-btn" onclick="exportData()">EXPORT (.json)</button><button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
   <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
-  <div class="tab-bar"><div class="tab-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Home</div><div class="tab-item" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Neu</div><div class="tab-item" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Tools</div><div class="tab-item" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Liste</div></div>
+  <div class="tab-bar"><div class="tab-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</div><div class="tab-item" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</div><div class="tab-item" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Tools</div><div class="tab-item" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</div></div>
   <script>
     let shifts=JSON.parse(localStorage.getItem('myShifts'))||[], presets=JSON.parse(localStorage.getItem('myPresets'))||[]; let mChart=null,aChart=null;
     document.getElementById('shift-date').valueAsDate=new Date(); updateMonthDropdowns(); updateDashboard(); renderPresets();
@@ -57,9 +488,164 @@
     function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">-- Keine Vorlage --</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
     function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
     function deletePreset(id){presets=presets.filter(p=>p.id!==id);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();}
-    function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${m}</option>`).join('');d.innerHTML=o||`<option value="${new Date().toISOString().substring(0,7)}">${new Date().toISOString().substring(0,7)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
-    function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('m-hours').innerText=mst.h.toFixed(2)+'h';document.getElementById('m-wage').innerText=mst.w.toFixed(2)+'€';document.getElementById('m-tip').innerText=mst.t.toFixed(2)+'€';document.getElementById('m-shifts').innerText=ms.length;const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+'h';document.getElementById('a-wage').innerText=ast.w.toFixed(2)+'€';document.getElementById('a-tip').innerText=ast.t.toFixed(2)+'€';document.getElementById('a-shifts').innerText=shifts.length;renderCharts(ms);}
-    function renderCharts(ms){const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();mChart=new Chart(ctxM,{type:'bar',data:{labels:ms.map(s=>s.date.split('-')[2]),datasets:[{label:'€',data:ms.map(s=>s.wageEarned+s.tip),backgroundColor:'#007AFF',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{data:lbs.map(l=>grp[l]),backgroundColor:'#34C759',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}}}});}
+    function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());} function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
+    function animateValue(id,target,formatter,duration=420){
+      const el=document.getElementById(id); if(!el)return;
+      const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0;
+      const endValue=Number(target)||0;
+      el.dataset.value=endValue;
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}
+      const start=performance.now();
+      function tick(now){
+        const p=Math.min(1,(now-start)/duration);
+        const eased=1-Math.pow(1-p,3);
+        el.innerText=formatter(startValue+(endValue-startValue)*eased);
+        if(p<1)requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function updateDashboard(){
+      const sel=document.getElementById('dashboard-month-filter').value,
+      ms=shifts.filter(s=>s.date.startsWith(sel)),
+      mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});
+
+      animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');
+      animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');
+      animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');
+      animateValue('m-shifts',ms.length,v=>Math.round(v));
+
+      const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});
+      document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';
+      document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';
+      document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';
+      document.getElementById('a-shifts').innerText=shifts.length;
+      animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);
+      renderCharts(ms);
+    }
+    function renderCharts(ms){
+      const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const textColor=isDark?'#98989D':'#8A8A91';
+      const gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)';
+      const blue='#007AFF';
+      const blueMid='#0A84FF';
+      const blueLight='#5AC8FA';
+      const blueSoft='rgba(0,122,255,.16)';
+      const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);
+
+      const ctxM=document.getElementById('monthChart').getContext('2d');
+      if(mChart)mChart.destroy();
+
+      const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}));
+      const monthValues=ms.map(s=>s.wageEarned+s.tip);
+
+      mChart=new Chart(ctxM,{
+        type:'line',
+        data:{
+          labels:monthLabels,
+          datasets:[{
+            label:'Verdienst',
+            data:monthValues,
+            borderColor:blue,
+            backgroundColor:blueSoft,
+            borderWidth:3,
+            pointRadius:4,
+            pointHoverRadius:7,
+            pointBackgroundColor:blue,
+            pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',
+            pointBorderWidth:2,
+            tension:.35,
+            fill:true
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              displayColors:false,
+              backgroundColor:isDark?'#2C2C2E':'#111113',
+              titleColor:'#fff',
+              bodyColor:'#fff',
+              padding:12,
+              cornerRadius:12,
+              callbacks:{label:ctx=>' '+money(ctx.parsed.y)}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},
+            y:{
+              beginAtZero:true,
+              grid:{color:gridColor},
+              border:{display:false},
+              ticks:{
+                color:textColor,
+                font:{size:10},
+                callback:value=>value+' €'
+              }
+            }
+          }
+        }
+      });
+
+      const ctxA=document.getElementById('allTimeChart').getContext('2d');
+      if(aChart)aChart.destroy();
+
+      const grp=shifts.reduce((a,s)=>{
+        const m=s.date.substring(0,7);
+        a[m]=(a[m]||0)+s.wageEarned+s.tip;
+        return a;
+      },{});
+      const lbs=Object.keys(grp).sort().map(monthLabel);
+      const rawLabels=Object.keys(grp).sort();
+
+      aChart=new Chart(ctxA,{
+        type:'bar',
+        data:{
+          labels:lbs,
+          datasets:[{
+            label:'Verdienst',
+            data:rawLabels.map(l=>grp[l]),
+            backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),
+            borderRadius:10,
+            borderSkipped:false,
+            barPercentage:.58,
+            categoryPercentage:.72
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              displayColors:false,
+              backgroundColor:isDark?'#2C2C2E':'#111113',
+              titleColor:'#fff',
+              bodyColor:'#fff',
+              padding:12,
+              cornerRadius:12,
+              callbacks:{label:ctx=>' '+money(ctx.parsed.y)}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},
+            y:{
+              beginAtZero:true,
+              grid:{color:gridColor},
+              border:{display:false},
+              ticks:{
+                color:textColor,
+                font:{size:10},
+                callback:value=>value+' €'
+              }
+            }
+          }
+        }
+      });
+    }
     function renderHistory(){const f=document.getElementById('history-month-filter').value,res=(f==='all'?[...shifts]:shifts.filter(s=>s.date.startsWith(f))).sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('history-list').innerHTML=res.map(s=>{const normal=s.type!=='pauschal',start=s.start||'',end=s.end||'',br=s.break??0,wg=s.wage??(s.hours?s.wageEarned/s.hours:0);return `<div class="history-item"><div><strong>${new Date(s.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?s.hours.toFixed(2)+'h':'Event'} | Tipp: ${s.tip}€</small></div><div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br><div class="action-links">${normal?`<span class="edit-link" onclick="editShift(${s.id})">Bearbeiten</span>`:`<span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span>`}<span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div></div>${normal?`<div id="history-edit-${s.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label>Beginn</label><input id="edit-start-${s.id}" type="time" value="${start}"></div><div class="input-group"><label>Ende</label><input id="edit-end-${s.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input id="edit-break-${s.id}" type="number" value="${br}"></div><div class="input-group"><label>€ / Std</label><input id="edit-wage-${s.id}" type="number" step="0.01" value="${wg}"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input id="edit-tip-${s.id}" type="number" step="0.01" value="${s.tip}"></div><button class="sec-btn" onclick="saveEditedShift(${s.id})">ÄNDERUNGEN SPEICHERN</button><button class="sec-btn cancel-btn" onclick="cancelEdit(${s.id})">ABBRECHEN</button></div>`:''}</div>`;}).join('');}
     function deleteShift(id){if(confirm('Löschen?')){shifts=shifts.filter(s=>s.id!==id);localStorage.setItem('myShifts',JSON.stringify(shifts));updateMonthDropdowns();renderHistory();updateDashboard();}}
     function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
