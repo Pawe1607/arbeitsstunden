@@ -456,22 +456,9 @@
       }
     }
 
-  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:22px}.auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:28px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.14)}.auth-logo{font-size:34px;font-weight:850;letter-spacing:-1.3px;margin-bottom:7px}.auth-subtitle{color:var(--text-muted);font-size:14px;margin-bottom:25px}.auth-register-btn{margin-top:10px}.auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}.auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}.auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}.account-card{display:flex;justify-content:space-between;align-items:center;gap:15px}.auth-locked{overflow:hidden}@media (prefers-color-scheme:dark){.auth-overlay{background:rgba(0,0,0,.9)}}
-</style>
+  </style>
 </head>
 <body>
-  <div id="auth-overlay" class="auth-overlay">
-    <div class="auth-card">
-      <div class="auth-logo">Stundenheld</div>
-      <div class="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert</div>
-      <div class="input-group"><label>E-Mail</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
-      <div class="input-group"><label>Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Mindestens 6 Zeichen"></div>
-      <button class="primary-btn" onclick="loginUser()">ANMELDEN</button>
-      <button class="sec-btn auth-register-btn" onclick="registerUser()">NEUES KONTO ERSTELLEN</button>
-      <div id="auth-message" class="auth-message"></div>
-    </div>
-  </div>
-
   <div id="tab-dashboard" class="tab-content active">
     <h1>Stundenheld</h1><div class="filter-container"><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
     <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Lohn + Trinkgeld</div></div><div class="card"><canvas id="monthChart"></canvas></div>
@@ -483,237 +470,186 @@
     <div id="normal-fields"><div class="grid-2"><div class="input-group"><label>Beginn</label><input type="time" id="time-start"></div><div class="input-group"><label>Ende</label><input type="time" id="time-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div><div class="input-group"><label>€ / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div></div></div>
     <div id="pauschal-fields" style="display:none;"><div class="input-group"><label>Pauschal-Betrag (€)</label><input type="number" id="flat-amount" placeholder="100"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0"></div><button class="primary-btn" onclick="saveShift()">EINTRAG SPEICHERN</button>
   </div></div>
-  <div id="tab-presets" class="tab-content"><h1>Tools</h1><div class="card account-card"><div><div class="section-title" style="margin-top:0">Konto</div><strong id="account-email"></strong><div class="auth-small">Cloud-Synchronisierung aktiv</div></div><button class="sec-btn" style="width:auto" onclick="logoutUser()">ABMELDEN</button></div><div class="section-title">Neue Vorlage</div><div class="card"><div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label>Start</label><input type="time" id="p-start"></div><div class="input-group"><label>Ende</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div><div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14"></div></div><button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button></div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Datensicherung</div><div class="card"><div class="grid-2"><button class="sec-btn" onclick="exportData()">EXPORT (.json)</button><button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
+  <div id="tab-presets" class="tab-content"><h1>Tools</h1><div class="section-title">Neue Vorlage</div><div class="card"><div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label>Start</label><input type="time" id="p-start"></div><div class="input-group"><label>Ende</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div><div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14"></div></div><button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button></div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Datensicherung</div><div class="card"><div class="grid-2"><button class="sec-btn" onclick="exportData()">EXPORT (.json)</button><button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
   <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
   <div class="tab-bar"><div class="tab-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</div><div class="tab-item" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</div><div class="tab-item" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Tools</div><div class="tab-item" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</div></div>
-  <!-- Supabase: client-side browser library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = 'https://ejjferwujxxqfxnobexg.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NVgNJZpGHviK15YnNFzqjg_J_OqpXdT';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-    let shifts = JSON.parse(localStorage.getItem('myShifts')) || [];
-    let presets = JSON.parse(localStorage.getItem('myPresets')) || [];
-    let mChart=null,aChart=null;
-    let currentUser=null;
-    let migrationRunning=false;
-
-    function localDataExists(){
-      return shifts.length>0 || presets.length>0;
-    }
-
-    function showAuth(show=true){
-      document.getElementById('auth-overlay').style.display=show?'flex':'none';
-      document.body.classList.toggle('auth-locked',show);
-    }
-
-    function setAuthMessage(message,type='info'){
-      const el=document.getElementById('auth-message');
-      el.textContent=message||'';
-      el.className='auth-message '+type;
-    }
-
-    async function registerUser(){
-      const email=document.getElementById('auth-email').value.trim();
-      const password=document.getElementById('auth-password').value;
-      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
-      if(password.length<6){setAuthMessage('Das Passwort muss mindestens 6 Zeichen haben.','error');return;}
-      setAuthMessage('Konto wird erstellt …');
-      const {data,error}=await supabaseClient.auth.signUp({email,password});
-      if(error){setAuthMessage(error.message,'error');return;}
-      if(data.session){
-        await finishLogin(data.session.user);
-      }else{
-        setAuthMessage('Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.','success');
-      }
-    }
-
-    async function loginUser(){
-      const email=document.getElementById('auth-email').value.trim();
-      const password=document.getElementById('auth-password').value;
-      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
-      setAuthMessage('Anmeldung läuft …');
-      const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-      if(error){setAuthMessage(error.message,'error');return;}
-      await finishLogin(data.user);
-    }
-
-    async function logoutUser(){
-      await supabaseClient.auth.signOut();
-      currentUser=null;
-      showAuth(true);
-      setAuthMessage('Abgemeldet.','info');
-    }
-
-    async function finishLogin(user){
-      currentUser=user;
-      showAuth(false);
-      setAuthMessage('');
-      // IMPORTANT: migrate localStorage BEFORE loading cloud data, otherwise the local data could be overwritten.
-      await migrateLocalDataIfNeeded();
-      await loadCloudData();
-      updateMonthDropdowns();
-      updateDashboard();
-      renderPresets();
-      renderHistory();
-      updateAccountUI();
-    }
-
-    async function loadCloudData(){
-      if(!currentUser)return;
-      const [shiftResult,presetResult]=await Promise.all([
-        supabaseClient.from('shifts').select('*').eq('user_id',currentUser.id).order('date',{ascending:true}),
-        supabaseClient.from('presets').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:true})
-      ]);
-      if(shiftResult.error){console.error(shiftResult.error);alert('Schichten konnten nicht aus der Cloud geladen werden.');return;}
-      if(presetResult.error){console.error(presetResult.error);alert('Vorlagen konnten nicht aus der Cloud geladen werden.');return;}
-      shifts=(shiftResult.data||[]).map(row=>({
-        id:row.id,date:row.date,tip:Number(row.tip)||0,hours:Number(row.hours)||0,
-        wageEarned:Number(row.wage_earned)||0,type:row.type||'normal',start:row.start?String(row.start).slice(0,5):'',
-        end:row.end?String(row.end).slice(0,5):'',break:Number(row.break)||0,wage:Number(row.wage)||0
-      }));
-      presets=(presetResult.data||[]).map(row=>({
-        id:row.id,name:row.name,start:row.start?String(row.start).slice(0,5):'',end:row.end?String(row.end).slice(0,5):'',
-        break:Number(row.break)||0,wage:Number(row.wage)||0
-      }));
-      localStorage.setItem('myShifts',JSON.stringify(shifts));
-      localStorage.setItem('myPresets',JSON.stringify(presets));
-    }
-
-    async function migrateLocalDataIfNeeded(){
-      if(!currentUser||migrationRunning||localStorage.getItem('stundenheldMigration_'+currentUser.id)==='done')return;
-      const localShifts=JSON.parse(localStorage.getItem('myShifts'))||[];
-      const localPresets=JSON.parse(localStorage.getItem('myPresets'))||[];
-      if(!localShifts.length&&!localPresets.length){localStorage.setItem('stundenheldMigration_'+currentUser.id,'done');return;}
-
-      migrationRunning=true;
-      const ok=confirm(`Auf diesem Gerät wurden ${localShifts.length} Schichten und ${localPresets.length} Vorlagen gefunden.\n\nSollen diese jetzt in deinen Stundenheld-Account übertragen werden? Deine lokalen Daten werden dabei nicht gelöscht.`);
-      if(!ok){migrationRunning=false;return;}
-
-      try{
-        if(localShifts.length){
-          const rows=localShifts.map(s=>({
-            user_id:currentUser.id,date:s.date,start:s.start||null,end:s.end||null,
-            break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,
-            wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type||'normal'
-          }));
-          const {error}=await supabaseClient.from('shifts').insert(rows);
-          if(error)throw error;
-        }
-        if(localPresets.length){
-          const rows=localPresets.map(p=>({
-            user_id:currentUser.id,name:p.name,start:p.start||null,end:p.end||null,
-            break:Number(p.break)||0,wage:Number(p.wage)||0
-          }));
-          const {error}=await supabaseClient.from('presets').insert(rows);
-          if(error)throw error;
-        }
-        localStorage.setItem('stundenheldMigration_'+currentUser.id,'done');
-        alert('Migration erfolgreich. Deine bisherigen Daten sind jetzt in der Cloud gespeichert.');
-      }catch(error){
-        console.error(error);
-        alert('Die Übertragung konnte nicht vollständig abgeschlossen werden. Die lokalen Daten wurden NICHT gelöscht.');
-      }finally{migrationRunning=false;}
-    }
-
-    function updateAccountUI(){
-      const el=document.getElementById('account-email');
-      if(el)el.textContent=currentUser?currentUser.email:'';
-    }
-
-    async function saveShift(){
-      const mode=document.getElementById('entry-mode').value;
-      const date=document.getElementById('shift-date').value;
-      const tip=parseFloat(document.getElementById('shift-tip').value)||0;
-      if(!date)return;
-      let s={id:Date.now(),date,tip,hours:0,wageEarned:0,type:mode};
-      if(mode==='normal'){
-        const st=document.getElementById('time-start').value,en=document.getElementById('time-end').value,br=document.getElementById('shift-break').value,wg=document.getElementById('hourly-wage').value;
-        if(!st||!en)return;
-        calculateNormalShift(s,st,en,br,wg);
-      }else{s.wageEarned=parseFloat(document.getElementById('flat-amount').value)||0;}
-
-      if(currentUser){
-        const {data,error}=await supabaseClient.from('shifts').insert({user_id:currentUser.id,date:s.date,start:s.start||null,end:s.end||null,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type}).select().single();
-        if(error){alert('Schicht konnte nicht gespeichert werden: '+error.message);return;}
-        s.id=data.id;
-      }
-      shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));
-      localStorage.setItem('myShifts',JSON.stringify(shifts));
-      document.getElementById('shift-tip').value='';
-      updateMonthDropdowns();switchTab('dashboard',document.querySelector('.tab-item'));
-    }
-
-    async function saveEditedShift(id){
-      const s=shifts.find(x=>x.id===id),start=document.getElementById(`edit-start-${id}`).value,end=document.getElementById(`edit-end-${id}`).value,br=document.getElementById(`edit-break-${id}`).value,wg=document.getElementById(`edit-wage-${id}`).value,tip=document.getElementById(`edit-tip-${id}`).value;
-      if(!s||!start||!end)return;
-      calculateNormalShift(s,start,end,br,wg);s.tip=parseFloat(tip)||0;
-      if(currentUser){
-        const {error}=await supabaseClient.from('shifts').update({start:s.start,end:s.end,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);
-        if(error){alert('Änderung konnte nicht gespeichert werden: '+error.message);return;}
-      }
-      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
-    }
-
-    async function editTip(id){
-      const s=shifts.find(x=>x.id===id);if(!s)return;
-      const n=prompt('Neues Trinkgeld (€):',s.tip);
-      if(n===null)return;
-      s.tip=parseFloat(n)||0;
-      if(currentUser){const {error}=await supabaseClient.from('shifts').update({tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);if(error){alert('Trinkgeld konnte nicht gespeichert werden: '+error.message);return;}}
-      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
-    }
-
-    async function savePreset(){
-      const n=document.getElementById('p-name').value;if(!n)return;
-      const p={id:Date.now(),name:n,start:document.getElementById('p-start').value,end:document.getElementById('p-end').value,break:document.getElementById('p-break').value,wage:document.getElementById('p-wage').value};
-      if(currentUser){
-        const {data,error}=await supabaseClient.from('presets').insert({user_id:currentUser.id,name:p.name,start:p.start||null,end:p.end||null,break:Number(p.break)||0,wage:Number(p.wage)||0}).select().single();
-        if(error){alert('Vorlage konnte nicht gespeichert werden: '+error.message);return;}
-        p.id=data.id;
-      }
-      presets.push(p);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();document.getElementById('p-name').value='';
-    }
-
-    async function deletePreset(id){
-      if(currentUser){const {error}=await supabaseClient.from('presets').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Vorlage konnte nicht gelöscht werden: '+error.message);return;}}
-      presets=presets.filter(p=>p.id!==id);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();
-    }
-
-    async function deleteShift(id){
-      if(!confirm('Löschen?'))return;
-      if(currentUser){const {error}=await supabaseClient.from('shifts').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Schicht konnte nicht gelöscht werden: '+error.message);return;}}
-      shifts=shifts.filter(s=>s.id!==id);localStorage.setItem('myShifts',JSON.stringify(shifts));updateMonthDropdowns();renderHistory();updateDashboard();
-    }
-
-    // Existing UI / calculation functions
-    document.getElementById('shift-date').valueAsDate=new Date();
-    updateMonthDropdowns(); updateDashboard(); renderPresets();
+    let shifts=JSON.parse(localStorage.getItem('myShifts'))||[], presets=JSON.parse(localStorage.getItem('myPresets'))||[]; let mChart=null,aChart=null;
+    document.getElementById('shift-date').valueAsDate=new Date(); updateMonthDropdowns(); updateDashboard(); renderPresets();
     function switchTab(t,el){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab-item').forEach(i=>i.classList.remove('active'));document.getElementById(`tab-${t}`).classList.add('active');if(el)el.classList.add('active');if(t==='dashboard')updateDashboard();if(t==='history')renderHistory();}
     function toggleEntryMode(){const m=document.getElementById('entry-mode').value;document.getElementById('normal-fields').style.display=m==='normal'?'block':'none';document.getElementById('pauschal-fields').style.display=m==='pauschal'?'block':'none';document.getElementById('preset-container').style.display=m==='normal'?'block':'none';}
     function calculateNormalShift(s,start,end,breakMinutes,wage){const startDate=new Date(`1970-01-01T${start}`),endDate=new Date(`1970-01-01T${end}`);if(endDate<startDate)endDate.setDate(endDate.getDate()+1);s.start=start;s.end=end;s.break=parseFloat(breakMinutes)||0;s.wage=parseFloat(wage)||0;s.hours=Math.max(0,(endDate-startDate)/3600000-s.break/60);s.wageEarned=s.hours*s.wage;}
+    function saveShift(){const mode=document.getElementById('entry-mode').value,date=document.getElementById('shift-date').value,tip=parseFloat(document.getElementById('shift-tip').value)||0;if(!date)return;let s={id:Date.now(),date,tip,hours:0,wageEarned:0,type:mode};if(mode==='normal'){const st=document.getElementById('time-start').value,en=document.getElementById('time-end').value,br=document.getElementById('shift-break').value,wg=document.getElementById('hourly-wage').value;if(!st||!en)return;calculateNormalShift(s,st,en,br,wg);}else{s.wageEarned=parseFloat(document.getElementById('flat-amount').value)||0;}shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));localStorage.setItem('myShifts',JSON.stringify(shifts));document.getElementById('shift-tip').value='';updateMonthDropdowns();switchTab('dashboard',document.querySelector('.tab-item'));}
     function editShift(id){const s=shifts.find(x=>x.id===id);if(!s||s.type==='pauschal')return;document.getElementById(`history-edit-${id}`).style.display='block';}
     function cancelEdit(id){document.getElementById(`history-edit-${id}`).style.display='none';}
-    function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
+    function saveEditedShift(id){const s=shifts.find(x=>x.id===id),start=document.getElementById(`edit-start-${id}`).value,end=document.getElementById(`edit-end-${id}`).value,br=document.getElementById(`edit-break-${id}`).value,wg=document.getElementById(`edit-wage-${id}`).value,tip=document.getElementById(`edit-tip-${id}`).value;if(!s||!start||!end)return;calculateNormalShift(s,start,end,br,wg);s.tip=parseFloat(tip)||0;localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();}
+    function editTip(id){const s=shifts.find(x=>x.id===id);if(s){const n=prompt('Neues Trinkgeld (€):',s.tip);if(n!==null){s.tip=parseFloat(n)||0;localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();}}}
+    function savePreset(){const n=document.getElementById('p-name').value;if(!n)return;presets.push({id:Date.now(),name:n,start:document.getElementById('p-start').value,end:document.getElementById('p-end').value,break:document.getElementById('p-break').value,wage:document.getElementById('p-wage').value});localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();document.getElementById('p-name').value='';}
     function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">-- Keine Vorlage --</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
-    function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());}
-    function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
-    function animateValue(id,target,formatter,duration=420){const el=document.getElementById(id);if(!el)return;const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0,endValue=Number(target)||0;el.dataset.value=endValue;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}const start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.innerText=formatter(startValue+(endValue-startValue)*eased);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
-    function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-shifts',ms.length,v=>Math.round(v));const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';document.getElementById('a-shifts').innerText=shifts.length;animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);renderCharts(ms);}
-    function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});}
-    function renderHistory(){const f=document.getElementById('history-month-filter').value,res=(f==='all'?[...shifts]:shifts.filter(s=>s.date.startsWith(f))).sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('history-list').innerHTML=res.map(s=>{const normal=s.type!=='pauschal',start=s.start||'',end=s.end||'',br=s.break??0,wg=s.wage??(s.hours?s.wageEarned/s.hours:0);return `<div class="history-item"><div><strong>${new Date(s.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?s.hours.toFixed(2)+'h':'Event'} | Tipp: ${s.tip}€</small></div><div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br><div class="action-links">${normal?`<span class="edit-link" onclick="editShift(${s.id})">Bearbeiten</span>`:`<span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span>`}<span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div></div>${normal?`<div id="history-edit-${s.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label>Beginn</label><input id="edit-start-${s.id}" type="time" value="${start}"></div><div class="input-group"><label>Ende</label><input id="edit-end-${s.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input id="edit-break-${s.id}" type="number" value="${br}"></div><div class="input-group"><label>€ / Std</label><input id="edit-wage-${s.id}" type="number" step="0.01" value="${wg}"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input id="edit-tip-${s.id}" type="number" step="0.01" value="${s.tip}"></div><button class="sec-btn" onclick="saveEditedShift(${s.id})">ÄNDERUNGEN SPEICHERN</button><button class="sec-btn cancel-btn" onclick="cancelEdit(${s.id})">ABBRECHEN</button></div>`:''}</div>`;}).join('');}
-    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
-    function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup lokal geladen. Bitte danach erneut anmelden bzw. die Datenmigration ausführen.');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
+    function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
+    function deletePreset(id){presets=presets.filter(p=>p.id!==id);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();}
+    function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());} function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
+    function animateValue(id,target,formatter,duration=420){
+      const el=document.getElementById(id); if(!el)return;
+      const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0;
+      const endValue=Number(target)||0;
+      el.dataset.value=endValue;
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}
+      const start=performance.now();
+      function tick(now){
+        const p=Math.min(1,(now-start)/duration);
+        const eased=1-Math.pow(1-p,3);
+        el.innerText=formatter(startValue+(endValue-startValue)*eased);
+        if(p<1)requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
 
-    supabaseClient.auth.getSession().then(async ({data})=>{
-      if(data.session) await finishLogin(data.session.user);
-      else showAuth(true);
-    });
-    supabaseClient.auth.onAuthStateChange(async (event,session)=>{
-      if(session && event==='SIGNED_IN' && !currentUser) await finishLogin(session.user);
-      if(event==='SIGNED_OUT'){currentUser=null;showAuth(true);}
-    });
+    function updateDashboard(){
+      const sel=document.getElementById('dashboard-month-filter').value,
+      ms=shifts.filter(s=>s.date.startsWith(sel)),
+      mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});
+
+      animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');
+      animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');
+      animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');
+      animateValue('m-shifts',ms.length,v=>Math.round(v));
+
+      const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});
+      document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';
+      document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';
+      document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';
+      document.getElementById('a-shifts').innerText=shifts.length;
+      animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);
+      renderCharts(ms);
+    }
+    function renderCharts(ms){
+      const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const textColor=isDark?'#98989D':'#8A8A91';
+      const gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)';
+      const blue='#007AFF';
+      const blueMid='#0A84FF';
+      const blueLight='#5AC8FA';
+      const blueSoft='rgba(0,122,255,.16)';
+      const money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);
+
+      const ctxM=document.getElementById('monthChart').getContext('2d');
+      if(mChart)mChart.destroy();
+
+      const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}));
+      const monthValues=ms.map(s=>s.wageEarned+s.tip);
+
+      mChart=new Chart(ctxM,{
+        type:'line',
+        data:{
+          labels:monthLabels,
+          datasets:[{
+            label:'Verdienst',
+            data:monthValues,
+            borderColor:blue,
+            backgroundColor:blueSoft,
+            borderWidth:3,
+            pointRadius:4,
+            pointHoverRadius:7,
+            pointBackgroundColor:blue,
+            pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',
+            pointBorderWidth:2,
+            tension:.35,
+            fill:true
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              displayColors:false,
+              backgroundColor:isDark?'#2C2C2E':'#111113',
+              titleColor:'#fff',
+              bodyColor:'#fff',
+              padding:12,
+              cornerRadius:12,
+              callbacks:{label:ctx=>' '+money(ctx.parsed.y)}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},
+            y:{
+              beginAtZero:true,
+              grid:{color:gridColor},
+              border:{display:false},
+              ticks:{
+                color:textColor,
+                font:{size:10},
+                callback:value=>value+' €'
+              }
+            }
+          }
+        }
+      });
+
+      const ctxA=document.getElementById('allTimeChart').getContext('2d');
+      if(aChart)aChart.destroy();
+
+      const grp=shifts.reduce((a,s)=>{
+        const m=s.date.substring(0,7);
+        a[m]=(a[m]||0)+s.wageEarned+s.tip;
+        return a;
+      },{});
+      const lbs=Object.keys(grp).sort().map(monthLabel);
+      const rawLabels=Object.keys(grp).sort();
+
+      aChart=new Chart(ctxA,{
+        type:'bar',
+        data:{
+          labels:lbs,
+          datasets:[{
+            label:'Verdienst',
+            data:rawLabels.map(l=>grp[l]),
+            backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),
+            borderRadius:10,
+            borderSkipped:false,
+            barPercentage:.58,
+            categoryPercentage:.72
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              displayColors:false,
+              backgroundColor:isDark?'#2C2C2E':'#111113',
+              titleColor:'#fff',
+              bodyColor:'#fff',
+              padding:12,
+              cornerRadius:12,
+              callbacks:{label:ctx=>' '+money(ctx.parsed.y)}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},
+            y:{
+              beginAtZero:true,
+              grid:{color:gridColor},
+              border:{display:false},
+              ticks:{
+                color:textColor,
+                font:{size:10},
+                callback:value=>value+' €'
+              }
+            }
+          }
+        }
+      });
+    }
+    function renderHistory(){const f=document.getElementById('history-month-filter').value,res=(f==='all'?[...shifts]:shifts.filter(s=>s.date.startsWith(f))).sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('history-list').innerHTML=res.map(s=>{const normal=s.type!=='pauschal',start=s.start||'',end=s.end||'',br=s.break??0,wg=s.wage??(s.hours?s.wageEarned/s.hours:0);return `<div class="history-item"><div><strong>${new Date(s.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?s.hours.toFixed(2)+'h':'Event'} | Tipp: ${s.tip}€</small></div><div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br><div class="action-links">${normal?`<span class="edit-link" onclick="editShift(${s.id})">Bearbeiten</span>`:`<span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span>`}<span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div></div>${normal?`<div id="history-edit-${s.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label>Beginn</label><input id="edit-start-${s.id}" type="time" value="${start}"></div><div class="input-group"><label>Ende</label><input id="edit-end-${s.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input id="edit-break-${s.id}" type="number" value="${br}"></div><div class="input-group"><label>€ / Std</label><input id="edit-wage-${s.id}" type="number" step="0.01" value="${wg}"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input id="edit-tip-${s.id}" type="number" step="0.01" value="${s.tip}"></div><button class="sec-btn" onclick="saveEditedShift(${s.id})">ÄNDERUNGEN SPEICHERN</button><button class="sec-btn cancel-btn" onclick="cancelEdit(${s.id})">ABBRECHEN</button></div>`:''}</div>`;}).join('');}
+    function deleteShift(id){if(confirm('Löschen?')){shifts=shifts.filter(s=>s.id!==id);localStorage.setItem('myShifts',JSON.stringify(shifts));updateMonthDropdowns();renderHistory();updateDashboard();}}
+    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
+    function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup erfolgreich geladen!');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
   </script>
 </body>
 </html>
