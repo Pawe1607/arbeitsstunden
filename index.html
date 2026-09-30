@@ -6,7 +6,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Stundenheld">
-  <link rel="apple-touch-icon" href="https://i.postimg.cc/PJtc4Nz0/icon-arbeit.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#007AFF">
   <title>Stundenheld Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -460,7 +464,8 @@
   .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center}
   .auth-brand-mark{width:58px;height:58px;border-radius:18px;margin:0 auto 16px;background:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,122,255,.22);color:#fff}
   .auth-brand-mark svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
-  .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px}
+  .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
+  .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
   .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 27px;max-width:280px}
   .auth-card .input-group{text-align:left;margin-bottom:16px}
   .auth-card label{margin-bottom:8px}
@@ -470,7 +475,17 @@
   .auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}
   .auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}
   .auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}
-  .account-card{display:flex;justify-content:space-between;align-items:center;gap:15px}.auth-locked{overflow:hidden}
+  .account-card{display:flex;justify-content:space-between;align-items:center;gap:15px}.account-card>div:first-child{min-width:0;flex:1}.account-card #account-email{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.account-card .sec-btn{flex:0 0 auto;white-space:nowrap}.auth-locked{overflow:hidden}
+@media (max-width:430px){
+  .account-card{gap:12px;padding:16px}
+  .account-card #account-email{max-width:calc(100vw - 170px)}
+  .account-card .sec-btn{padding:12px 13px;font-size:12px}
+}
+@media (max-width:360px){
+  .account-card{flex-direction:column;align-items:stretch}
+  .account-card #account-email{max-width:100%}
+  .account-card .sec-btn{width:100%!important}
+}
   @media (prefers-color-scheme:dark){.auth-overlay{background:rgba(0,0,0,.88)}}
 </style>
 </head>
@@ -480,7 +495,7 @@
       <div class="auth-brand-mark" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M12 3v18M8 6.5c1.1-1.4 2.35-2 4-2s2.9.6 4 2M7 17.5c1.1 1.4 2.35 2 5 2s3.9-.6 5-2M6 10.2c1.2-1 2.5-1.4 4-1.4s2.8.4 4 1.4 2.5 1.4 4 1.4"/></svg>
       </div>
-      <div class="auth-logo">Stundenheld</div>
+      <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
       <div class="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert</div>
       <div class="input-group"><label>E-Mail</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
       <div class="input-group"><label>Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Mindestens 6 Zeichen"></div>
