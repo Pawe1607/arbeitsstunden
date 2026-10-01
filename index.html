@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg-color:#F5F5F7;
+      --bg-color:#F2F2F7;
       --blue-strong:#007AFF;
       --blue:#0A84FF;
       --blue-light:#5AC8FA;
@@ -91,23 +91,188 @@
       margin:0 0 24px;
     }
 
-    .section-title {
-      font-size:12px;
-      text-transform:uppercase;
-      color:var(--text-muted);
-      font-weight:750;
-      letter-spacing:.55px;
-      margin:30px 2px 12px;
+    .dashboard-intro {
       display:flex;
       align-items:center;
-      gap:8px;
+      justify-content:space-between;
+      gap:12px;
+      margin:-7px 2px 20px;
     }
 
-    .section-title::after {
-      content:"";
-      height:1px;
-      background:var(--border-color);
-      flex-grow:1;
+    .dashboard-intro p {
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .dashboard-intro .primary-btn {
+      width:auto;
+      flex:0 0 auto;
+      margin:0;
+      padding:13px 15px;
+      white-space:nowrap;
+      box-shadow:0 5px 14px rgba(0,122,255,.18);
+    }
+
+    .dashboard-filter-label {
+      margin:0 2px 8px;
+    }
+
+    .entry-help {
+      color:var(--text-muted);
+      font-size:13px;
+      line-height:1.45;
+      margin:-7px 3px 18px;
+    }
+
+    .entry-message {
+      min-height:20px;
+      margin:0 2px 8px;
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .entry-message.error { color:var(--danger); }
+    .entry-message.success { color:var(--success); }
+
+    .empty-state {
+      padding:22px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.45;
+      text-align:center;
+    }
+
+    [aria-invalid="true"] {
+      border-color:var(--danger) !important;
+      box-shadow:0 0 0 3px rgba(255,59,48,.12) !important;
+    }
+
+    .app-toast {
+      position:fixed;
+      left:18px;
+      right:18px;
+      bottom:calc(var(--safe-bottom) + 88px);
+      z-index:1001;
+      max-width:500px;
+      margin:auto;
+      padding:13px 16px;
+      border-radius:14px;
+      background:#222;
+      color:#fff;
+      font-size:14px;
+      font-weight:650;
+      text-align:center;
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      opacity:0;
+      transform:translateY(8px);
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+
+    .app-toast.visible {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @media (max-width:380px) {
+      .dashboard-intro {
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .dashboard-intro .primary-btn {
+        width:100%;
+      }
+    }
+
+    .section-title {
+      font-size:16px;
+      color:var(--text-main);
+      font-weight:700;
+      letter-spacing:-.2px;
+      margin:26px 2px 12px;
+    }
+
+    .overview-details {
+      margin-top:20px;
+      overflow:hidden;
+      border:1px solid var(--border-color);
+      border-radius:20px;
+      background:var(--card-bg);
+      box-shadow:var(--shadow);
+    }
+
+    .overview-details summary {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:16px 18px;
+      list-style:none;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:700;
+    }
+
+    .overview-details summary::-webkit-details-marker { display:none; }
+    .overview-details summary::after {
+      content:"+";
+      margin-left:auto;
+      color:var(--primary);
+      font-size:21px;
+      font-weight:500;
+    }
+
+    .overview-details[open] summary::after { content:"−"; }
+    .overview-details summary small {
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:500;
+    }
+
+    .overview-details-content {
+      padding:0 16px 16px;
+      border-top:1px solid var(--border-color);
+    }
+
+    .overview-details-content .stats-grid { margin-top:14px; }
+    .overview-details-content .card { margin:14px 0 0; }
+
+    .history-month + .history-month {
+      border-top:1px solid var(--border-color);
+    }
+
+    .history-month-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 18px;
+      background:rgba(120,120,128,.07);
+    }
+
+    .history-month-header h2 {
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:-.2px;
+    }
+
+    .history-month-meta {
+      text-align:right;
+      flex:0 0 auto;
+    }
+
+    .history-month-total {
+      display:block;
+      font-size:14px;
+      font-weight:750;
+    }
+
+    .history-month-count {
+      display:block;
+      margin-top:2px;
+      color:var(--text-muted);
+      font-size:12px;
     }
 
     .stats-grid {
@@ -126,12 +291,12 @@
     }
 
     .stat-box h3 {
-      font-size:10px;
-      text-transform:uppercase;
+      font-size:12px;
+      text-transform:none;
       margin-bottom:8px;
-      font-weight:750;
+      font-weight:650;
       color:var(--text-muted);
-      letter-spacing:.25px;
+      letter-spacing:0;
     }
 
     .stat-box p {
@@ -146,8 +311,6 @@
     .stat-box.green,
     .stat-box.purple {
       background:var(--card-bg);
-      position:relative;
-      overflow:hidden;
     }
 
     .stat-box.orange { border-top:3px solid var(--blue-strong); }
@@ -160,17 +323,6 @@
     .stat-box.green p  { color:#1597D4; }
     .stat-box.purple p { color:#4F91C9; }
 
-    .stat-box::after {
-      content:"";
-      position:absolute;
-      width:54px;
-      height:54px;
-      border-radius:50%;
-      right:-22px;
-      bottom:-25px;
-      background:var(--primary-soft);
-    }
-
     .total-card {
       background:var(--primary);
       color:#fff;
@@ -181,11 +333,11 @@
     }
 
     .total-card .total-label {
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.55px;
-      font-weight:750;
-      opacity:.78;
+      font-size:13px;
+      text-transform:none;
+      letter-spacing:0;
+      font-weight:650;
+      opacity:.9;
       margin-bottom:5px;
     }
 
@@ -215,14 +367,14 @@
     }
 
     label {
-      font-size:11px;
+      font-size:12px;
       color:var(--text-muted);
-      margin-bottom:9px;
-      text-transform:uppercase;
-      font-weight:750;
+      margin-bottom:8px;
+      text-transform:none;
+      font-weight:650;
       display:block;
-      padding-left:3px;
-      letter-spacing:.25px;
+      padding-left:2px;
+      letter-spacing:0;
     }
 
     select.ios-select,
@@ -295,6 +447,9 @@
     }
 
     .tab-item {
+      border:0;
+      background:transparent;
+      cursor:pointer;
       flex:1;
       text-align:center;
       color:var(--text-muted);
@@ -311,6 +466,13 @@
     .tab-item.active {
       color:var(--primary);
       background:var(--primary-soft);
+    }
+
+    .tab-item:focus-visible,
+    button.primary-btn:focus-visible,
+    button.sec-btn:focus-visible {
+      outline:3px solid var(--primary);
+      outline-offset:3px;
     }
 
     .tab-icon svg {
@@ -330,15 +492,18 @@
       align-items:center;
     }
 
-    .history-item:first-child,
     .preset-item:first-child {
       border-radius:20px 20px 0 0;
     }
 
-    .history-item:last-child,
     .preset-item:last-child {
       border-bottom:0;
       border-radius:0 0 20px 20px;
+    }
+
+    .history-item:last-child {
+      border-bottom:0;
+      border-radius:0;
     }
 
     .history-item {
@@ -355,9 +520,14 @@
 
     .delete-link,
     .edit-link {
-      font-size:11px;
+      min-height:38px;
+      padding:8px 4px;
+      border:0;
+      background:transparent;
+      font-family:inherit;
+      font-size:12px;
       font-weight:750;
-      text-transform:uppercase;
+      text-transform:none;
       cursor:pointer;
     }
 
@@ -381,7 +551,7 @@
     }
 
     .card:has(canvas) { padding:18px 16px 14px; position:relative; }
-    .card:has(canvas)::before { content:'VERDIENST'; display:block; font-size:11px; font-weight:750; letter-spacing:.55px; color:var(--text-muted); margin:0 2px 8px; }
+    .chart-heading { font-size:14px; font-weight:700; margin:0 2px 8px; }
     .card canvas { height:240px !important; max-height:240px; }
 
     /* Subtle iOS-style motion */
@@ -460,18 +630,34 @@
       }
     }
 
-  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px}
-  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center}
-  .auth-brand-mark{width:58px;height:58px;border-radius:18px;margin:0 auto 16px;background:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,122,255,.22);color:#fff}
-  .auth-brand-mark svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
+  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}
+  .auth-card.is-registering{border-color:rgba(0,122,255,.26);background:linear-gradient(180deg,rgba(0,122,255,.055),transparent 48%),var(--card-bg);box-shadow:0 18px 52px rgba(0,122,255,.14)}
+  .auth-login-header,.auth-register-header{animation:authViewEnter .26s ease both}
+  @keyframes authViewEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
   .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
-  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 27px;max-width:280px}
+  .auth-card .auth-heading{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.45px;margin:18px 0 7px}
+  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 24px;max-width:280px}
+  .auth-back-button{display:flex;align-items:center;gap:8px;margin:-8px 0 0;padding:8px 0;border:0;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-back-button svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-visual{width:56px;height:56px;display:flex;align-items:center;justify-content:center;margin:15px auto 12px;border-radius:18px;background:var(--primary-soft);color:var(--primary)}
+  .auth-register-visual svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-kicker{color:var(--primary);font-size:11px;font-weight:750;letter-spacing:.09em;margin-bottom:7px}
+  .auth-register-header .auth-heading{margin:0 0 8px}
+  .auth-register-header .auth-subtitle{margin-bottom:15px}
+  .auth-register-note{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:var(--primary-soft);font-size:13px;line-height:1.35;text-align:left}
+  .auth-register-note svg{width:18px;height:18px;flex:0 0 auto;color:var(--primary);stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-password-hint{font-size:12px;color:var(--text-muted);margin:-8px 0 15px;text-align:left}
+  .auth-mode-toggle{display:block;width:100%;margin-top:13px;padding:9px;border:0;border-radius:10px;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-mode-toggle[hidden]{display:none}
+  .auth-mode-toggle:focus-visible,.auth-back-button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+  .auth-card .auth-heading:focus{outline:none}
+  @media(max-height:700px){.auth-overlay{align-items:flex-start}}
   .auth-card .input-group{text-align:left;margin-bottom:16px}
   .auth-card label{margin-bottom:8px}
   .auth-card input{padding:14px 15px;border-radius:14px}
   .auth-card .primary-btn{margin-top:4px}
-  .auth-register-btn{margin-top:10px}
   .auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}
   .auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}
   .auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}
@@ -491,34 +677,47 @@
 </head>
 <body>
   <div id="auth-overlay" class="auth-overlay">
-    <div class="auth-card">
-      <div class="auth-brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 3v18M8 6.5c1.1-1.4 2.35-2 4-2s2.9.6 4 2M7 17.5c1.1 1.4 2.35 2 5 2s3.9-.6 5-2M6 10.2c1.2-1 2.5-1.4 4-1.4s2.8.4 4 1.4 2.5 1.4 4 1.4"/></svg>
+    <div id="auth-card" class="auth-card">
+      <div class="auth-login-header" id="auth-login-header">
+        <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
+        <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
+        <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
       </div>
-      <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
-      <div class="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert</div>
-      <div class="input-group"><label>E-Mail</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
-      <div class="input-group"><label>Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Mindestens 6 Zeichen"></div>
-      <button class="primary-btn" onclick="loginUser()">ANMELDEN</button>
-      <button class="sec-btn auth-register-btn" onclick="registerUser()">NEUES KONTO ERSTELLEN</button>
-      <div id="auth-message" class="auth-message"></div>
+      <div class="auth-register-header" id="auth-register-header" hidden>
+        <button class="auth-back-button" type="button" onclick="setAuthMode('login')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Zur Anmeldung</span></button>
+        <div class="auth-register-visual" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        <div class="auth-register-kicker">DEIN START MIT STUNDENHELD</div>
+        <h1 class="auth-heading" id="auth-register-heading" tabindex="-1">Konto erstellen</h1>
+        <p class="auth-subtitle">Speichere deine Schichten sicher und greife überall darauf zu.</p>
+        <div class="auth-register-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>Deine Einträge bleiben mit deinem Konto synchronisiert.</span></div>
+      </div>
+      <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
+      <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Passwort"></div>
+      <div class="auth-password-hint" id="auth-password-hint" hidden>Mindestens 6 Zeichen</div>
+      <button id="auth-submit-btn" class="primary-btn" type="button" onclick="submitAuth()">Anmelden</button>
+      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Kostenlos erstellen</button>
+      <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
     </div>
   </div>
 
   <div id="tab-dashboard" class="tab-content active">
-    <h1>Stundenheld</h1><div class="filter-container"><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
-    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Lohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Lohn + Trinkgeld</div></div><div class="card"><canvas id="monthChart"></canvas></div>
-    <div class="section-title">All-Time Karriere</div><div class="stats-grid"><div class="stat-box orange"><h3>Gesamt Stunden</h3><p id="a-hours">0.00 h</p></div><div class="stat-box blue"><h3>Gesamt Lohn</h3><p id="a-wage">0 €</p></div><div class="stat-box green"><h3>Gesamt Tipp</h3><p id="a-tip">0 €</p></div><div class="stat-box purple"><h3>Alle Schichten</h3><p id="a-shifts">0</p></div></div><div class="card"><canvas id="allTimeChart"></canvas></div>
+    <h1>Übersicht</h1>
+    <div class="dashboard-intro"><p>Arbeitszeit und Verdienst auf einen Blick.</p><button type="button" class="primary-btn" onclick="switchTab('add',document.getElementById('nav-add'))">Schicht eintragen</button></div>
+    <div class="filter-container"><label class="dashboard-filter-label" for="dashboard-month-filter">Monat anzeigen</label><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
+    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Arbeitslohn + Trinkgeld</div></div><div class="card"><div class="chart-heading">Verdienst im Monat</div><canvas id="monthChart" role="img" aria-label="Verdienst je Schicht im ausgewählten Monat"></canvas></div>
+    <details class="overview-details"><summary><span>Insgesamt</span><small>Alle bisherigen Schichten</small></summary><div class="overview-details-content"><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="a-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="a-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="a-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="a-shifts">0</p></div></div><div class="card"><div class="chart-heading">Verdienst pro Monat</div><canvas id="allTimeChart" role="img" aria-label="Verdienst pro Monat insgesamt"></canvas></div></div></details>
   </div>
-  <div id="tab-add" class="tab-content"><h1>Eintragen</h1><div class="card">
-    <div class="input-group"><label>Abrechnungs-Modus</label><select id="entry-mode" class="ios-select" onchange="toggleEntryMode()"><option value="normal">Normaler Arbeitstag</option><option value="pauschal">Event / Pauschal</option></select></div>
-    <div id="preset-container" class="input-group"><label>Schnell-Vorlage wählen</label><select id="preset-select" class="ios-select" onchange="applyPreset()"><option value="">-- Keine Vorlage --</option></select></div><div class="input-group"><label>Datum</label><input type="date" id="shift-date"></div>
-    <div id="normal-fields"><div class="grid-2"><div class="input-group"><label>Beginn</label><input type="time" id="time-start"></div><div class="input-group"><label>Ende</label><input type="time" id="time-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input type="number" id="shift-break" placeholder="30"></div><div class="input-group"><label>€ / Std</label><input type="number" id="hourly-wage" placeholder="13.50"></div></div></div>
-    <div id="pauschal-fields" style="display:none;"><div class="input-group"><label>Pauschal-Betrag (€)</label><input type="number" id="flat-amount" placeholder="100"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input type="number" id="shift-tip" placeholder="0"></div><button class="primary-btn" onclick="saveShift()">EINTRAG SPEICHERN</button>
+  <div id="tab-add" class="tab-content"><h1>Schicht eintragen</h1><p class="entry-help">Wähle „Nach Stunden“ für Zeiten und Stundenlohn oder „Fester Betrag“ für eine direkte Eingabe.</p><div class="card">
+    <div class="input-group"><label for="entry-mode">Art der Schicht</label><select id="entry-mode" class="ios-select" onchange="toggleEntryMode()"><option value="normal">Nach Stunden</option><option value="pauschal">Fester Betrag</option></select></div>
+    <div class="input-group"><label for="shift-date">Arbeitstag</label><input type="date" id="shift-date"></div>
+    <div id="preset-container" class="input-group"><label for="preset-select">Vorlage (optional)</label><select id="preset-select" class="ios-select" onchange="applyPreset()"><option value="">Keine Vorlage</option></select></div>
+    <div id="normal-fields"><div class="grid-2"><div class="input-group"><label for="time-start">Startzeit</label><input type="time" id="time-start"></div><div class="input-group"><label for="time-end">Endzeit</label><input type="time" id="time-end"></div></div><div class="grid-2"><div class="input-group"><label for="shift-break">Pause (Minuten)</label><input type="number" id="shift-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="hourly-wage">Stundenlohn (€)</label><input type="number" id="hourly-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div></div>
+    <div id="pauschal-fields" style="display:none;"><div class="input-group"><label for="flat-amount">Fester Verdienst (€)</label><input type="number" id="flat-amount" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 100,00"></div></div><div class="input-group"><label for="shift-tip">Trinkgeld (€)</label><input type="number" id="shift-tip" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div><div id="entry-message" class="entry-message" role="status" aria-live="polite"></div><button id="save-shift-btn" class="primary-btn" type="button" onclick="saveShift()">Schicht speichern</button>
   </div></div>
-  <div id="tab-presets" class="tab-content"><h1>Tools</h1><div class="card account-card"><div><div class="section-title" style="margin-top:0">Konto</div><strong id="account-email"></strong><div class="auth-small">Cloud-Synchronisierung aktiv</div></div><button class="sec-btn" style="width:auto" onclick="logoutUser()">ABMELDEN</button></div><div class="section-title">Neue Vorlage</div><div class="card"><div class="input-group"><label>Name</label><input type="text" id="p-name" placeholder="z.B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label>Start</label><input type="time" id="p-start"></div><div class="input-group"><label>Ende</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label>Pause</label><input type="number" id="p-break" placeholder="30"></div><div class="input-group"><label>€/Std</label><input type="number" id="p-wage" placeholder="14"></div></div><button class="primary-btn" onclick="savePreset()">VORLAGE SPEICHERN</button></div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Datensicherung</div><div class="card"><div class="grid-2"><button class="sec-btn" onclick="exportData()">EXPORT (.json)</button><button class="sec-btn" onclick="document.getElementById('importFile').click()">IMPORT</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
-  <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
-  <div class="tab-bar"><div class="tab-item active" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</div><div class="tab-item" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</div><div class="tab-item" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Tools</div><div class="tab-item" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</div></div>
+  <div id="tab-presets" class="tab-content"><h1>Mehr</h1><div class="card account-card"><div><div class="section-title" style="margin-top:0">Konto</div><strong id="account-email"></strong><div class="auth-small">Cloud-Synchronisierung aktiv</div></div><button class="sec-btn" style="width:auto" onclick="logoutUser()">ABMELDEN</button></div><div class="section-title">Neue Schichtvorlage</div><div class="card"><div class="input-group"><label for="p-name">Name der Vorlage</label><input type="text" id="p-name" placeholder="z. B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label for="p-start">Startzeit</label><input type="time" id="p-start"></div><div class="input-group"><label for="p-end">Endzeit</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label for="p-break">Pause (Minuten)</label><input type="number" id="p-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="p-wage">Stundenlohn (€)</label><input type="number" id="p-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div><button class="primary-btn" type="button" onclick="savePreset()">Vorlage speichern</button></div><div class="section-title">Meine Vorlagen</div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Daten sichern</div><div class="card"><div class="grid-2"><button class="sec-btn" type="button" onclick="exportData()">Backup herunterladen</button><button class="sec-btn" type="button" onclick="document.getElementById('importFile').click()">Backup importieren</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
+  <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><label class="dashboard-filter-label" for="history-month-filter">Monat filtern</label><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
+  <nav class="tab-bar" aria-label="Hauptnavigation"><button class="tab-item active" id="nav-dashboard" type="button" aria-current="page" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</button><button class="tab-item" id="nav-add" type="button" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</button><button class="tab-item" id="nav-history" type="button" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</button><button class="tab-item" id="nav-presets" type="button" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Mehr</button></nav>
+  <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
   <!-- Supabase: client-side browser library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -541,6 +740,33 @@
       document.body.classList.toggle('auth-locked',show);
     }
 
+    let authMode='login';
+
+    function setAuthMode(mode){
+      authMode=mode==='register'?'register':'login';
+      const registering=authMode==='register';
+      document.getElementById('auth-card').classList.toggle('is-registering',registering);
+      document.getElementById('auth-login-header').hidden=registering;
+      document.getElementById('auth-register-header').hidden=!registering;
+      document.getElementById('auth-submit-btn').textContent=registering?'Konto erstellen':'Anmelden';
+      document.getElementById('auth-mode-toggle').hidden=registering;
+      const password=document.getElementById('auth-password');
+      password.autocomplete=registering?'new-password':'current-password';
+      document.getElementById('auth-password-hint').hidden=!registering;
+      const heading=document.getElementById(registering?'auth-register-heading':'auth-heading');
+      if(document.getElementById('auth-overlay').style.display!=='none') heading.focus({preventScroll:true});
+      setAuthMessage('');
+    }
+
+    function toggleAuthMode(){
+      setAuthMode(authMode==='login'?'register':'login');
+    }
+
+    function submitAuth(){
+      if(authMode==='register') registerUser();
+      else loginUser();
+    }
+
     function setAuthMessage(message,type='info'){
       const el=document.getElementById('auth-message');
       el.textContent=message||'';
@@ -558,6 +784,7 @@
       if(data.session){
         await finishLogin(data.session.user);
       }else{
+        setAuthMode('login');
         setAuthMessage('Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.','success');
       }
     }
@@ -575,6 +802,7 @@
     async function logoutUser(){
       await supabaseClient.auth.signOut();
       currentUser=null;
+      setAuthMode('login');
       showAuth(true);
       setAuthMessage('Abgemeldet.','info');
     }
@@ -706,27 +934,80 @@
       if(el)el.textContent=currentUser?currentUser.email:'';
     }
 
+    let toastTimeout;
+    function showToast(message){
+      const toast=document.getElementById('app-toast');
+      toast.textContent=message;
+      toast.classList.add('visible');
+      window.clearTimeout(toastTimeout);
+      toastTimeout=window.setTimeout(()=>toast.classList.remove('visible'),2600);
+    }
+
+    function setEntryMessage(message,type='info'){
+      const el=document.getElementById('entry-message');
+      el.textContent=message||'';
+      el.className='entry-message'+(type==='error'?' error':type==='success'?' success':'');
+    }
+
     async function saveShift(){
       const mode=document.getElementById('entry-mode').value;
-      const date=document.getElementById('shift-date').value;
-      const tip=parseFloat(document.getElementById('shift-tip').value)||0;
-      if(!date)return;
+      const dateInput=document.getElementById('shift-date');
+      const date=dateInput.value;
+      const tipInput=document.getElementById('shift-tip');
+      const tip=tipInput.value===''?0:Number(tipInput.value);
+      document.querySelectorAll('#tab-add [aria-invalid="true"]').forEach(input=>input.removeAttribute('aria-invalid'));
+      setEntryMessage('');
+
+      function showFieldError(input,message){
+        input.setAttribute('aria-invalid','true');
+        setEntryMessage(message,'error');
+        input.focus();
+      }
+
+      if(!date){showFieldError(dateInput,'Bitte wähle den Arbeitstag aus.');return;}
+      if(!Number.isFinite(tip)||tip<0){showFieldError(tipInput,'Bitte gib ein Trinkgeld ab 0 € ein.');return;}
+
       let s={id:Date.now(),date,tip,hours:0,wageEarned:0,type:mode};
       if(mode==='normal'){
-        const st=document.getElementById('time-start').value,en=document.getElementById('time-end').value,br=document.getElementById('shift-break').value,wg=document.getElementById('hourly-wage').value;
-        if(!st||!en)return;
-        calculateNormalShift(s,st,en,br,wg);
-      }else{s.wageEarned=parseFloat(document.getElementById('flat-amount').value)||0;}
-
-      if(currentUser){
-        const {data,error}=await supabaseClient.from('shifts').insert({user_id:currentUser.id,legacy_id:s.id,date:s.date,start:s.start||null,end:s.end||null,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type}).select().single();
-        if(error){alert('Schicht konnte nicht gespeichert werden: '+error.message);return;}
-        s.id=data.id;
+        const startInput=document.getElementById('time-start');
+        const endInput=document.getElementById('time-end');
+        const breakInput=document.getElementById('shift-break');
+        const wageInput=document.getElementById('hourly-wage');
+        const st=startInput.value,en=endInput.value;
+        if(!st){showFieldError(startInput,'Bitte gib eine Startzeit ein.');return;}
+        if(!en){showFieldError(endInput,'Bitte gib eine Endzeit ein.');return;}
+        if(st===en){showFieldError(endInput,'Startzeit und Endzeit dürfen nicht gleich sein.');return;}
+        if(wageInput.value===''||!Number.isFinite(Number(wageInput.value))||Number(wageInput.value)<0){showFieldError(wageInput,'Bitte gib einen Stundenlohn ab 0 € ein.');return;}
+        if(breakInput.value!==''&&(!Number.isFinite(Number(breakInput.value))||Number(breakInput.value)<0)){showFieldError(breakInput,'Die Pause muss 0 Minuten oder länger sein.');return;}
+        calculateNormalShift(s,st,en,breakInput.value,wageInput.value);
+      }else{
+        const amountInput=document.getElementById('flat-amount');
+        if(amountInput.value===''||!Number.isFinite(Number(amountInput.value))||Number(amountInput.value)<0){showFieldError(amountInput,'Bitte gib einen festen Verdienst ab 0 € ein.');return;}
+        s.wageEarned=Number(amountInput.value);
       }
-      shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));
-      localStorage.setItem('myShifts',JSON.stringify(shifts));
-      document.getElementById('shift-tip').value='';
-      updateMonthDropdowns();switchTab('dashboard',document.querySelector('.tab-item'));
+
+      const saveButton=document.getElementById('save-shift-btn');
+      saveButton.disabled=true;
+      saveButton.textContent='Wird gespeichert …';
+      try{
+        if(currentUser){
+          const {data,error}=await supabaseClient.from('shifts').insert({user_id:currentUser.id,legacy_id:s.id,date:s.date,start:s.start||null,end:s.end||null,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type}).select().single();
+          if(error)throw error;
+          s.id=data.id;
+        }
+        shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));
+        localStorage.setItem('myShifts',JSON.stringify(shifts));
+        document.getElementById('shift-tip').value='';
+        updateMonthDropdowns();
+        showToast('Schicht gespeichert.');
+        switchTab('dashboard',document.getElementById('nav-dashboard'));
+      }catch(error){
+        console.error(error);
+        setEntryMessage('Die Schicht konnte nicht gespeichert werden. Prüfe deine Verbindung und versuche es erneut.','error');
+      }finally{
+        saveButton.disabled=false;
+        saveButton.textContent='Schicht speichern';
+      }
     }
 
     async function saveEditedShift(id){
@@ -773,20 +1054,47 @@
 
     // Existing UI / calculation functions
     document.getElementById('shift-date').valueAsDate=new Date();
+    document.querySelectorAll('#tab-add input,#tab-add select').forEach(input=>input.addEventListener('input',()=>{input.removeAttribute('aria-invalid');setEntryMessage('');}));
     updateMonthDropdowns(); updateDashboard(); renderPresets();
-    function switchTab(t,el){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab-item').forEach(i=>i.classList.remove('active'));document.getElementById(`tab-${t}`).classList.add('active');if(el)el.classList.add('active');if(t==='dashboard')updateDashboard();if(t==='history')renderHistory();}
+    function switchTab(t,el){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab-item').forEach(i=>{i.classList.remove('active');i.removeAttribute('aria-current');});document.getElementById(`tab-${t}`).classList.add('active');if(el){el.classList.add('active');el.setAttribute('aria-current','page');}if(t==='dashboard')updateDashboard();if(t==='history')renderHistory();}
     function toggleEntryMode(){const m=document.getElementById('entry-mode').value;document.getElementById('normal-fields').style.display=m==='normal'?'block':'none';document.getElementById('pauschal-fields').style.display=m==='pauschal'?'block':'none';document.getElementById('preset-container').style.display=m==='normal'?'block':'none';}
     function calculateNormalShift(s,start,end,breakMinutes,wage){const startDate=new Date(`1970-01-01T${start}`),endDate=new Date(`1970-01-01T${end}`);if(endDate<startDate)endDate.setDate(endDate.getDate()+1);s.start=start;s.end=end;s.break=parseFloat(breakMinutes)||0;s.wage=parseFloat(wage)||0;s.hours=Math.max(0,(endDate-startDate)/3600000-s.break/60);s.wageEarned=s.hours*s.wage;}
     function editShift(id){const s=shifts.find(x=>x.id===id);if(!s||s.type==='pauschal')return;document.getElementById(`history-edit-${id}`).style.display='block';}
     function cancelEdit(id){document.getElementById(`history-edit-${id}`).style.display='none';}
     function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
-    function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><span class="delete-link" onclick="deletePreset(${p.id})">Entfernen</span></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">-- Keine Vorlage --</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
+    function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><button type="button" class="delete-link" onclick="deletePreset(${p.id})">Vorlage entfernen</button></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">Keine Vorlage</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
     function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());}
     function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
     function animateValue(id,target,formatter,duration=420){const el=document.getElementById(id);if(!el)return;const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0,endValue=Number(target)||0;el.dataset.value=endValue;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}const start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.innerText=formatter(startValue+(endValue-startValue)*eased);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
     function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-shifts',ms.length,v=>Math.round(v));const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';document.getElementById('a-shifts').innerText=shifts.length;animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);renderCharts(ms);}
     function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});}
-    function renderHistory(){const f=document.getElementById('history-month-filter').value,res=(f==='all'?[...shifts]:shifts.filter(s=>s.date.startsWith(f))).sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('history-list').innerHTML=res.map(s=>{const normal=s.type!=='pauschal',start=s.start||'',end=s.end||'',br=s.break??0,wg=s.wage??(s.hours?s.wageEarned/s.hours:0);return `<div class="history-item"><div><strong>${new Date(s.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?s.hours.toFixed(2)+'h':'Event'} | Tipp: ${s.tip}€</small></div><div style="text-align:right"><strong>${(s.wageEarned+s.tip).toFixed(2)}€</strong><br><div class="action-links">${normal?`<span class="edit-link" onclick="editShift(${s.id})">Bearbeiten</span>`:`<span class="edit-link" onclick="editTip(${s.id})">Tipp ändern</span>`}<span class="delete-link" onclick="deleteShift(${s.id})">Löschen</span></div></div>${normal?`<div id="history-edit-${s.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label>Beginn</label><input id="edit-start-${s.id}" type="time" value="${start}"></div><div class="input-group"><label>Ende</label><input id="edit-end-${s.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label>Pause (Min)</label><input id="edit-break-${s.id}" type="number" value="${br}"></div><div class="input-group"><label>€ / Std</label><input id="edit-wage-${s.id}" type="number" step="0.01" value="${wg}"></div></div><div class="input-group"><label>Trinkgeld (€)</label><input id="edit-tip-${s.id}" type="number" step="0.01" value="${s.tip}"></div><button class="sec-btn" onclick="saveEditedShift(${s.id})">ÄNDERUNGEN SPEICHERN</button><button class="sec-btn cancel-btn" onclick="cancelEdit(${s.id})">ABBRECHEN</button></div>`:''}</div>`;}).join('');}
+    function renderHistory(){
+      const filter=document.getElementById('history-month-filter').value;
+      const records=(filter==='all'?[...shifts]:shifts.filter(shift=>shift.date.startsWith(filter))).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const list=document.getElementById('history-list');
+      if(!records.length){
+        list.innerHTML='<p class="empty-state">Für diesen Zeitraum sind noch keine Schichten eingetragen.</p>';
+        return;
+      }
+
+      const formatMoney=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(value)||0);
+      const groups=new Map();
+      records.forEach(shift=>{
+        const month=shift.date.slice(0,7);
+        if(!groups.has(month))groups.set(month,[]);
+        groups.get(month).push(shift);
+      });
+
+      list.innerHTML=[...groups.entries()].map(([month,monthShifts])=>{
+        const total=monthShifts.reduce((sum,shift)=>sum+Number(shift.wageEarned||0)+Number(shift.tip||0),0);
+        const count=monthShifts.length;
+        const monthRows=monthShifts.map(shift=>{
+          const normal=shift.type!=='pauschal',start=shift.start||'',end=shift.end||'',pause=shift.break??0,wage=shift.wage??(shift.hours?shift.wageEarned/shift.hours:0);
+          return `<div class="history-item"><div><strong>${new Date(shift.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?shift.hours.toFixed(2)+' Std.':'Pauschalbetrag'} | Trinkgeld: ${formatMoney(shift.tip)}</small></div><div style="text-align:right"><strong>${formatMoney(Number(shift.wageEarned||0)+Number(shift.tip||0))}</strong><br><div class="action-links">${normal?`<button type="button" class="edit-link" onclick="editShift(${shift.id})">Bearbeiten</button>`:`<button type="button" class="edit-link" onclick="editTip(${shift.id})">Trinkgeld ändern</button>`}<button type="button" class="delete-link" onclick="deleteShift(${shift.id})">Löschen</button></div></div>${normal?`<div id="history-edit-${shift.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label for="edit-start-${shift.id}">Startzeit</label><input id="edit-start-${shift.id}" type="time" value="${start}"></div><div class="input-group"><label for="edit-end-${shift.id}">Endzeit</label><input id="edit-end-${shift.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label for="edit-break-${shift.id}">Pause (Minuten)</label><input id="edit-break-${shift.id}" type="number" min="0" step="1" value="${pause}"></div><div class="input-group"><label for="edit-wage-${shift.id}">Stundenlohn (€)</label><input id="edit-wage-${shift.id}" type="number" min="0" step="0.01" value="${wage}"></div></div><div class="input-group"><label for="edit-tip-${shift.id}">Trinkgeld (€)</label><input id="edit-tip-${shift.id}" type="number" min="0" step="0.01" value="${shift.tip}"></div><button type="button" class="sec-btn" onclick="saveEditedShift(${shift.id})">Änderungen speichern</button><button type="button" class="sec-btn cancel-btn" onclick="cancelEdit(${shift.id})">Abbrechen</button></div>`:''}</div>`;
+        }).join('');
+        return `<section class="history-month" aria-label="${monthLabel(month)}"><header class="history-month-header"><h2>${monthLabel(month)}</h2><div class="history-month-meta"><strong class="history-month-total">${formatMoney(total)}</strong><span class="history-month-count">${count} ${count===1?'Schicht':'Schichten'}</span></div></header>${monthRows}</section>`;
+      }).join('');
+    }
     function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
     function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup lokal geladen. Bitte danach erneut anmelden bzw. die Datenmigration ausführen.');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
 
