@@ -634,12 +634,15 @@
   .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center}
   .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
   .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
-  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 27px;max-width:280px}
+  .auth-card .auth-heading{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.45px;margin:18px 0 7px}
+  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 24px;max-width:280px}
+  .auth-password-hint{font-size:12px;color:var(--text-muted);margin:-8px 0 15px;text-align:left}
+  .auth-mode-toggle{display:block;width:100%;margin-top:13px;padding:9px;border:0;border-radius:10px;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-mode-toggle:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
   .auth-card .input-group{text-align:left;margin-bottom:16px}
   .auth-card label{margin-bottom:8px}
   .auth-card input{padding:14px 15px;border-radius:14px}
   .auth-card .primary-btn{margin-top:4px}
-  .auth-register-btn{margin-top:10px}
   .auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}
   .auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}
   .auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}
@@ -661,11 +664,13 @@
   <div id="auth-overlay" class="auth-overlay">
     <div class="auth-card">
       <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
-      <div class="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert</div>
+      <h1 class="auth-heading" id="auth-heading">Anmelden</h1>
+      <div class="auth-subtitle" id="auth-subtitle">Melde dich an, um deine Arbeitszeiten anzusehen.</div>
       <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
-      <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Mindestens 6 Zeichen"></div>
-      <button class="primary-btn" type="button" onclick="loginUser()">Anmelden</button>
-      <button class="sec-btn auth-register-btn" type="button" onclick="registerUser()">Neues Konto erstellen</button>
+      <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Passwort"></div>
+      <div class="auth-password-hint" id="auth-password-hint" hidden>Mindestens 6 Zeichen</div>
+      <button id="auth-submit-btn" class="primary-btn" type="button" onclick="submitAuth()">Anmelden</button>
+      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Konto erstellen</button>
       <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
     </div>
   </div>
@@ -710,6 +715,34 @@
       document.body.classList.toggle('auth-locked',show);
     }
 
+    let authMode='login';
+
+    function setAuthMode(mode){
+      authMode=mode==='register'?'register':'login';
+      const registering=authMode==='register';
+      document.getElementById('auth-heading').textContent=registering?'Konto erstellen':'Anmelden';
+      document.getElementById('auth-subtitle').textContent=registering
+        ?'Erstelle dein Konto, um deine Arbeitszeiten sicher zu speichern.'
+        :'Melde dich an, um deine Arbeitszeiten anzusehen.';
+      document.getElementById('auth-submit-btn').textContent=registering?'Konto erstellen':'Anmelden';
+      document.getElementById('auth-mode-toggle').textContent=registering
+        ?'Schon ein Konto? Zur Anmeldung'
+        :'Noch kein Konto? Konto erstellen';
+      const password=document.getElementById('auth-password');
+      password.autocomplete=registering?'new-password':'current-password';
+      document.getElementById('auth-password-hint').hidden=!registering;
+      setAuthMessage('');
+    }
+
+    function toggleAuthMode(){
+      setAuthMode(authMode==='login'?'register':'login');
+    }
+
+    function submitAuth(){
+      if(authMode==='register') registerUser();
+      else loginUser();
+    }
+
     function setAuthMessage(message,type='info'){
       const el=document.getElementById('auth-message');
       el.textContent=message||'';
@@ -727,6 +760,7 @@
       if(data.session){
         await finishLogin(data.session.user);
       }else{
+        setAuthMode('login');
         setAuthMessage('Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.','success');
       }
     }
@@ -744,6 +778,7 @@
     async function logoutUser(){
       await supabaseClient.auth.signOut();
       currentUser=null;
+      setAuthMode('login');
       showAuth(true);
       setAuthMessage('Abgemeldet.','info');
     }
