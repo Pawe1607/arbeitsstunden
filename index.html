@@ -630,15 +630,29 @@
       }
     }
 
-  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px}
-  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center}
+  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
+  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}
+  .auth-card.is-registering{border-color:rgba(0,122,255,.26);background:linear-gradient(180deg,rgba(0,122,255,.055),transparent 48%),var(--card-bg);box-shadow:0 18px 52px rgba(0,122,255,.14)}
+  .auth-login-header,.auth-register-header{animation:authViewEnter .26s ease both}
+  @keyframes authViewEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
   .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
   .auth-card .auth-heading{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.45px;margin:18px 0 7px}
   .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 24px;max-width:280px}
+  .auth-back-button{display:flex;align-items:center;gap:8px;margin:-8px 0 0;padding:8px 0;border:0;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-back-button svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-visual{width:56px;height:56px;display:flex;align-items:center;justify-content:center;margin:15px auto 12px;border-radius:18px;background:var(--primary-soft);color:var(--primary)}
+  .auth-register-visual svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-kicker{color:var(--primary);font-size:11px;font-weight:750;letter-spacing:.09em;margin-bottom:7px}
+  .auth-register-header .auth-heading{margin:0 0 8px}
+  .auth-register-header .auth-subtitle{margin-bottom:15px}
+  .auth-register-note{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:var(--primary-soft);font-size:13px;line-height:1.35;text-align:left}
+  .auth-register-note svg{width:18px;height:18px;flex:0 0 auto;color:var(--primary);stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .auth-password-hint{font-size:12px;color:var(--text-muted);margin:-8px 0 15px;text-align:left}
   .auth-mode-toggle{display:block;width:100%;margin-top:13px;padding:9px;border:0;border-radius:10px;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
-  .auth-mode-toggle:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+  .auth-mode-toggle:focus-visible,.auth-back-button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+  .auth-card .auth-heading:focus{outline:none}
+  @media(max-height:700px){.auth-overlay{align-items:flex-start}}
   .auth-card .input-group{text-align:left;margin-bottom:16px}
   .auth-card label{margin-bottom:8px}
   .auth-card input{padding:14px 15px;border-radius:14px}
@@ -662,15 +676,25 @@
 </head>
 <body>
   <div id="auth-overlay" class="auth-overlay">
-    <div class="auth-card">
-      <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
-      <h1 class="auth-heading" id="auth-heading">Anmelden</h1>
-      <div class="auth-subtitle" id="auth-subtitle">Melde dich an, um deine Arbeitszeiten anzusehen.</div>
+    <div id="auth-card" class="auth-card">
+      <div class="auth-login-header" id="auth-login-header">
+        <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
+        <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
+        <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
+      </div>
+      <div class="auth-register-header" id="auth-register-header" hidden>
+        <button class="auth-back-button" type="button" onclick="setAuthMode('login')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Zur Anmeldung</span></button>
+        <div class="auth-register-visual" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        <div class="auth-register-kicker">DEIN START MIT STUNDENHELD</div>
+        <h1 class="auth-heading" id="auth-register-heading" tabindex="-1">Konto erstellen</h1>
+        <p class="auth-subtitle">Speichere deine Schichten sicher und greife überall darauf zu.</p>
+        <div class="auth-register-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>Deine Einträge bleiben mit deinem Konto synchronisiert.</span></div>
+      </div>
       <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
       <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Passwort"></div>
       <div class="auth-password-hint" id="auth-password-hint" hidden>Mindestens 6 Zeichen</div>
       <button id="auth-submit-btn" class="primary-btn" type="button" onclick="submitAuth()">Anmelden</button>
-      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Konto erstellen</button>
+      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Kostenlos erstellen</button>
       <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
     </div>
   </div>
@@ -720,17 +744,16 @@
     function setAuthMode(mode){
       authMode=mode==='register'?'register':'login';
       const registering=authMode==='register';
-      document.getElementById('auth-heading').textContent=registering?'Konto erstellen':'Anmelden';
-      document.getElementById('auth-subtitle').textContent=registering
-        ?'Erstelle dein Konto, um deine Arbeitszeiten sicher zu speichern.'
-        :'Melde dich an, um deine Arbeitszeiten anzusehen.';
+      document.getElementById('auth-card').classList.toggle('is-registering',registering);
+      document.getElementById('auth-login-header').hidden=registering;
+      document.getElementById('auth-register-header').hidden=!registering;
       document.getElementById('auth-submit-btn').textContent=registering?'Konto erstellen':'Anmelden';
-      document.getElementById('auth-mode-toggle').textContent=registering
-        ?'Schon ein Konto? Zur Anmeldung'
-        :'Noch kein Konto? Konto erstellen';
+      document.getElementById('auth-mode-toggle').hidden=registering;
       const password=document.getElementById('auth-password');
       password.autocomplete=registering?'new-password':'current-password';
       document.getElementById('auth-password-hint').hidden=!registering;
+      const heading=document.getElementById(registering?'auth-register-heading':'auth-heading');
+      if(document.getElementById('auth-overlay').style.display!=='none') heading.focus({preventScroll:true});
       setAuthMessage('');
     }
 
