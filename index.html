@@ -632,8 +632,6 @@
 
   .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px}
   .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center}
-  .auth-brand-mark{width:58px;height:58px;border-radius:18px;margin:0 auto 16px;background:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,122,255,.22);color:#fff}
-  .auth-brand-mark svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
   .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
   .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
   .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 27px;max-width:280px}
@@ -662,9 +660,6 @@
 <body>
   <div id="auth-overlay" class="auth-overlay">
     <div class="auth-card">
-      <div class="auth-brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 3v18M8 6.5c1.1-1.4 2.35-2 4-2s2.9.6 4 2M7 17.5c1.1 1.4 2.35 2 5 2s3.9-.6 5-2M6 10.2c1.2-1 2.5-1.4 4-1.4s2.8.4 4 1.4 2.5 1.4 4 1.4"/></svg>
-      </div>
       <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
       <div class="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert</div>
       <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
