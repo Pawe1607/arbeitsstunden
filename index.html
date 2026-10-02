@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Stundenheld">
+  <meta name="apple-mobile-web-app-title" content="Stundera">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#007AFF">
-  <title>Stundenheld Pro</title>
+  <title>Stundera</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -679,14 +679,14 @@
   <div id="auth-overlay" class="auth-overlay">
     <div id="auth-card" class="auth-card">
       <div class="auth-login-header" id="auth-login-header">
-        <img class="auth-app-icon" src="icon-180.png" alt="Stundenheld" /><div class="auth-logo">Stundenheld</div>
+        <img class="auth-app-icon" src="icon-180.png" alt="Stundera" /><div class="auth-logo">Stundera</div>
         <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
         <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
       </div>
       <div class="auth-register-header" id="auth-register-header" hidden>
         <button class="auth-back-button" type="button" onclick="setAuthMode('login')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Zur Anmeldung</span></button>
         <div class="auth-register-visual" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
-        <div class="auth-register-kicker">DEIN START MIT STUNDENHELD</div>
+        <div class="auth-register-kicker">DEIN START MIT STUNDERA</div>
         <h1 class="auth-heading" id="auth-register-heading" tabindex="-1">Konto erstellen</h1>
         <p class="auth-subtitle">Speichere deine Schichten sicher und greife überall darauf zu.</p>
         <div class="auth-register-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>Deine Einträge bleiben mit deinem Konto synchronisiert.</span></div>
@@ -873,7 +873,7 @@
       }
 
       migrationRunning=true;
-      const ok=confirm(`Auf diesem Gerät wurden ${localShifts.length} Schichten und ${localPresets.length} Vorlagen gefunden.\n\nSollen diese jetzt in deinen Stundenheld-Account übertragen werden? Deine lokalen Daten werden dabei nicht gelöscht.`);
+      const ok=confirm(`Auf diesem Gerät wurden ${localShifts.length} Schichten und ${localPresets.length} Vorlagen gefunden.\n\nSollen diese jetzt in deinen Stundera-Account übertragen werden? Deine lokalen Daten werden dabei nicht gelöscht.`);
       if(!ok){migrationRunning=false;return 'cancelled';}
 
       try{
@@ -1095,7 +1095,7 @@
         return `<section class="history-month" aria-label="${monthLabel(month)}"><header class="history-month-header"><h2>${monthLabel(month)}</h2><div class="history-month-meta"><strong class="history-month-total">${formatMoney(total)}</strong><span class="history-month-count">${count} ${count===1?'Schicht':'Schichten'}</span></div></header>${monthRows}</section>`;
       }).join('');
     }
-    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundenheld_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
+    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundera_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
     function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup lokal geladen. Bitte danach erneut anmelden bzw. die Datenmigration ausführen.');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
 
     supabaseClient.auth.getSession().then(async ({data})=>{
