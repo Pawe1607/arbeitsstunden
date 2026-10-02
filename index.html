@@ -1,1111 +1,237 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Stundera">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6faff">
+  <meta name="description" content="Mit Stundera hältst du Schichten, Arbeitszeit, Lohn und Trinkgeld einfach fest. Sieh deinen Verdienst auf einen Blick und finde jeden Monat wieder.">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#007AFF">
-  <title>Stundera</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --bg-color:#F2F2F7;
-      --blue-strong:#007AFF;
-      --blue:#0A84FF;
-      --blue-light:#5AC8FA;
-      --blue-soft:rgba(0,122,255,.10);
-      --card-bg:#FFFFFF;
-      --text-main:#111113;
-      --text-muted:#8A8A91;
-      --primary:var(--blue-strong);
-      --primary-soft:var(--blue-soft);
-      --border-color:rgba(60,60,67,.10);
-      --tab-bar-bg:rgba(255,255,255,.88);
-      --success:#34C759;
-      --danger:#FF3B30;
-      --safe-bottom:env(safe-area-inset-bottom,20px);
-      --safe-top:env(safe-area-inset-top,47px);
-      --shadow:0 8px 28px rgba(0,0,0,.055);
-    }
-
-    @media (prefers-color-scheme:dark) {
-      :root {
-        --bg-color:#000;
-        --card-bg:#1C1C1E;
-        --text-main:#FFF;
-        --text-muted:#98989D;
-        --primary-soft:rgba(10,132,255,.16);
-        --border-color:rgba(235,235,245,.13);
-        --tab-bar-bg:rgba(28,28,30,.88);
-        --shadow:0 8px 28px rgba(0,0,0,.28);
-      }
-    }
-
-    * {
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    body {
-      background:var(--bg-color);
-      color:var(--text-main);
-      padding-top:var(--safe-top);
-      padding-bottom:calc(145px + var(--safe-bottom));
-    }
-
-    .tab-content {
-      display:none;
-      padding:18px 18px 24px;
-      max-width:680px;
-      margin:auto;
-    }
-
-    .tab-content.active {
-      display:block;
-      animation:fadeIn .22s ease;
-    }
-
-    @keyframes fadeIn {
-      from {opacity:0;transform:translateY(4px)}
-      to {opacity:1;transform:translateY(0)}
-    }
-
-    h1 {
-      font-size:34px;
-      line-height:1.08;
-      font-weight:800;
-      margin:5px 0 18px 2px;
-      letter-spacing:-1.1px;
-    }
-
-    .filter-container {
-      margin:0 0 24px;
-    }
-
-    .dashboard-intro {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin:-7px 2px 20px;
-    }
-
-    .dashboard-intro p {
-      color:var(--text-muted);
-      font-size:14px;
-      line-height:1.4;
-    }
-
-    .dashboard-intro .primary-btn {
-      width:auto;
-      flex:0 0 auto;
-      margin:0;
-      padding:13px 15px;
-      white-space:nowrap;
-      box-shadow:0 5px 14px rgba(0,122,255,.18);
-    }
-
-    .dashboard-filter-label {
-      margin:0 2px 8px;
-    }
-
-    .entry-help {
-      color:var(--text-muted);
-      font-size:13px;
-      line-height:1.45;
-      margin:-7px 3px 18px;
-    }
-
-    .entry-message {
-      min-height:20px;
-      margin:0 2px 8px;
-      font-size:13px;
-      line-height:1.4;
-    }
-
-    .entry-message.error { color:var(--danger); }
-    .entry-message.success { color:var(--success); }
-
-    .empty-state {
-      padding:22px;
-      color:var(--text-muted);
-      font-size:14px;
-      line-height:1.45;
-      text-align:center;
-    }
-
-    [aria-invalid="true"] {
-      border-color:var(--danger) !important;
-      box-shadow:0 0 0 3px rgba(255,59,48,.12) !important;
-    }
-
-    .app-toast {
-      position:fixed;
-      left:18px;
-      right:18px;
-      bottom:calc(var(--safe-bottom) + 88px);
-      z-index:1001;
-      max-width:500px;
-      margin:auto;
-      padding:13px 16px;
-      border-radius:14px;
-      background:#222;
-      color:#fff;
-      font-size:14px;
-      font-weight:650;
-      text-align:center;
-      box-shadow:0 8px 24px rgba(0,0,0,.2);
-      opacity:0;
-      transform:translateY(8px);
-      pointer-events:none;
-      transition:opacity .18s ease, transform .18s ease;
-    }
-
-    .app-toast.visible {
-      opacity:1;
-      transform:translateY(0);
-    }
-
-    @media (max-width:380px) {
-      .dashboard-intro {
-        align-items:stretch;
-        flex-direction:column;
-      }
-
-      .dashboard-intro .primary-btn {
-        width:100%;
-      }
-    }
-
-    .section-title {
-      font-size:16px;
-      color:var(--text-main);
-      font-weight:700;
-      letter-spacing:-.2px;
-      margin:26px 2px 12px;
-    }
-
-    .overview-details {
-      margin-top:20px;
-      overflow:hidden;
-      border:1px solid var(--border-color);
-      border-radius:20px;
-      background:var(--card-bg);
-      box-shadow:var(--shadow);
-    }
-
-    .overview-details summary {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:16px 18px;
-      list-style:none;
-      cursor:pointer;
-      font-size:16px;
-      font-weight:700;
-    }
-
-    .overview-details summary::-webkit-details-marker { display:none; }
-    .overview-details summary::after {
-      content:"+";
-      margin-left:auto;
-      color:var(--primary);
-      font-size:21px;
-      font-weight:500;
-    }
-
-    .overview-details[open] summary::after { content:"−"; }
-    .overview-details summary small {
-      color:var(--text-muted);
-      font-size:12px;
-      font-weight:500;
-    }
-
-    .overview-details-content {
-      padding:0 16px 16px;
-      border-top:1px solid var(--border-color);
-    }
-
-    .overview-details-content .stats-grid { margin-top:14px; }
-    .overview-details-content .card { margin:14px 0 0; }
-
-    .history-month + .history-month {
-      border-top:1px solid var(--border-color);
-    }
-
-    .history-month-header {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px 18px;
-      background:rgba(120,120,128,.07);
-    }
-
-    .history-month-header h2 {
-      font-size:16px;
-      font-weight:700;
-      letter-spacing:-.2px;
-    }
-
-    .history-month-meta {
-      text-align:right;
-      flex:0 0 auto;
-    }
-
-    .history-month-total {
-      display:block;
-      font-size:14px;
-      font-weight:750;
-    }
-
-    .history-month-count {
-      display:block;
-      margin-top:2px;
-      color:var(--text-muted);
-      font-size:12px;
-    }
-
-    .stats-grid {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-bottom:12px;
-    }
-
-    .stat-box {
-      padding:17px;
-      border-radius:18px;
-      background:var(--card-bg);
-      border:1px solid var(--border-color);
-      box-shadow:var(--shadow);
-    }
-
-    .stat-box h3 {
-      font-size:12px;
-      text-transform:none;
-      margin-bottom:8px;
-      font-weight:650;
-      color:var(--text-muted);
-      letter-spacing:0;
-    }
-
-    .stat-box p {
-      font-size:21px;
-      font-weight:800;
-      letter-spacing:-.45px;
-    }
-
-    /* Deliberate blue hierarchy: four shades, one visual language. */
-    .stat-box.orange,
-    .stat-box.blue,
-    .stat-box.green,
-    .stat-box.purple {
-      background:var(--card-bg);
-    }
-
-    .stat-box.orange { border-top:3px solid var(--blue-strong); }
-    .stat-box.blue   { border-top:3px solid var(--blue); }
-    .stat-box.green  { border-top:3px solid var(--blue-light); }
-    .stat-box.purple { border-top:3px solid rgba(0,122,255,.38); }
-
-    .stat-box.orange p { color:var(--blue-strong); }
-    .stat-box.blue p   { color:var(--blue); }
-    .stat-box.green p  { color:#1597D4; }
-    .stat-box.purple p { color:#4F91C9; }
-
-    .total-card {
-      background:var(--primary);
-      color:#fff;
-      border-radius:20px;
-      padding:20px;
-      margin:12px 0 22px;
-      box-shadow:0 10px 25px rgba(0,122,255,.20);
-    }
-
-    .total-card .total-label {
-      font-size:13px;
-      text-transform:none;
-      letter-spacing:0;
-      font-weight:650;
-      opacity:.9;
-      margin-bottom:5px;
-    }
-
-    .total-card .total-value {
-      font-size:30px;
-      font-weight:850;
-      letter-spacing:-1px;
-    }
-
-    .total-card .total-sub {
-      margin-top:5px;
-      font-size:12px;
-      opacity:.78;
-    }
-
-    .card {
-      background:var(--card-bg);
-      border-radius:20px;
-      padding:20px;
-      margin-bottom:16px;
-      border:1px solid var(--border-color);
-      box-shadow:var(--shadow);
-    }
-
-    .input-group {
-      margin-bottom:20px;
-    }
-
-    label {
-      font-size:12px;
-      color:var(--text-muted);
-      margin-bottom:8px;
-      text-transform:none;
-      font-weight:650;
-      display:block;
-      padding-left:2px;
-      letter-spacing:0;
-    }
-
-    select.ios-select,
-    input {
-      background:var(--card-bg);
-      color:var(--text-main);
-      font-size:16px;
-      font-weight:600;
-      padding:14px;
-      border-radius:13px;
-      border:1px solid var(--border-color);
-      width:100%;
-      appearance:none;
-      outline:none;
-    }
-
-    input:focus,
-    select.ios-select:focus {
-      border-color:var(--primary);
-      box-shadow:0 0 0 3px var(--primary-soft);
-    }
-
-    .grid-2 {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-
-    button.primary-btn {
-      background:var(--primary);
-      color:#fff;
-      border:0;
-      padding:17px;
-      border-radius:15px;
-      font-size:16px;
-      font-weight:750;
-      width:100%;
-      box-shadow:0 7px 18px rgba(0,122,255,.20);
-      margin-top:5px;
-    }
-
-    button.sec-btn {
-      background:var(--primary-soft);
-      color:var(--primary);
-      border:0;
-      padding:14px;
-      border-radius:13px;
-      font-size:13px;
-      font-weight:750;
-      width:100%;
-    }
-
-    .tab-bar {
-      position:fixed;
-      bottom:calc(var(--safe-bottom) + 10px);
-      left:14px;
-      right:14px;
-      max-width:650px;
-      margin:auto;
-      background:var(--tab-bar-bg);
-      backdrop-filter:blur(25px);
-      -webkit-backdrop-filter:blur(25px);
-      border-radius:25px;
-      display:flex;
-      justify-content:space-around;
-      padding:9px 7px;
-      z-index:1000;
-      border:1px solid var(--border-color);
-      box-shadow:0 10px 35px rgba(0,0,0,.16);
-    }
-
-    .tab-item {
-      border:0;
-      background:transparent;
-      cursor:pointer;
-      flex:1;
-      text-align:center;
-      color:var(--text-muted);
-      font-size:10px;
-      font-weight:650;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      text-transform:none;
-      padding:5px 2px;
-      border-radius:17px;
-    }
-
-    .tab-item.active {
-      color:var(--primary);
-      background:var(--primary-soft);
-    }
-
-    .tab-item:focus-visible,
-    button.primary-btn:focus-visible,
-    button.sec-btn:focus-visible {
-      outline:3px solid var(--primary);
-      outline-offset:3px;
-    }
-
-    .tab-icon svg {
-      width:22px;
-      height:22px;
-      margin-bottom:3px;
-      stroke-width:2.25;
-    }
-
-    .history-item,
-    .preset-item {
-      background:var(--card-bg);
-      padding:18px;
-      border-bottom:1px solid var(--border-color);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-
-    .preset-item:first-child {
-      border-radius:20px 20px 0 0;
-    }
-
-    .preset-item:last-child {
-      border-bottom:0;
-      border-radius:0 0 20px 20px;
-    }
-
-    .history-item:last-child {
-      border-bottom:0;
-      border-radius:0;
-    }
-
-    .history-item {
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .action-links {
-      display:flex;
-      gap:14px;
-      margin-top:8px;
-      justify-content:flex-end;
-    }
-
-    .delete-link,
-    .edit-link {
-      min-height:38px;
-      padding:8px 4px;
-      border:0;
-      background:transparent;
-      font-family:inherit;
-      font-size:12px;
-      font-weight:750;
-      text-transform:none;
-      cursor:pointer;
-    }
-
-    .delete-link { color:var(--danger); }
-    .edit-link { color:var(--primary); }
-
-    .history-edit {
-      width:100%;
-      padding-top:16px;
-      border-top:1px solid var(--border-color);
-    }
-
-    .history-edit .input-group { margin-bottom:13px; }
-    .history-edit input { font-size:15px; padding:11px; }
-    .history-edit button { margin-top:0; }
-    .history-edit .cancel-btn { margin-top:9px; }
-
-    #preset-list,
-    #history-list {
-      box-shadow:var(--shadow);
-    }
-
-    .card:has(canvas) { padding:18px 16px 14px; position:relative; }
-    .chart-heading { font-size:14px; font-weight:700; margin:0 2px 8px; }
-    .card canvas { height:240px !important; max-height:240px; }
-
-    /* Subtle iOS-style motion */
-    @media (prefers-reduced-motion:no-preference) {
-      .tab-content.active {
-        animation:pageIn .24s cubic-bezier(.22,.8,.3,1);
-      }
-
-      @keyframes pageIn {
-        from { opacity:0; transform:translateY(7px); }
-        to { opacity:1; transform:translateY(0); }
-      }
-
-      .stat-box,
-      .total-card,
-      .card,
-      .history-item,
-      .preset-item {
-        animation:cardIn .38s cubic-bezier(.22,.8,.3,1) both;
-      }
-
-      .stat-box:nth-child(1) { animation-delay:.02s; }
-      .stat-box:nth-child(2) { animation-delay:.05s; }
-      .stat-box:nth-child(3) { animation-delay:.08s; }
-      .stat-box:nth-child(4) { animation-delay:.11s; }
-      .total-card { animation-delay:.08s; }
-      .card { animation-delay:.13s; }
-
-      @keyframes cardIn {
-        from { opacity:0; transform:translateY(6px); }
-        to { opacity:1; transform:translateY(0); }
-      }
-
-      button.primary-btn,
-      button.sec-btn,
-      .tab-item,
-      .edit-link,
-      .delete-link {
-        transition:transform .16s ease, opacity .16s ease, background-color .16s ease;
-      }
-
-      button.primary-btn:active,
-      button.sec-btn:active,
-      .tab-item:active {
-        transform:scale(.97);
-      }
-
-      .edit-link:active,
-      .delete-link:active {
-        opacity:.55;
-      }
-
-      .total-card {
-        transition:transform .22s ease, box-shadow .22s ease;
-      }
-
-      .total-card:active {
-        transform:scale(.985);
-      }
-
-      .history-item {
-        transition:background-color .18s ease, transform .18s ease;
-      }
-
-      select.ios-select {
-        transition:border-color .18s ease, box-shadow .18s ease;
-      }
-    }
-
-    @media (prefers-reduced-motion:reduce) {
-      *, *::before, *::after {
-        animation-duration:.01ms !important;
-        animation-iteration-count:1 !important;
-        transition-duration:.01ms !important;
-        scroll-behavior:auto !important;
-      }
-    }
-
-  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
-  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}
-  .auth-card.is-registering{border-color:rgba(0,122,255,.26);background:linear-gradient(180deg,rgba(0,122,255,.055),transparent 48%),var(--card-bg);box-shadow:0 18px 52px rgba(0,122,255,.14)}
-  .auth-login-header,.auth-register-header{animation:authViewEnter .26s ease both}
-  @keyframes authViewEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
-  .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
-  .auth-card .auth-heading{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.45px;margin:18px 0 7px}
-  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 24px;max-width:280px}
-  .auth-back-button{display:flex;align-items:center;gap:8px;margin:-8px 0 0;padding:8px 0;border:0;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
-  .auth-back-button svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .auth-register-visual{width:56px;height:56px;display:flex;align-items:center;justify-content:center;margin:15px auto 12px;border-radius:18px;background:var(--primary-soft);color:var(--primary)}
-  .auth-register-visual svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .auth-register-kicker{color:var(--primary);font-size:11px;font-weight:750;letter-spacing:.09em;margin-bottom:7px}
-  .auth-register-header .auth-heading{margin:0 0 8px}
-  .auth-register-header .auth-subtitle{margin-bottom:15px}
-  .auth-register-note{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:var(--primary-soft);font-size:13px;line-height:1.35;text-align:left}
-  .auth-register-note svg{width:18px;height:18px;flex:0 0 auto;color:var(--primary);stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .auth-password-hint{font-size:12px;color:var(--text-muted);margin:-8px 0 15px;text-align:left}
-  .auth-mode-toggle{display:block;width:100%;margin-top:13px;padding:9px;border:0;border-radius:10px;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
-  .auth-mode-toggle[hidden]{display:none}
-  .auth-mode-toggle:focus-visible,.auth-back-button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
-  .auth-card .auth-heading:focus{outline:none}
-  @media(max-height:700px){.auth-overlay{align-items:flex-start}}
-  .auth-card .input-group{text-align:left;margin-bottom:16px}
-  .auth-card label{margin-bottom:8px}
-  .auth-card input{padding:14px 15px;border-radius:14px}
-  .auth-card .primary-btn{margin-top:4px}
-  .auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}
-  .auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}
-  .auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}
-  .account-card{display:flex;justify-content:space-between;align-items:center;gap:15px}.account-card>div:first-child{min-width:0;flex:1}.account-card #account-email{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.account-card .sec-btn{flex:0 0 auto;white-space:nowrap}.auth-locked{overflow:hidden}
-@media (max-width:430px){
-  .account-card{gap:12px;padding:16px}
-  .account-card #account-email{max-width:calc(100vw - 170px)}
-  .account-card .sec-btn{padding:12px 13px;font-size:12px}
-}
-@media (max-width:360px){
-  .account-card{flex-direction:column;align-items:stretch}
-  .account-card #account-email{max-width:100%}
-  .account-card .sec-btn{width:100%!important}
-}
-  @media (prefers-color-scheme:dark){.auth-overlay{background:rgba(0,0,0,.88)}}
-</style>
+  <link rel="stylesheet" href="site.css">
+  <script>document.documentElement.classList.add('js-motion');</script>
+  <title>Stundera – Arbeitszeit einfach im Blick</title>
 </head>
 <body>
-  <div id="auth-overlay" class="auth-overlay">
-    <div id="auth-card" class="auth-card">
-      <div class="auth-login-header" id="auth-login-header">
-        <img class="auth-app-icon" src="icon-180.png" alt="Stundera" /><div class="auth-logo">Stundera</div>
-        <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
-        <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
-      </div>
-      <div class="auth-register-header" id="auth-register-header" hidden>
-        <button class="auth-back-button" type="button" onclick="setAuthMode('login')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Zur Anmeldung</span></button>
-        <div class="auth-register-visual" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
-        <div class="auth-register-kicker">DEIN START MIT STUNDERA</div>
-        <h1 class="auth-heading" id="auth-register-heading" tabindex="-1">Konto erstellen</h1>
-        <p class="auth-subtitle">Speichere deine Schichten sicher und greife überall darauf zu.</p>
-        <div class="auth-register-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>Deine Einträge bleiben mit deinem Konto synchronisiert.</span></div>
-      </div>
-      <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
-      <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Passwort"></div>
-      <div class="auth-password-hint" id="auth-password-hint" hidden>Mindestens 6 Zeichen</div>
-      <button id="auth-submit-btn" class="primary-btn" type="button" onclick="submitAuth()">Anmelden</button>
-      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Kostenlos erstellen</button>
-      <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
+<a class="skip-link" href="#main">Zum Inhalt</a>
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="/" aria-label="Stundera – Startseite">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7v5l3.4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 4.5h4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span>Stundera</span>
+    </a>
+    <nav class="main-nav" aria-label="Hauptnavigation">
+      <a href="#funktionen">Funktionen</a>
+      <a href="#einblicke">Einblicke</a>
+      <a href="#so-gehts">So funktioniert’s</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="login-link" href="https://app.stundera.de/">Einloggen</a>
+      <a class="button button-primary" href="https://app.stundera.de/">App öffnen <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
+    <button class="menu-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
   </div>
+  <nav id="mobile-menu" class="mobile-menu container" aria-label="Mobile Navigation" hidden>
+    <a href="#funktionen">Funktionen</a><a href="#einblicke">Einblicke</a><a href="#so-gehts">So funktioniert’s</a>
+    <a class="button button-primary" href="https://app.stundera.de/">Jetzt Stundera öffnen</a>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy reveal">
+        <span class="eyebrow"><span class="eyebrow-dot"></span>Arbeitszeit, leicht gemacht</span>
+        <h1>Deine Schichten.<br><span>Dein Überblick.</span></h1>
+        <p>Trage Arbeitszeiten und Trinkgeld schnell ein. Stundera rechnet mit und zeigt dir, was du diesen Monat gearbeitet und verdient hast.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://app.stundera.de/">Jetzt starten <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="button button-secondary" href="https://app.stundera.de/">Ich habe schon ein Konto</a>
+        </div>
+        <p class="hero-note">Starten oder einloggen – direkt in der Stundera-App.</p>
+        <div class="hero-points" aria-label="Das bietet Stundera">
+          <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Schichten erfassen</span>
+          <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verdienst im Blick</span>
+          <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monat für Monat sortiert</span>
+        </div>
+      </div>
+      <div class="hero-visual reveal delay-1" role="img" aria-label="Beispielansicht der Stundera-Übersicht mit Arbeitsstunden, Verdienst und Monatsdiagramm">
+        <div class="hero-glow"></div>
+        <div class="floating-chip chip-one"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><small>Arbeitszeit</small><strong>76,5 Stunden</strong></span></div>
+        <div class="dashboard-preview">
+          <div class="demo-top"><div class="demo-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7v5l3.4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 4.5h4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Stundera</div><div class="demo-month">Oktober 2026 <span>⌄</span></div></div>
+          <div class="demo-greeting">DEIN MONAT IM ÜBERBLICK</div><div class="demo-title">Gut gearbeitet.</div>
+          <div class="demo-stats"><div class="demo-stat"><small>Arbeitszeit</small><strong>76,5 Std.</strong></div><div class="demo-stat"><small>Arbeitslohn</small><strong>1.124 €</strong></div><div class="demo-stat"><small>Trinkgeld</small><strong>68 €</strong></div></div>
+          <div class="demo-total"><span><small>Gesamtverdienst</small><strong>1.192,75 €</strong></span><span class="period">im Oktober</span></div>
+          <div class="demo-chart"><div class="demo-chart-head"><span>Verdienst im Monat</span><span>Beispiel</span></div><div class="chart-area" aria-hidden="true"><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i><i class="chart-bar"></i></div><div class="demo-chart-foot"><span>01. Okt.</span><span>15. Okt.</span><span>31. Okt.</span></div></div>
+          <div class="demo-shifts"><span>Schichten eingetragen</span><strong>12</strong></div>
+        </div>
+        <div class="floating-chip chip-two"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5h14M5 12h14M5 19h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="3" cy="5" r=".8" fill="currentColor"/><circle cx="3" cy="12" r=".8" fill="currentColor"/><circle cx="3" cy="19" r=".8" fill="currentColor"/></svg><span><small>Dein Verlauf</small><strong>Alles wiederfinden</strong></span></div>
+      </div>
+    </div>
+  </section>
 
-  <div id="tab-dashboard" class="tab-content active">
-    <h1>Übersicht</h1>
-    <div class="dashboard-intro"><p>Arbeitszeit und Verdienst auf einen Blick.</p><button type="button" class="primary-btn" onclick="switchTab('add',document.getElementById('nav-add'))">Schicht eintragen</button></div>
-    <div class="filter-container"><label class="dashboard-filter-label" for="dashboard-month-filter">Monat anzeigen</label><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
-    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Arbeitslohn + Trinkgeld</div></div><div class="card"><div class="chart-heading">Verdienst im Monat</div><canvas id="monthChart" role="img" aria-label="Verdienst je Schicht im ausgewählten Monat"></canvas></div>
-    <details class="overview-details"><summary><span>Insgesamt</span><small>Alle bisherigen Schichten</small></summary><div class="overview-details-content"><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="a-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="a-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="a-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="a-shifts">0</p></div></div><div class="card"><div class="chart-heading">Verdienst pro Monat</div><canvas id="allTimeChart" role="img" aria-label="Verdienst pro Monat insgesamt"></canvas></div></div></details>
+  <section id="funktionen" class="section">
+    <div class="container">
+      <div class="section-heading reveal">
+        <span class="eyebrow"><span class="eyebrow-dot"></span>Weniger suchen, mehr wissen</span>
+        <h2>Alles Wichtige zu deinen Schichten an einem Ort.</h2>
+        <p>Stundera macht aus einzelnen Einträgen einen klaren Überblick – vom Feierabend bis zum Monatsende.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card reveal"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3.2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Schicht schnell eintragen</h3><p>Beginn, Ende, Pause und Stundenlohn eingeben – oder bei einem festen Betrag direkt den Verdienst notieren.</p></article>
+        <article class="feature-card reveal delay-1"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h16M8 16v-5m4 5V7m4 9V9m4 7v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Verdienst sofort sehen</h3><p>Arbeitsstunden, Lohn, Trinkgeld und Gesamtverdienst werden für den ausgewählten Monat übersichtlich zusammengefasst.</p></article>
+        <article class="feature-card reveal delay-2"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13H4V6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Monate klar getrennt</h3><p>Finde frühere Schichten im Verlauf wieder, filtere nach Monat und bearbeite oder entferne einen Eintrag.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="einblicke" class="section section-soft">
+    <div class="container">
+      <div class="section-heading reveal">
+        <span class="eyebrow"><span class="eyebrow-dot"></span>So sieht’s aus</span>
+        <h2>Ein kurzer Blick genügt.</h2>
+        <p>Die Vorschauen zeigen beispielhafte Ansichten mit erfundenen Werten – deine eigenen Schichten bleiben in deinem Konto.</p>
+      </div>
+      <div class="showcase reveal">
+        <div class="showcase-copy">
+          <span class="eyebrow">01 · EINTRAGEN</span>
+          <h3>Von der Schicht zur Zahl. Ganz ohne Kopfrechnen.</h3>
+          <p>Trage deine Arbeitszeit ein und lass Stundera die Dauer sowie den Verdienst berechnen. Trinkgeld kommt direkt dazu.</p>
+          <ul class="showcase-points">
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Start, Ende und Pause festhalten</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Stundenlohn oder festen Betrag wählen</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Trinkgeld direkt ergänzen</li>
+          </ul>
+        </div>
+        <div class="showcase-visual">
+          <div class="mock-form" role="img" aria-label="Beispielansicht zum Eintragen einer Spätschicht">
+            <span class="mock-caption">BEISPIEL · SCHICHT EINTRAGEN</span>
+            <div class="mock-window-top"><strong>Neue Schicht</strong><span>Oktober 2026</span></div>
+            <label class="mock-label">Art der Schicht</label><div class="mock-input">Nach Stunden <em>⌄</em></div>
+            <label class="mock-label">Arbeitstag</label><div class="mock-input">Donnerstag, 1. Oktober <em>▦</em></div>
+            <div class="mock-input-row"><div><label class="mock-label">Startzeit</label><div class="mock-input">16:00</div></div><div><label class="mock-label">Endzeit</label><div class="mock-input">22:15</div></div></div>
+            <div class="mock-input-row"><div><label class="mock-label">Pause</label><div class="mock-input">30 Min.</div></div><div><label class="mock-label">Stundenlohn</label><div class="mock-input">14,00 €</div></div></div>
+            <div class="mock-result"><span>Voraussichtlicher Lohn</span><strong>80,50 €</strong></div>
+            <div class="mock-save">Schicht speichern</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase reveal" id="so-gehts">
+        <div class="showcase-copy">
+          <span class="eyebrow">02 · ÜBERBLICK</span>
+          <h3>Sieh, was sich über den Monat ansammelt.</h3>
+          <p>Arbeitszeit, Arbeitslohn, Trinkgeld und Schichtanzahl stehen zusammen. Das Diagramm zeigt, wie sich dein Verdienst entwickelt.</p>
+          <ul class="showcase-points">
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monatsübersicht und Gesamtverlauf</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Stunden und Verdienst getrennt im Blick</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monat auswählen und Werte vergleichen</li>
+          </ul>
+        </div>
+        <div class="showcase-visual">
+          <div class="mock-history" role="img" aria-label="Beispielansicht des nach Monaten sortierten Schichtverlaufs">
+            <span class="mock-caption">BEISPIEL · DEIN VERLAUF</span>
+            <div class="mock-history-head"><strong>Schichten</strong><span>Monat filtern&nbsp; ⌄</span></div>
+            <div class="mock-month">
+              <div class="mock-month-title"><strong>September 2026</strong><span>5 Schichten · 421,20 €</span></div>
+              <div class="mock-row"><div><small>MO, 28. SEP.</small><strong>16:00–22:15 · 5,75 Std.</strong></div><div class="right"><small>GESAMT</small><strong>88,50 €</strong></div></div>
+              <div class="mock-row"><div><small>DO, 24. SEP.</small><strong>17:00–23:00 · 5,50 Std.</strong></div><div class="right"><small>GESAMT</small><strong>82,00 €</strong></div></div>
+              <div class="mock-row"><div><small>DI, 22. SEP.</small><strong>15:30–21:45 · 5,75 Std.</strong></div><div class="right"><small>GESAMT</small><strong>91,70 €</strong></div></div>
+            </div>
+            <p style="margin:12px 2px 0;color:#8794a5;font-size:10px">Beispieldaten – Ansichten können sich weiterentwickeln.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase reveal">
+        <div class="showcase-copy">
+          <span class="eyebrow">03 · VORLAGEN &amp; SICHERUNG</span>
+          <h3>Wiederkehrendes schneller erfassen.</h3>
+          <p>Speichere typische Schichten als Vorlage. Mit deinem Konto werden Einträge synchronisiert; zusätzlich kannst du ein Backup exportieren oder wiederherstellen.</p>
+          <ul class="showcase-points">
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vorlagen für wiederkehrende Zeiten</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Synchronisierung über dein Konto</li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Backup herunterladen oder importieren</li>
+          </ul>
+        </div>
+        <div class="showcase-visual">
+          <div class="mock-templates" role="img" aria-label="Beispielansicht von gespeicherten Schichtvorlagen">
+            <span class="mock-caption">BEISPIEL · DEINE VORLAGEN</span>
+            <div class="mock-window-top"><strong>Häufige Schichten</strong><span>Bearbeiten</span></div>
+            <div class="mock-template-wrap">
+              <div class="template-card"><span class="template-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><strong>Frühschicht</strong><span>07:00–14:30 · 30 Min. Pause</span></div>
+              <div class="template-card"><span class="template-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><strong>Spätschicht</strong><span>15:00–22:00 · 30 Min. Pause</span></div>
+              <div class="template-card"><span class="template-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><strong>Wochenende</strong><span>10:00–18:00 · 45 Min. Pause</span></div>
+              <div class="template-card"><span class="template-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><strong>Neue Vorlage</strong><span>Eigene Zeiten speichern</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sync-heading">
+    <div class="container showcase">
+      <div class="showcase-copy reveal">
+        <span class="eyebrow">IMMER DABEI</span>
+        <h3 id="sync-heading">Am Handy eintragen. Später am Computer nachsehen.</h3>
+        <p>Mit deinem Stundera-Konto werden deine Schichten über die App hinweg synchronisiert. Die Oberfläche passt sich an kleine und große Bildschirme an.</p>
+        <ul class="showcase-points">
+          <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Für Handy und Desktop gestaltet</li>
+          <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Einträge mit Konto synchronisieren</li>
+        </ul>
+      </div>
+      <div class="showcase-visual reveal delay-1">
+        <div class="sync-card" role="img" aria-label="Schematische Darstellung der Synchronisierung zwischen verschiedenen Geräten">
+          <div class="sync-orbit">
+            <span class="sync-device one"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.3" stroke="currentColor" stroke-width="1.7"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <span class="sync-device two"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 21h8m-4-3v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+            <span class="sync-device three"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 17.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <span class="sync-center"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 8a5 5 0 0 1 8.5-3.5L18 7m-2 0h2V5M17 16a5 5 0 0 1-8.5 3.5L6 17m2 0H6v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="sync-label">Ein Konto. Deine Schichten auf deinen Geräten.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container">
+      <div class="section-heading reveal"><span class="eyebrow"><span class="eyebrow-dot"></span>Einfach anfangen</span><h2>Deine nächste Schicht ist schnell eingetragen.</h2><p>Öffne die App, melde dich an oder erstelle ein Konto und halte deine Arbeitszeit direkt fest.</p></div>
+      <div class="closing"><div class="closing-card reveal"><div class="closing-copy"><h2>Mach Schluss mit dem Nachrechnen.</h2><p>Arbeitszeit, Verdienst und Verlauf – übersichtlich an einem Ort.</p></div><a class="button" href="https://app.stundera.de/">Stundera jetzt öffnen <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-row">
+    <a class="footer-brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7v5l3.4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 4.5h4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Stundera</a>
+    <span class="footer-note">Deine Arbeitszeit, klar im Blick.</span>
+    <nav class="footer-links" aria-label="Rechtliches"><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a><a href="https://app.stundera.de/">Einloggen</a></nav>
   </div>
-  <div id="tab-add" class="tab-content"><h1>Schicht eintragen</h1><p class="entry-help">Wähle „Nach Stunden“ für Zeiten und Stundenlohn oder „Fester Betrag“ für eine direkte Eingabe.</p><div class="card">
-    <div class="input-group"><label for="entry-mode">Art der Schicht</label><select id="entry-mode" class="ios-select" onchange="toggleEntryMode()"><option value="normal">Nach Stunden</option><option value="pauschal">Fester Betrag</option></select></div>
-    <div class="input-group"><label for="shift-date">Arbeitstag</label><input type="date" id="shift-date"></div>
-    <div id="preset-container" class="input-group"><label for="preset-select">Vorlage (optional)</label><select id="preset-select" class="ios-select" onchange="applyPreset()"><option value="">Keine Vorlage</option></select></div>
-    <div id="normal-fields"><div class="grid-2"><div class="input-group"><label for="time-start">Startzeit</label><input type="time" id="time-start"></div><div class="input-group"><label for="time-end">Endzeit</label><input type="time" id="time-end"></div></div><div class="grid-2"><div class="input-group"><label for="shift-break">Pause (Minuten)</label><input type="number" id="shift-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="hourly-wage">Stundenlohn (€)</label><input type="number" id="hourly-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div></div>
-    <div id="pauschal-fields" style="display:none;"><div class="input-group"><label for="flat-amount">Fester Verdienst (€)</label><input type="number" id="flat-amount" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 100,00"></div></div><div class="input-group"><label for="shift-tip">Trinkgeld (€)</label><input type="number" id="shift-tip" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div><div id="entry-message" class="entry-message" role="status" aria-live="polite"></div><button id="save-shift-btn" class="primary-btn" type="button" onclick="saveShift()">Schicht speichern</button>
-  </div></div>
-  <div id="tab-presets" class="tab-content"><h1>Mehr</h1><div class="card account-card"><div><div class="section-title" style="margin-top:0">Konto</div><strong id="account-email"></strong><div class="auth-small">Cloud-Synchronisierung aktiv</div></div><button class="sec-btn" style="width:auto" onclick="logoutUser()">ABMELDEN</button></div><div class="section-title">Neue Schichtvorlage</div><div class="card"><div class="input-group"><label for="p-name">Name der Vorlage</label><input type="text" id="p-name" placeholder="z. B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label for="p-start">Startzeit</label><input type="time" id="p-start"></div><div class="input-group"><label for="p-end">Endzeit</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label for="p-break">Pause (Minuten)</label><input type="number" id="p-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="p-wage">Stundenlohn (€)</label><input type="number" id="p-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div><button class="primary-btn" type="button" onclick="savePreset()">Vorlage speichern</button></div><div class="section-title">Meine Vorlagen</div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Daten sichern</div><div class="card"><div class="grid-2"><button class="sec-btn" type="button" onclick="exportData()">Backup herunterladen</button><button class="sec-btn" type="button" onclick="document.getElementById('importFile').click()">Backup importieren</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
-  <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><label class="dashboard-filter-label" for="history-month-filter">Monat filtern</label><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
-  <nav class="tab-bar" aria-label="Hauptnavigation"><button class="tab-item active" id="nav-dashboard" type="button" aria-current="page" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</button><button class="tab-item" id="nav-add" type="button" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</button><button class="tab-item" id="nav-history" type="button" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</button><button class="tab-item" id="nav-presets" type="button" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Mehr</button></nav>
-  <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
-  <!-- Supabase: client-side browser library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = 'https://ejjferwujxxqfxnobexg.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NVgNJZpGHviK15YnNFzqjg_J_OqpXdT';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-    let shifts = JSON.parse(localStorage.getItem('myShifts')) || [];
-    let presets = JSON.parse(localStorage.getItem('myPresets')) || [];
-    let mChart=null,aChart=null;
-    let currentUser=null;
-    let migrationRunning=false;
-
-    function localDataExists(){
-      return shifts.length>0 || presets.length>0;
-    }
-
-    function showAuth(show=true){
-      document.getElementById('auth-overlay').style.display=show?'flex':'none';
-      document.body.classList.toggle('auth-locked',show);
-    }
-
-    let authMode='login';
-
-    function setAuthMode(mode){
-      authMode=mode==='register'?'register':'login';
-      const registering=authMode==='register';
-      document.getElementById('auth-card').classList.toggle('is-registering',registering);
-      document.getElementById('auth-login-header').hidden=registering;
-      document.getElementById('auth-register-header').hidden=!registering;
-      document.getElementById('auth-submit-btn').textContent=registering?'Konto erstellen':'Anmelden';
-      document.getElementById('auth-mode-toggle').hidden=registering;
-      const password=document.getElementById('auth-password');
-      password.autocomplete=registering?'new-password':'current-password';
-      document.getElementById('auth-password-hint').hidden=!registering;
-      const heading=document.getElementById(registering?'auth-register-heading':'auth-heading');
-      if(document.getElementById('auth-overlay').style.display!=='none') heading.focus({preventScroll:true});
-      setAuthMessage('');
-    }
-
-    function toggleAuthMode(){
-      setAuthMode(authMode==='login'?'register':'login');
-    }
-
-    function submitAuth(){
-      if(authMode==='register') registerUser();
-      else loginUser();
-    }
-
-    function setAuthMessage(message,type='info'){
-      const el=document.getElementById('auth-message');
-      el.textContent=message||'';
-      el.className='auth-message '+type;
-    }
-
-    async function registerUser(){
-      const email=document.getElementById('auth-email').value.trim();
-      const password=document.getElementById('auth-password').value;
-      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
-      if(password.length<6){setAuthMessage('Das Passwort muss mindestens 6 Zeichen haben.','error');return;}
-      setAuthMessage('Konto wird erstellt …');
-      const {data,error}=await supabaseClient.auth.signUp({email,password});
-      if(error){setAuthMessage(error.message,'error');return;}
-      if(data.session){
-        await finishLogin(data.session.user);
-      }else{
-        setAuthMode('login');
-        setAuthMessage('Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.','success');
-      }
-    }
-
-    async function loginUser(){
-      const email=document.getElementById('auth-email').value.trim();
-      const password=document.getElementById('auth-password').value;
-      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
-      setAuthMessage('Anmeldung läuft …');
-      const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-      if(error){setAuthMessage(error.message,'error');return;}
-      await finishLogin(data.user);
-    }
-
-    async function logoutUser(){
-      await supabaseClient.auth.signOut();
-      currentUser=null;
-      setAuthMode('login');
-      showAuth(true);
-      setAuthMessage('Abgemeldet.','info');
-    }
-
-    async function finishLogin(user){
-      currentUser=user;
-      setAuthMessage('');
-
-      // Erst lokale Daten sicher in die Cloud übertragen. Erst danach darf die Cloud
-      // die lokale Anzeige ersetzen. So gehen bestehende localStorage-Daten nicht verloren.
-      const migrationResult=await migrateLocalDataIfNeeded();
-      if(migrationResult==='cancelled'){
-        // Bei Abbruch bleiben die lokalen Daten sichtbar und unangetastet.
-        showAuth(false);
-      }else if(migrationResult==='error'){
-        // Bei einem Fehler ebenfalls niemals lokale Daten durch einen leeren Cloud-Stand ersetzen.
-        showAuth(false);
-      }else{
-        showAuth(false);
-        await loadCloudData();
-      }
-
-      updateMonthDropdowns();
-      updateDashboard();
-      renderPresets();
-      renderHistory();
-      updateAccountUI();
-    }
-
-    async function loadCloudData(){
-      if(!currentUser)return false;
-      const [shiftResult,presetResult]=await Promise.all([
-        supabaseClient.from('shifts').select('*').eq('user_id',currentUser.id).order('date',{ascending:true}),
-        supabaseClient.from('presets').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:true})
-      ]);
-
-      if(shiftResult.error || presetResult.error){
-        console.error(shiftResult.error||presetResult.error);
-        alert('Die Cloud-Daten konnten nicht geladen werden. Deine lokalen Daten bleiben erhalten.');
-        return false;
-      }
-
-      // Erst wenn BEIDE Abfragen erfolgreich waren, ersetzen wir den lokalen Cache.
-      shifts=(shiftResult.data||[]).map(row=>({
-        id:row.id,legacyId:row.legacy_id,date:row.date,tip:Number(row.tip)||0,hours:Number(row.hours)||0,
-        wageEarned:Number(row.wage_earned)||0,type:row.type||'normal',start:row.start?String(row.start).slice(0,5):'',
-        end:row.end?String(row.end).slice(0,5):'',break:Number(row.break)||0,wage:Number(row.wage)||0
-      }));
-      presets=(presetResult.data||[]).map(row=>({
-        id:row.id,legacyId:row.legacy_id,name:row.name,start:row.start?String(row.start).slice(0,5):'',end:row.end?String(row.end).slice(0,5):'',
-        break:Number(row.break)||0,wage:Number(row.wage)||0
-      }));
-      localStorage.setItem('myShifts',JSON.stringify(shifts));
-      localStorage.setItem('myPresets',JSON.stringify(presets));
-      return true;
-    }
-
-    async function migrateLocalDataIfNeeded(){
-      if(!currentUser||migrationRunning)return 'ok';
-      const migrationKey='stundenheldMigration_'+currentUser.id;
-      if(localStorage.getItem(migrationKey)==='done')return 'ok';
-
-      const localShifts=JSON.parse(localStorage.getItem('myShifts'))||[];
-      const localPresets=JSON.parse(localStorage.getItem('myPresets'))||[];
-      if(!localShifts.length&&!localPresets.length){
-        localStorage.setItem(migrationKey,'done');
-        return 'ok';
-      }
-
-      migrationRunning=true;
-      const ok=confirm(`Auf diesem Gerät wurden ${localShifts.length} Schichten und ${localPresets.length} Vorlagen gefunden.\n\nSollen diese jetzt in deinen Stundera-Account übertragen werden? Deine lokalen Daten werden dabei nicht gelöscht.`);
-      if(!ok){migrationRunning=false;return 'cancelled';}
-
-      try{
-        // Bereits übertragene Datensätze anhand der alten localStorage-ID erkennen.
-        const [existingShiftsResult,existingPresetsResult]=await Promise.all([
-          supabaseClient.from('shifts').select('legacy_id').eq('user_id',currentUser.id),
-          supabaseClient.from('presets').select('legacy_id').eq('user_id',currentUser.id)
-        ]);
-        if(existingShiftsResult.error)throw existingShiftsResult.error;
-        if(existingPresetsResult.error)throw existingPresetsResult.error;
-
-        const existingShiftIds=new Set((existingShiftsResult.data||[]).map(r=>String(r.legacy_id)).filter(Boolean));
-        const existingPresetIds=new Set((existingPresetsResult.data||[]).map(r=>String(r.legacy_id)).filter(Boolean));
-
-        const shiftRows=localShifts.map((s,index)=>{
-          const legacyId=s.id ?? Date.now()+index;
-          if(s.id==null)s.id=legacyId;
-          return {
-            user_id:currentUser.id,legacy_id:legacyId,date:s.date,start:s.start||null,end:s.end||null,
-            break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,
-            wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type||'normal'
-          };
-        }).filter(row=>!existingShiftIds.has(String(row.legacy_id)));
-
-        const presetRows=localPresets.map((p,index)=>{
-          const legacyId=p.id ?? Date.now()+index;
-          if(p.id==null)p.id=legacyId;
-          return {
-            user_id:currentUser.id,legacy_id:legacyId,name:p.name,start:p.start||null,end:p.end||null,
-            break:Number(p.break)||0,wage:Number(p.wage)||0
-          };
-        }).filter(row=>!existingPresetIds.has(String(row.legacy_id)));
-
-        if(shiftRows.length){
-          const {error}=await supabaseClient.from('shifts').insert(shiftRows);
-          if(error)throw error;
+</footer>
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.setAttribute('aria-label', expanded ? 'Menü öffnen' : 'Menü schließen');
+    mobileMenu.hidden = expanded;
+  });
+  const revealItems = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver((entries, currentObserver) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          currentObserver.unobserve(entry.target);
         }
-        if(presetRows.length){
-          const {error}=await supabaseClient.from('presets').insert(presetRows);
-          if(error)throw error;
-        }
-
-        // Lokale Daten erst jetzt aktualisieren – niemals vorher löschen.
-        localStorage.setItem('myShifts',JSON.stringify(localShifts));
-        localStorage.setItem('myPresets',JSON.stringify(localPresets));
-        localStorage.setItem(migrationKey,'done');
-        alert('Migration erfolgreich. Deine bisherigen Daten sind jetzt in der Cloud gespeichert.');
-        return 'ok';
-      }catch(error){
-        console.error(error);
-        alert('Die Übertragung konnte nicht vollständig abgeschlossen werden. Deine lokalen Daten wurden NICHT gelöscht.');
-        return 'error';
-      }finally{migrationRunning=false;}
-    }
-
-    function updateAccountUI(){
-      const el=document.getElementById('account-email');
-      if(el)el.textContent=currentUser?currentUser.email:'';
-    }
-
-    let toastTimeout;
-    function showToast(message){
-      const toast=document.getElementById('app-toast');
-      toast.textContent=message;
-      toast.classList.add('visible');
-      window.clearTimeout(toastTimeout);
-      toastTimeout=window.setTimeout(()=>toast.classList.remove('visible'),2600);
-    }
-
-    function setEntryMessage(message,type='info'){
-      const el=document.getElementById('entry-message');
-      el.textContent=message||'';
-      el.className='entry-message'+(type==='error'?' error':type==='success'?' success':'');
-    }
-
-    async function saveShift(){
-      const mode=document.getElementById('entry-mode').value;
-      const dateInput=document.getElementById('shift-date');
-      const date=dateInput.value;
-      const tipInput=document.getElementById('shift-tip');
-      const tip=tipInput.value===''?0:Number(tipInput.value);
-      document.querySelectorAll('#tab-add [aria-invalid="true"]').forEach(input=>input.removeAttribute('aria-invalid'));
-      setEntryMessage('');
-
-      function showFieldError(input,message){
-        input.setAttribute('aria-invalid','true');
-        setEntryMessage(message,'error');
-        input.focus();
-      }
-
-      if(!date){showFieldError(dateInput,'Bitte wähle den Arbeitstag aus.');return;}
-      if(!Number.isFinite(tip)||tip<0){showFieldError(tipInput,'Bitte gib ein Trinkgeld ab 0 € ein.');return;}
-
-      let s={id:Date.now(),date,tip,hours:0,wageEarned:0,type:mode};
-      if(mode==='normal'){
-        const startInput=document.getElementById('time-start');
-        const endInput=document.getElementById('time-end');
-        const breakInput=document.getElementById('shift-break');
-        const wageInput=document.getElementById('hourly-wage');
-        const st=startInput.value,en=endInput.value;
-        if(!st){showFieldError(startInput,'Bitte gib eine Startzeit ein.');return;}
-        if(!en){showFieldError(endInput,'Bitte gib eine Endzeit ein.');return;}
-        if(st===en){showFieldError(endInput,'Startzeit und Endzeit dürfen nicht gleich sein.');return;}
-        if(wageInput.value===''||!Number.isFinite(Number(wageInput.value))||Number(wageInput.value)<0){showFieldError(wageInput,'Bitte gib einen Stundenlohn ab 0 € ein.');return;}
-        if(breakInput.value!==''&&(!Number.isFinite(Number(breakInput.value))||Number(breakInput.value)<0)){showFieldError(breakInput,'Die Pause muss 0 Minuten oder länger sein.');return;}
-        calculateNormalShift(s,st,en,breakInput.value,wageInput.value);
-      }else{
-        const amountInput=document.getElementById('flat-amount');
-        if(amountInput.value===''||!Number.isFinite(Number(amountInput.value))||Number(amountInput.value)<0){showFieldError(amountInput,'Bitte gib einen festen Verdienst ab 0 € ein.');return;}
-        s.wageEarned=Number(amountInput.value);
-      }
-
-      const saveButton=document.getElementById('save-shift-btn');
-      saveButton.disabled=true;
-      saveButton.textContent='Wird gespeichert …';
-      try{
-        if(currentUser){
-          const {data,error}=await supabaseClient.from('shifts').insert({user_id:currentUser.id,legacy_id:s.id,date:s.date,start:s.start||null,end:s.end||null,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type}).select().single();
-          if(error)throw error;
-          s.id=data.id;
-        }
-        shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));
-        localStorage.setItem('myShifts',JSON.stringify(shifts));
-        document.getElementById('shift-tip').value='';
-        updateMonthDropdowns();
-        showToast('Schicht gespeichert.');
-        switchTab('dashboard',document.getElementById('nav-dashboard'));
-      }catch(error){
-        console.error(error);
-        setEntryMessage('Die Schicht konnte nicht gespeichert werden. Prüfe deine Verbindung und versuche es erneut.','error');
-      }finally{
-        saveButton.disabled=false;
-        saveButton.textContent='Schicht speichern';
-      }
-    }
-
-    async function saveEditedShift(id){
-      const s=shifts.find(x=>x.id===id),start=document.getElementById(`edit-start-${id}`).value,end=document.getElementById(`edit-end-${id}`).value,br=document.getElementById(`edit-break-${id}`).value,wg=document.getElementById(`edit-wage-${id}`).value,tip=document.getElementById(`edit-tip-${id}`).value;
-      if(!s||!start||!end)return;
-      calculateNormalShift(s,start,end,br,wg);s.tip=parseFloat(tip)||0;
-      if(currentUser){
-        const {error}=await supabaseClient.from('shifts').update({start:s.start,end:s.end,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);
-        if(error){alert('Änderung konnte nicht gespeichert werden: '+error.message);return;}
-      }
-      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
-    }
-
-    async function editTip(id){
-      const s=shifts.find(x=>x.id===id);if(!s)return;
-      const n=prompt('Neues Trinkgeld (€):',s.tip);
-      if(n===null)return;
-      s.tip=parseFloat(n)||0;
-      if(currentUser){const {error}=await supabaseClient.from('shifts').update({tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);if(error){alert('Trinkgeld konnte nicht gespeichert werden: '+error.message);return;}}
-      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
-    }
-
-    async function savePreset(){
-      const n=document.getElementById('p-name').value;if(!n)return;
-      const p={id:Date.now(),name:n,start:document.getElementById('p-start').value,end:document.getElementById('p-end').value,break:document.getElementById('p-break').value,wage:document.getElementById('p-wage').value};
-      if(currentUser){
-        const {data,error}=await supabaseClient.from('presets').insert({user_id:currentUser.id,legacy_id:p.id,name:p.name,start:p.start||null,end:p.end||null,break:Number(p.break)||0,wage:Number(p.wage)||0}).select().single();
-        if(error){alert('Vorlage konnte nicht gespeichert werden: '+error.message);return;}
-        p.id=data.id;
-      }
-      presets.push(p);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();document.getElementById('p-name').value='';
-    }
-
-    async function deletePreset(id){
-      if(currentUser){const {error}=await supabaseClient.from('presets').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Vorlage konnte nicht gelöscht werden: '+error.message);return;}}
-      presets=presets.filter(p=>p.id!==id);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();
-    }
-
-    async function deleteShift(id){
-      if(!confirm('Löschen?'))return;
-      if(currentUser){const {error}=await supabaseClient.from('shifts').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Schicht konnte nicht gelöscht werden: '+error.message);return;}}
-      shifts=shifts.filter(s=>s.id!==id);localStorage.setItem('myShifts',JSON.stringify(shifts));updateMonthDropdowns();renderHistory();updateDashboard();
-    }
-
-    // Existing UI / calculation functions
-    document.getElementById('shift-date').valueAsDate=new Date();
-    document.querySelectorAll('#tab-add input,#tab-add select').forEach(input=>input.addEventListener('input',()=>{input.removeAttribute('aria-invalid');setEntryMessage('');}));
-    updateMonthDropdowns(); updateDashboard(); renderPresets();
-    function switchTab(t,el){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab-item').forEach(i=>{i.classList.remove('active');i.removeAttribute('aria-current');});document.getElementById(`tab-${t}`).classList.add('active');if(el){el.classList.add('active');el.setAttribute('aria-current','page');}if(t==='dashboard')updateDashboard();if(t==='history')renderHistory();}
-    function toggleEntryMode(){const m=document.getElementById('entry-mode').value;document.getElementById('normal-fields').style.display=m==='normal'?'block':'none';document.getElementById('pauschal-fields').style.display=m==='pauschal'?'block':'none';document.getElementById('preset-container').style.display=m==='normal'?'block':'none';}
-    function calculateNormalShift(s,start,end,breakMinutes,wage){const startDate=new Date(`1970-01-01T${start}`),endDate=new Date(`1970-01-01T${end}`);if(endDate<startDate)endDate.setDate(endDate.getDate()+1);s.start=start;s.end=end;s.break=parseFloat(breakMinutes)||0;s.wage=parseFloat(wage)||0;s.hours=Math.max(0,(endDate-startDate)/3600000-s.break/60);s.wageEarned=s.hours*s.wage;}
-    function editShift(id){const s=shifts.find(x=>x.id===id);if(!s||s.type==='pauschal')return;document.getElementById(`history-edit-${id}`).style.display='block';}
-    function cancelEdit(id){document.getElementById(`history-edit-${id}`).style.display='none';}
-    function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
-    function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><button type="button" class="delete-link" onclick="deletePreset(${p.id})">Vorlage entfernen</button></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">Keine Vorlage</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
-    function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());}
-    function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
-    function animateValue(id,target,formatter,duration=420){const el=document.getElementById(id);if(!el)return;const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0,endValue=Number(target)||0;el.dataset.value=endValue;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}const start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.innerText=formatter(startValue+(endValue-startValue)*eased);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
-    function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-shifts',ms.length,v=>Math.round(v));const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';document.getElementById('a-shifts').innerText=shifts.length;animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);renderCharts(ms);}
-    function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});}
-    function renderHistory(){
-      const filter=document.getElementById('history-month-filter').value;
-      const records=(filter==='all'?[...shifts]:shifts.filter(shift=>shift.date.startsWith(filter))).sort((a,b)=>new Date(b.date)-new Date(a.date));
-      const list=document.getElementById('history-list');
-      if(!records.length){
-        list.innerHTML='<p class="empty-state">Für diesen Zeitraum sind noch keine Schichten eingetragen.</p>';
-        return;
-      }
-
-      const formatMoney=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(value)||0);
-      const groups=new Map();
-      records.forEach(shift=>{
-        const month=shift.date.slice(0,7);
-        if(!groups.has(month))groups.set(month,[]);
-        groups.get(month).push(shift);
       });
-
-      list.innerHTML=[...groups.entries()].map(([month,monthShifts])=>{
-        const total=monthShifts.reduce((sum,shift)=>sum+Number(shift.wageEarned||0)+Number(shift.tip||0),0);
-        const count=monthShifts.length;
-        const monthRows=monthShifts.map(shift=>{
-          const normal=shift.type!=='pauschal',start=shift.start||'',end=shift.end||'',pause=shift.break??0,wage=shift.wage??(shift.hours?shift.wageEarned/shift.hours:0);
-          return `<div class="history-item"><div><strong>${new Date(shift.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?shift.hours.toFixed(2)+' Std.':'Pauschalbetrag'} | Trinkgeld: ${formatMoney(shift.tip)}</small></div><div style="text-align:right"><strong>${formatMoney(Number(shift.wageEarned||0)+Number(shift.tip||0))}</strong><br><div class="action-links">${normal?`<button type="button" class="edit-link" onclick="editShift(${shift.id})">Bearbeiten</button>`:`<button type="button" class="edit-link" onclick="editTip(${shift.id})">Trinkgeld ändern</button>`}<button type="button" class="delete-link" onclick="deleteShift(${shift.id})">Löschen</button></div></div>${normal?`<div id="history-edit-${shift.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label for="edit-start-${shift.id}">Startzeit</label><input id="edit-start-${shift.id}" type="time" value="${start}"></div><div class="input-group"><label for="edit-end-${shift.id}">Endzeit</label><input id="edit-end-${shift.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label for="edit-break-${shift.id}">Pause (Minuten)</label><input id="edit-break-${shift.id}" type="number" min="0" step="1" value="${pause}"></div><div class="input-group"><label for="edit-wage-${shift.id}">Stundenlohn (€)</label><input id="edit-wage-${shift.id}" type="number" min="0" step="0.01" value="${wage}"></div></div><div class="input-group"><label for="edit-tip-${shift.id}">Trinkgeld (€)</label><input id="edit-tip-${shift.id}" type="number" min="0" step="0.01" value="${shift.tip}"></div><button type="button" class="sec-btn" onclick="saveEditedShift(${shift.id})">Änderungen speichern</button><button type="button" class="sec-btn cancel-btn" onclick="cancelEdit(${shift.id})">Abbrechen</button></div>`:''}</div>`;
-        }).join('');
-        return `<section class="history-month" aria-label="${monthLabel(month)}"><header class="history-month-header"><h2>${monthLabel(month)}</h2><div class="history-month-meta"><strong class="history-month-total">${formatMoney(total)}</strong><span class="history-month-count">${count} ${count===1?'Schicht':'Schichten'}</span></div></header>${monthRows}</section>`;
-      }).join('');
-    }
-    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundera_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
-    function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup lokal geladen. Bitte danach erneut anmelden bzw. die Datenmigration ausführen.');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
-
-    supabaseClient.auth.getSession().then(async ({data})=>{
-      if(data.session) await finishLogin(data.session.user);
-      else showAuth(true);
-    });
-    supabaseClient.auth.onAuthStateChange(async (event,session)=>{
-      if(session && event==='SIGNED_IN' && !currentUser) await finishLogin(session.user);
-      if(event==='SIGNED_OUT'){currentUser=null;showAuth(true);}
-    });
-  </script>
+    }, { threshold: 0.13, rootMargin: '0px 0px -30px 0px' });
+    revealItems.forEach(item => observer.observe(item));
+  } else {
+    revealItems.forEach(item => item.classList.add('is-visible'));
+  }
+</script>
 </body>
 </html>
