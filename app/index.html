@@ -2,15 +2,15 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, ">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Stundera">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="stundera-mark.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#007AFF">
+  <meta name="theme-color" content="#F4F7FB">
   <meta name="description" content="Stundera: Arbeitszeit, Schichten und Verdienst übersichtlich verwalten."><title>Stundera – Arbeitszeit im Blick</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -674,13 +674,195 @@
 }
   @media (prefers-color-scheme:dark){.auth-overlay{background:rgba(0,0,0,.88)}}
 </style>
-<style>.auth-legal-links{display:flex;justify-content:center;gap:9px;margin-top:16px;font-size:12px;color:#778397}.auth-legal-links a{color:inherit;text-decoration:underline;text-underline-offset:2px}</style>
+<style>.auth-legal-links{display:flex;justify-content:center;gap:9px;margin-top:16px;font-size:12px;color:#778397}.auth-legal-links a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+    /* Stundera app refresh: clearer hierarchy, generous spacing and one consistent mark. */
+    :root{
+      --bg-color:#F4F7FB;
+      --blue-strong:#0878F9;
+      --blue:#2389FF;
+      --blue-light:#63C4F5;
+      --blue-soft:rgba(8,120,249,.10);
+      --card-bg:#FFFFFF;
+      --text-main:#101820;
+      --text-muted:#788698;
+      --primary:var(--blue-strong);
+      --primary-soft:var(--blue-soft);
+      --border-color:rgba(45,72,104,.10);
+      --tab-bar-bg:rgba(255,255,255,.88);
+      --shadow:0 10px 30px rgba(26,68,116,.07);
+    }
+    body{
+      min-height:100vh;
+      min-height:100svh;
+      background:radial-gradient(ellipse at 50% 0,rgba(66,153,255,.10),transparent 48%),var(--bg-color);
+      padding-top:max(12px,env(safe-area-inset-top,0px));
+      padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));
+    }
+    .app-shell-header{
+      position:sticky;
+      top:env(safe-area-inset-top,0px);
+      z-index:100;
+      padding:7px 20px;
+      border-bottom:1px solid var(--border-color);
+      background:rgba(244,247,251,.86);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+    }
+    .app-shell-header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      width:min(100%,720px);
+      min-height:42px;
+      margin:auto;
+    }
+    .app-shell-brand{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:var(--text-main);
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.55px;
+    }
+    .app-shell-brand img{width:34px;height:34px;object-fit:contain}
+    .app-shell-note{color:var(--text-muted);font-size:12px;font-weight:550}
+    .tab-content{max-width:720px;padding:25px 20px 34px}
+    h1{margin:7px 0 18px;font-size:clamp(30px,5.7vw,38px);line-height:1.08;letter-spacing:-1.25px}
+    .dashboard-intro{align-items:center;gap:16px;margin:0 2px 22px}
+    .dashboard-intro p{font-size:15px;line-height:1.5}
+    .dashboard-intro .primary-btn{padding:12px 16px;border-radius:15px}
+    .filter-container{position:relative;margin:0 0 22px}
+    .dashboard-filter-label{margin:0 2px 8px;font-size:11px}
+    .filter-container::after{
+      content:"";
+      position:absolute;
+      right:18px;
+      bottom:19px;
+      width:8px;
+      height:8px;
+      border-right:1.7px solid var(--text-muted);
+      border-bottom:1.7px solid var(--text-muted);
+      transform:rotate(45deg);
+      pointer-events:none;
+    }
+    .section-title{margin:25px 2px 12px;font-size:16px;letter-spacing:-.25px}
+    .stats-grid{gap:12px;margin-bottom:14px}
+    .stat-box{min-width:0;padding:16px;border-radius:19px;box-shadow:0 7px 20px rgba(26,68,116,.055);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+    .stat-box h3{margin-bottom:6px;font-size:11px}
+    .stat-box p{font-size:clamp(18px,4.5vw,22px);overflow-wrap:anywhere}
+    .total-card{padding:21px 22px;margin:13px 0 22px;border-radius:22px;background:linear-gradient(118deg,#0878F9,#278CFF);box-shadow:0 12px 28px rgba(8,120,249,.20)}
+    .total-card .total-label{font-size:12px}
+    .total-card .total-value{font-size:clamp(28px,7vw,34px)}
+    .card{padding:20px;border-radius:22px;margin-bottom:17px;box-shadow:var(--shadow)}
+    .overview-details{margin-top:18px;border-radius:20px}
+    .overview-details summary{padding:16px 18px}
+    .history-month-header{padding:15px 18px}
+    .history-item,.preset-item{padding:17px 18px}
+    .input-group{margin-bottom:18px}
+    label{margin-bottom:8px;font-size:12px}
+    select.ios-select,input{min-height:50px;padding:13px 14px;border-radius:14px;font-size:16px;transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease}
+    select.ios-select{padding-right:42px}
+    button.primary-btn{min-height:51px;padding:14px 17px;border-radius:15px;font-size:15px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+    button.primary-btn:disabled{cursor:wait;opacity:.7}
+    button.sec-btn{min-height:46px;border-radius:14px;cursor:pointer;transition:transform .2s ease,background-color .2s ease}
+    .tab-bar{
+      bottom:calc(11px + env(safe-area-inset-bottom,0px));
+      left:12px;
+      right:12px;
+      max-width:640px;
+      padding:7px 6px;
+      border-radius:24px;
+      box-shadow:0 12px 36px rgba(20,49,82,.14);
+    }
+    .tab-item{min-height:58px;padding:6px 3px;border-radius:17px;font-size:10px}
+    .tab-icon svg{width:21px;height:21px;margin-bottom:3px;transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+    .tab-item.active .tab-icon svg{transform:translateY(-1px) scale(1.04)}
+    .app-toast{border:1px solid rgba(255,255,255,.18);border-radius:16px}
+    .auth-overlay{background:rgba(239,246,255,.90);padding:20px}
+    .auth-card{width:min(440px,100%);padding:26px 24px 23px;border-radius:28px;box-shadow:0 24px 72px rgba(21,70,128,.16)}
+    .auth-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 16px;color:var(--text-main);font-size:28px;line-height:1;font-weight:850;letter-spacing:-1px}
+    .auth-brand img{width:46px;height:46px;object-fit:contain;border-radius:13px;filter:drop-shadow(0 5px 10px rgba(0,80,170,.13))}
+    .auth-login-header .auth-heading,.auth-register-header .auth-heading{margin-top:14px}
+    .auth-subtitle{line-height:1.55}
+    .auth-register-visual{width:50px;height:50px;margin:11px auto 10px;border-radius:16px}
+    .auth-register-note{border-radius:15px}
+    .auth-card .input-group{margin-bottom:14px}
+    .auth-card input{min-height:50px;border-radius:14px}
+    .auth-card .primary-btn{min-height:51px}
+    .auth-mode-toggle{min-height:44px}
+    .entry-help{margin:0 2px 18px;line-height:1.55}
+    .history-month{animation:none}
+    @media (prefers-reduced-motion:no-preference){
+      .tab-content.active{animation:appPageIn .34s cubic-bezier(.2,.75,.25,1) both}
+      @keyframes appPageIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+      .tab-content.active .stat-box{animation:appCardIn .34s cubic-bezier(.2,.75,.25,1) both}
+      .tab-content.active .stat-box:nth-child(2){animation-delay:.045s}
+      .tab-content.active .stat-box:nth-child(3){animation-delay:.09s}
+      .tab-content.active .stat-box:nth-child(4){animation-delay:.135s}
+      .tab-content.active .total-card,.tab-content.active>.card,.tab-content.active .overview-details{animation:appCardIn .38s .07s cubic-bezier(.2,.75,.25,1) both}
+      #history-list .history-month{animation:appCardIn .32s cubic-bezier(.2,.75,.25,1) both}
+      @keyframes appCardIn{from{opacity:0;transform:translateY(8px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+      button.primary-btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 11px 25px rgba(8,120,249,.22)}
+      button.primary-btn:active,button.sec-btn:active,.tab-item:active{transform:scale(.975)}
+      .history-item,.preset-item{animation:none!important}
+    }
+    @media (hover:hover) and (prefers-reduced-motion:no-preference){
+      .stat-box:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(26,68,116,.10)}
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg-color:#101318;
+        --card-bg:#1B2028;
+        --text-main:#F4F7FA;
+        --text-muted:#A0AAB8;
+        --primary-soft:rgba(35,137,255,.18);
+        --border-color:rgba(232,237,243,.10);
+        --tab-bar-bg:rgba(27,32,40,.90);
+        --shadow:0 12px 34px rgba(0,0,0,.24);
+      }
+      body{background:radial-gradient(ellipse at 50% 0,rgba(35,137,255,.12),transparent 48%),var(--bg-color)}
+      .app-shell-header{background:rgba(16,19,24,.88)}
+      .auth-overlay{background:rgba(10,13,18,.88)}
+    }
+    @media (max-width:520px){
+      .app-shell-header{padding:7px 16px}
+      .app-shell-header-inner{min-height:40px}
+      .app-shell-brand{font-size:17px}
+      .app-shell-brand img{width:32px;height:32px}
+      .app-shell-note{font-size:11px}
+      .tab-content{padding:20px 16px 30px}
+      .dashboard-intro{gap:12px;margin-bottom:19px}
+      .dashboard-intro p{font-size:14px}
+      .stats-grid{gap:9px}
+      .stat-box{padding:13px;border-radius:17px}
+      .total-card{padding:19px;border-radius:20px}
+      .card{padding:17px;border-radius:19px}
+      .auth-card{padding:24px 20px 21px;border-radius:24px}
+      .tab-bar{left:9px;right:9px}
+      .tab-item{min-height:56px}
+      .history-item,.preset-item{padding:15px 14px}
+    }
+    @media (max-width:380px){
+      .app-shell-note{font-size:10px}
+      .tab-content{padding-right:14px;padding-left:14px}
+      .grid-2{grid-template-columns:1fr;gap:0}
+      .history-month-header{align-items:flex-start;flex-direction:column;gap:5px}
+      .history-month-meta{text-align:left}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .tab-content.active{animation:none}
+      .tab-content.active .stat-box,.tab-content.active .total-card,.tab-content.active>.card,.tab-content.active .overview-details,#history-list .history-month{animation:none}
+      button.primary-btn,.stat-box,.tab-item .tab-icon svg{transition:none}
+    }
+</style>
 </head>
 <body>
   <div id="auth-overlay" class="auth-overlay">
     <div id="auth-card" class="auth-card">
+      <div class="auth-brand"><img src="stundera-mark.svg" alt="" width="46" height="46"><span>Stundera</span></div>
       <div class="auth-login-header" id="auth-login-header">
-        <img class="auth-app-icon" src="icon-180.png" alt="Stundera" /><div class="auth-logo">Stundera</div>
         <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
         <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
       </div>
@@ -701,6 +883,7 @@
       <div class="auth-legal-links"><a href="https://stundera.de/datenschutz.html">Datenschutz</a><span aria-hidden="true">·</span><a href="https://stundera.de/impressum.html">Impressum</a></div>
     </div>
   </div>
+  <header class="app-shell-header"><div class="app-shell-header-inner"><div class="app-shell-brand"><img src="stundera-mark.svg" alt="" width="34" height="34"><span>Stundera</span></div><span class="app-shell-note">Arbeitszeit im Blick</span></div></header>
 
   <div id="tab-dashboard" class="tab-content active">
     <h1>Übersicht</h1>
@@ -1069,7 +1252,7 @@
     function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
     function animateValue(id,target,formatter,duration=420){const el=document.getElementById(id);if(!el)return;const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0,endValue=Number(target)||0;el.dataset.value=endValue;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}const start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.innerText=formatter(startValue+(endValue-startValue)*eased);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
     function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-shifts',ms.length,v=>Math.round(v));const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';document.getElementById('a-shifts').innerText=shifts.length;animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);renderCharts(ms);}
-    function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});}
+    function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:520,easing:'easeOutQuart'},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'600'}}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,font:{size:10},callback:value=>value+' €'}}}}});}
     function renderHistory(){
       const filter=document.getElementById('history-month-filter').value;
       const records=(filter==='all'?[...shifts]:shifts.filter(shift=>shift.date.startsWith(filter))).sort((a,b)=>new Date(b.date)-new Date(a.date));
