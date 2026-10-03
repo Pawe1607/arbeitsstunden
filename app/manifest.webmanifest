@@ -1,0 +1,18 @@
+{
+  "name": "Stundera",
+  "short_name": "Stundera",
+  "description": "Arbeitszeiten und Schichten einfach im Blick behalten.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F4F7FB",
+  "theme_color": "#007AFF",
+  "icons": [
+    {
+      "src": "stundera-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Stundera">
+  <link rel="icon" type="image/svg+xml" href="stundera-mark.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#F4F7FB">
+  <meta name="description" content="Stundera: Arbeitszeit, Schichten und Verdienst übersichtlich verwalten."><title>Stundera – Arbeitszeit im Blick</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-color:#F4F7FB;
+      --blue-strong:#007AFF;
+      --blue:#0A84FF;
+      --blue-light:#5AC8FA;
+      --blue-soft:rgba(0,122,255,.10);
+      --card-bg:#FFFFFF;
+      --text-main:#111113;
+      --text-muted:#8A8A91;
+      --primary:var(--blue-strong);
+      --primary-soft:var(--blue-soft);
+      --border-color:rgba(60,60,67,.10);
+      --tab-bar-bg:rgba(255,255,255,.88);
+      --success:#34C759;
+      --danger:#FF3B30;
+      --safe-bottom:env(safe-area-inset-bottom,20px);
+      --safe-top:env(safe-area-inset-top,47px);
+      --shadow:0 8px 28px rgba(0,0,0,.055);
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root {
+        --bg-color:#000;
+        --card-bg:#1C1C1E;
+        --text-main:#FFF;
+        --text-muted:#98989D;
+        --primary-soft:rgba(10,132,255,.16);
+        --border-color:rgba(235,235,245,.13);
+        --tab-bar-bg:rgba(28,28,30,.88);
+        --shadow:0 8px 28px rgba(0,0,0,.28);
+      }
+    }
+
+    * {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    body {
+      background:var(--bg-color);
+      color:var(--text-main);
+      padding-top:var(--safe-top);
+      padding-bottom:calc(145px + var(--safe-bottom));
+    }
+
+    .tab-content {
+      display:none;
+      padding:18px 18px 24px;
+      max-width:680px;
+      margin:auto;
+    }
+
+    .tab-content.active {
+      display:block;
+      animation:fadeIn .22s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0;transform:translateY(4px)}
+      to {opacity:1;transform:translateY(0)}
+    }
+
+    h1 {
+      font-size:34px;
+      line-height:1.08;
+      font-weight:800;
+      margin:5px 0 18px 2px;
+      letter-spacing:-1.1px;
+    }
+
+    .filter-container {
+      margin:0 0 24px;
+    }
+
+    .dashboard-intro {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:-7px 2px 20px;
+    }
+
+    .dashboard-intro p {
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .dashboard-intro .primary-btn {
+      width:auto;
+      flex:0 0 auto;
+      margin:0;
+      padding:13px 15px;
+      white-space:nowrap;
+      box-shadow:0 5px 14px rgba(0,122,255,.18);
+    }
+
+    .dashboard-filter-label {
+      margin:0 2px 8px;
+    }
+
+    .entry-help {
+      color:var(--text-muted);
+      font-size:13px;
+      line-height:1.45;
+      margin:-7px 3px 18px;
+    }
+
+    .entry-message {
+      min-height:20px;
+      margin:0 2px 8px;
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .entry-message.error { color:var(--danger); }
+    .entry-message.success { color:var(--success); }
+
+    .empty-state {
+      padding:22px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.45;
+      text-align:center;
+    }
+
+    [aria-invalid="true"] {
+      border-color:var(--danger) !important;
+      box-shadow:0 0 0 3px rgba(255,59,48,.12) !important;
+    }
+
+    .app-toast {
+      position:fixed;
+      left:18px;
+      right:18px;
+      bottom:calc(var(--safe-bottom) + 88px);
+      z-index:1001;
+      max-width:500px;
+      margin:auto;
+      padding:13px 16px;
+      border-radius:14px;
+      background:#222;
+      color:#fff;
+      font-size:14px;
+      font-weight:650;
+      text-align:center;
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      opacity:0;
+      transform:translateY(8px);
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+
+    .app-toast.visible {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @media (max-width:380px) {
+      .dashboard-intro {
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .dashboard-intro .primary-btn {
+        width:100%;
+      }
+    }
+
+    .section-title {
+      font-size:16px;
+      color:var(--text-main);
+      font-weight:700;
+      letter-spacing:-.2px;
+      margin:26px 2px 12px;
+    }
+
+    .overview-details {
+      margin-top:20px;
+      overflow:hidden;
+      border:1px solid var(--border-color);
+      border-radius:20px;
+      background:var(--card-bg);
+      box-shadow:var(--shadow);
+    }
+
+    .overview-details summary {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:16px 18px;
+      list-style:none;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:700;
+    }
+
+    .overview-details summary::-webkit-details-marker { display:none; }
+    .overview-details summary::after {
+      content:"+";
+      margin-left:auto;
+      color:var(--primary);
+      font-size:21px;
+      font-weight:500;
+    }
+
+    .overview-details[open] summary::after { content:"−"; }
+    .overview-details summary small {
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:500;
+    }
+
+    .overview-details-content {
+      padding:0 16px 16px;
+      border-top:1px solid var(--border-color);
+    }
+
+    .overview-details-content .stats-grid { margin-top:14px; }
+    .overview-details-content .card { margin:14px 0 0; }
+
+    .history-month + .history-month {
+      border-top:1px solid var(--border-color);
+    }
+
+    .history-month-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 18px;
+      background:rgba(120,120,128,.07);
+    }
+
+    .history-month-header h2 {
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:-.2px;
+    }
+
+    .history-month-meta {
+      text-align:right;
+      flex:0 0 auto;
+    }
+
+    .history-month-total {
+      display:block;
+      font-size:14px;
+      font-weight:750;
+    }
+
+    .history-month-count {
+      display:block;
+      margin-top:2px;
+      color:var(--text-muted);
+      font-size:12px;
+    }
+
+    .stats-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .stat-box {
+      padding:17px;
+      border-radius:18px;
+      background:var(--card-bg);
+      border:1px solid var(--border-color);
+      box-shadow:var(--shadow);
+    }
+
+    .stat-box h3 {
+      font-size:12px;
+      text-transform:none;
+      margin-bottom:8px;
+      font-weight:650;
+      color:var(--text-muted);
+      letter-spacing:0;
+    }
+
+    .stat-box p {
+      font-size:21px;
+      font-weight:800;
+      letter-spacing:-.45px;
+    }
+
+    /* Deliberate blue hierarchy: four shades, one visual language. */
+    .stat-box.orange,
+    .stat-box.blue,
+    .stat-box.green,
+    .stat-box.purple {
+      background:var(--card-bg);
+    }
+
+    .stat-box.orange { border-top:3px solid var(--blue-strong); }
+    .stat-box.blue   { border-top:3px solid var(--blue); }
+    .stat-box.green  { border-top:3px solid var(--blue-light); }
+    .stat-box.purple { border-top:3px solid rgba(0,122,255,.38); }
+
+    .stat-box.orange p { color:var(--blue-strong); }
+    .stat-box.blue p   { color:var(--blue); }
+    .stat-box.green p  { color:#1597D4; }
+    .stat-box.purple p { color:#4F91C9; }
+
+    .total-card {
+      background:var(--primary);
+      color:#fff;
+      border-radius:20px;
+      padding:20px;
+      margin:12px 0 22px;
+      box-shadow:0 10px 25px rgba(0,122,255,.20);
+    }
+
+    .total-card .total-label {
+      font-size:13px;
+      text-transform:none;
+      letter-spacing:0;
+      font-weight:650;
+      opacity:.9;
+      margin-bottom:5px;
+    }
+
+    .total-card .total-value {
+      font-size:30px;
+      font-weight:850;
+      letter-spacing:-1px;
+    }
+
+    .total-card .total-sub {
+      margin-top:5px;
+      font-size:12px;
+      opacity:.78;
+    }
+
+    .card {
+      background:var(--card-bg);
+      border-radius:20px;
+      padding:20px;
+      margin-bottom:16px;
+      border:1px solid var(--border-color);
+      box-shadow:var(--shadow);
+    }
+
+    .input-group {
+      margin-bottom:20px;
+    }
+
+    label {
+      font-size:12px;
+      color:var(--text-muted);
+      margin-bottom:8px;
+      text-transform:none;
+      font-weight:650;
+      display:block;
+      padding-left:2px;
+      letter-spacing:0;
+    }
+
+    select.ios-select,
+    input {
+      background:var(--card-bg);
+      color:var(--text-main);
+      font-size:16px;
+      font-weight:600;
+      padding:14px;
+      border-radius:13px;
+      border:1px solid var(--border-color);
+      width:100%;
+      appearance:none;
+      outline:none;
+    }
+
+    input:focus,
+    select.ios-select:focus {
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px var(--primary-soft);
+    }
+
+    .grid-2 {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    button.primary-btn {
+      background:var(--primary);
+      color:#fff;
+      border:0;
+      padding:17px;
+      border-radius:15px;
+      font-size:16px;
+      font-weight:750;
+      width:100%;
+      box-shadow:0 7px 18px rgba(0,122,255,.20);
+      margin-top:5px;
+    }
+
+    button.sec-btn {
+      background:var(--primary-soft);
+      color:var(--primary);
+      border:0;
+      padding:14px;
+      border-radius:13px;
+      font-size:13px;
+      font-weight:750;
+      width:100%;
+    }
+
+    .tab-bar {
+      position:fixed;
+      bottom:calc(var(--safe-bottom) + 10px);
+      left:14px;
+      right:14px;
+      max-width:650px;
+      margin:auto;
+      background:var(--tab-bar-bg);
+      backdrop-filter:blur(25px);
+      -webkit-backdrop-filter:blur(25px);
+      border-radius:25px;
+      display:flex;
+      justify-content:space-around;
+      padding:9px 7px;
+      z-index:1000;
+      border:1px solid var(--border-color);
+      box-shadow:0 10px 35px rgba(0,0,0,.16);
+    }
+
+    .tab-item {
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      flex:1;
+      text-align:center;
+      color:var(--text-muted);
+      font-size:10px;
+      font-weight:650;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-transform:none;
+      padding:5px 2px;
+      border-radius:17px;
+    }
+
+    .tab-item.active {
+      color:var(--primary);
+      background:var(--primary-soft);
+    }
+
+    .tab-item:focus-visible,
+    button.primary-btn:focus-visible,
+    button.sec-btn:focus-visible {
+      outline:3px solid var(--primary);
+      outline-offset:3px;
+    }
+
+    .tab-icon svg {
+      width:22px;
+      height:22px;
+      margin-bottom:3px;
+      stroke-width:2.25;
+    }
+
+    .history-item,
+    .preset-item {
+      background:var(--card-bg);
+      padding:18px;
+      border-bottom:1px solid var(--border-color);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .preset-item:first-child {
+      border-radius:20px 20px 0 0;
+    }
+
+    .preset-item:last-child {
+      border-bottom:0;
+      border-radius:0 0 20px 20px;
+    }
+
+    .history-item:last-child {
+      border-bottom:0;
+      border-radius:0;
+    }
+
+    .history-item {
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .action-links {
+      display:flex;
+      gap:14px;
+      margin-top:8px;
+      justify-content:flex-end;
+    }
+
+    .delete-link,
+    .edit-link {
+      min-height:38px;
+      padding:8px 4px;
+      border:0;
+      background:transparent;
+      font-family:inherit;
+      font-size:12px;
+      font-weight:750;
+      text-transform:none;
+      cursor:pointer;
+    }
+
+    .delete-link { color:var(--danger); }
+    .edit-link { color:var(--primary); }
+
+    .history-edit {
+      width:100%;
+      padding-top:16px;
+      border-top:1px solid var(--border-color);
+    }
+
+    .history-edit .input-group { margin-bottom:13px; }
+    .history-edit input { font-size:15px; padding:11px; }
+    .history-edit button { margin-top:0; }
+    .history-edit .cancel-btn { margin-top:9px; }
+
+    #preset-list,
+    #history-list {
+      box-shadow:var(--shadow);
+    }
+
+    .card:has(canvas) { padding:18px 16px 14px; position:relative; }
+    .chart-heading { font-size:14px; font-weight:700; margin:0 2px 8px; }
+    .card canvas { height:220px !important; max-height:220px; }
+
+    /* Subtle iOS-style motion */
+    @media (prefers-reduced-motion:no-preference) {
+      .tab-content.active {
+        animation:pageIn .24s cubic-bezier(.22,.8,.3,1);
+      }
+
+      @keyframes pageIn {
+        from { opacity:0; transform:translateY(7px); }
+        to { opacity:1; transform:translateY(0); }
+      }
+
+      .stat-box,
+      .total-card,
+      .card,
+      .history-item,
+      .preset-item {
+        animation:cardIn .38s cubic-bezier(.22,.8,.3,1) both;
+      }
+
+      .stat-box:nth-child(1) { animation-delay:.02s; }
+      .stat-box:nth-child(2) { animation-delay:.05s; }
+      .stat-box:nth-child(3) { animation-delay:.08s; }
+      .stat-box:nth-child(4) { animation-delay:.11s; }
+      .total-card { animation-delay:.08s; }
+      .card { animation-delay:.13s; }
+
+      @keyframes cardIn {
+        from { opacity:0; transform:translateY(6px); }
+        to { opacity:1; transform:translateY(0); }
+      }
+
+      button.primary-btn,
+      button.sec-btn,
+      .tab-item,
+      .edit-link,
+      .delete-link {
+        transition:transform .16s ease, opacity .16s ease, background-color .16s ease;
+      }
+
+      button.primary-btn:active,
+      button.sec-btn:active,
+      .tab-item:active {
+        transform:scale(.97);
+      }
+
+      .edit-link:active,
+      .delete-link:active {
+        opacity:.55;
+      }
+
+      .total-card {
+        transition:transform .22s ease, box-shadow .22s ease;
+      }
+
+      .total-card:active {
+        transform:scale(.985);
+      }
+
+      .history-item {
+        transition:background-color .18s ease, transform .18s ease;
+      }
+
+      select.ios-select {
+        transition:border-color .18s ease, box-shadow .18s ease;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after {
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+
+  .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(245,245,247,.92);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:22px;overflow-y:auto}
+  .auth-card{width:min(430px,100%);background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:30px 24px 24px;box-shadow:var(--shadow);text-align:center;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}
+  .auth-card.is-registering{border-color:rgba(0,122,255,.26);background:linear-gradient(180deg,rgba(0,122,255,.055),transparent 48%),var(--card-bg);box-shadow:0 18px 52px rgba(0,122,255,.14)}
+  .auth-login-header,.auth-register-header{animation:authViewEnter .26s ease both}
+  @keyframes authViewEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .auth-app-icon{width:64px;height:64px;border-radius:17px;display:block;margin:0 auto 18px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
+  .auth-logo{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-1.25px;margin-bottom:7px;text-align:center}
+  .auth-card .auth-heading{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.45px;margin:18px 0 7px}
+  .auth-subtitle{color:var(--text-muted);font-size:14px;line-height:1.45;margin:0 auto 24px;max-width:280px}
+  .auth-back-button{display:flex;align-items:center;gap:8px;margin:-8px 0 0;padding:8px 0;border:0;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-back-button svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-visual{width:56px;height:56px;display:flex;align-items:center;justify-content:center;margin:15px auto 12px;border-radius:18px;background:var(--primary-soft);color:var(--primary)}
+  .auth-register-visual svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-register-kicker{color:var(--primary);font-size:11px;font-weight:750;letter-spacing:.09em;margin-bottom:7px}
+  .auth-register-header .auth-heading{margin:0 0 8px}
+  .auth-register-header .auth-subtitle{margin-bottom:15px}
+  .auth-register-note{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:var(--primary-soft);font-size:13px;line-height:1.35;text-align:left}
+  .auth-register-note svg{width:18px;height:18px;flex:0 0 auto;color:var(--primary);stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .auth-password-hint{font-size:12px;color:var(--text-muted);margin:-8px 0 15px;text-align:left}
+  .auth-mode-toggle{display:block;width:100%;margin-top:13px;padding:9px;border:0;border-radius:10px;background:transparent;color:var(--primary);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .auth-mode-toggle[hidden]{display:none}
+  .auth-mode-toggle:focus-visible,.auth-back-button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+  .auth-card .auth-heading:focus{outline:none}
+  @media(max-height:700px){.auth-overlay{align-items:flex-start}}
+  .auth-card .input-group{text-align:left;margin-bottom:16px}
+  .auth-card label{margin-bottom:8px}
+  .auth-card input{padding:14px 15px;border-radius:14px}
+  .auth-card .primary-btn{margin-top:4px}
+  .auth-message{min-height:20px;margin-top:15px;font-size:13px;line-height:1.4;text-align:center}
+  .auth-message.error{color:var(--danger)}.auth-message.success{color:var(--success)}
+  .auth-small{font-size:12px;color:var(--text-muted);margin-top:4px}
+  .account-card{display:flex;justify-content:space-between;align-items:center;gap:15px}.account-card>div:first-child{min-width:0;flex:1}.account-card #account-email{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.account-card .sec-btn{flex:0 0 auto;white-space:nowrap}.auth-locked{overflow:hidden}
+@media (max-width:430px){
+  .account-card{gap:12px;padding:16px}
+  .account-card #account-email{max-width:calc(100vw - 170px)}
+  .account-card .sec-btn{padding:12px 13px;font-size:12px}
+}
+@media (max-width:360px){
+  .account-card{flex-direction:column;align-items:stretch}
+  .account-card #account-email{max-width:100%}
+  .account-card .sec-btn{width:100%!important}
+}
+  @media (prefers-color-scheme:dark){.auth-overlay{background:rgba(0,0,0,.88)}}
+</style>
+<style>.auth-legal-links{display:flex;justify-content:center;gap:9px;margin-top:16px;font-size:12px;color:#778397}.auth-legal-links a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+    /* Stundera app refresh: clearer hierarchy, generous spacing and one consistent mark. */
+    :root{
+      --bg-color:#F4F7FB;
+      --blue-strong:#0878F9;
+      --blue:#2389FF;
+      --blue-light:#63C4F5;
+      --blue-soft:rgba(8,120,249,.10);
+      --card-bg:#FFFFFF;
+      --text-main:#101820;
+      --text-muted:#788698;
+      --primary:var(--blue-strong);
+      --primary-soft:var(--blue-soft);
+      --border-color:rgba(45,72,104,.10);
+      --tab-bar-bg:rgba(255,255,255,.88);
+      --shadow:0 10px 30px rgba(26,68,116,.07);
+    }
+    body{
+      min-height:100vh;
+      min-height:100svh;
+      background:radial-gradient(ellipse at 50% 0,rgba(66,153,255,.10),transparent 48%),var(--bg-color);
+      padding-top:max(12px,env(safe-area-inset-top,0px));
+      padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));
+    }
+    .app-shell-header{
+      position:sticky;
+      top:env(safe-area-inset-top,0px);
+      z-index:100;
+      padding:7px 20px;
+      border-bottom:1px solid var(--border-color);
+      background:rgba(244,247,251,.86);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+    }
+    .app-shell-header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      width:min(100%,720px);
+      min-height:42px;
+      margin:auto;
+    }
+    .app-shell-brand{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:var(--text-main);
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.55px;
+    }
+    .app-shell-brand img{width:34px;height:34px;object-fit:contain}
+    .app-shell-note{color:var(--text-muted);font-size:12px;font-weight:550}
+    .tab-content{max-width:720px;padding:25px 20px 34px}
+    h1{margin:7px 0 18px;font-size:clamp(30px,5.7vw,38px);line-height:1.08;letter-spacing:-1.25px}
+    .dashboard-intro{align-items:center;gap:16px;margin:0 2px 22px}
+    .dashboard-intro p{font-size:15px;line-height:1.5}
+    .dashboard-intro .primary-btn{padding:12px 16px;border-radius:15px}
+    .filter-container{position:relative;margin:0 0 22px}
+    .dashboard-filter-label{margin:0 2px 8px;font-size:11px}
+    .filter-container::after{
+      content:"";
+      position:absolute;
+      right:18px;
+      bottom:19px;
+      width:8px;
+      height:8px;
+      border-right:1.7px solid var(--text-muted);
+      border-bottom:1.7px solid var(--text-muted);
+      transform:rotate(45deg);
+      pointer-events:none;
+    }
+    .section-title{margin:25px 2px 12px;font-size:16px;letter-spacing:-.25px}
+    .stats-grid{gap:12px;margin-bottom:14px}
+    .stat-box{min-width:0;padding:16px;border-radius:19px;box-shadow:0 7px 20px rgba(26,68,116,.055);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+    .stat-box h3{margin-bottom:6px;font-size:11px}
+    .stat-box p{font-size:clamp(18px,4.5vw,22px);overflow-wrap:anywhere}
+    .total-card{padding:21px 22px;margin:13px 0 22px;border-radius:22px;background:linear-gradient(118deg,#0878F9,#278CFF);box-shadow:0 12px 28px rgba(8,120,249,.20)}
+    .total-card .total-label{font-size:12px}
+    .total-card .total-value{font-size:clamp(28px,7vw,34px)}
+    .card{padding:20px;border-radius:22px;margin-bottom:17px;box-shadow:var(--shadow)}
+    .overview-details{margin-top:18px;border-radius:20px}
+    .overview-details summary{padding:16px 18px}
+    .history-month-header{padding:15px 18px}
+    .history-item,.preset-item{padding:17px 18px}
+    .input-group{margin-bottom:18px}
+    label{margin-bottom:8px;font-size:12px}
+    select.ios-select,input{min-height:50px;padding:13px 14px;border-radius:14px;font-size:16px;transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease}
+    select.ios-select{padding-right:42px}
+    button.primary-btn{min-height:51px;padding:14px 17px;border-radius:15px;font-size:15px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+    button.primary-btn:disabled{cursor:wait;opacity:.7}
+    button.sec-btn{min-height:46px;border-radius:14px;cursor:pointer;transition:transform .2s ease,background-color .2s ease}
+    .tab-bar{
+      bottom:calc(11px + env(safe-area-inset-bottom,0px));
+      left:12px;
+      right:12px;
+      max-width:640px;
+      padding:7px 6px;
+      border-radius:24px;
+      box-shadow:0 12px 36px rgba(20,49,82,.14);
+    }
+    .tab-item{min-height:58px;padding:6px 3px;border-radius:17px;font-size:10px}
+    .tab-icon svg{width:21px;height:21px;margin-bottom:3px;transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+    .tab-item.active .tab-icon svg{transform:translateY(-1px) scale(1.04)}
+    .app-toast{border:1px solid rgba(255,255,255,.18);border-radius:16px}
+    .auth-overlay{background:rgba(239,246,255,.90);padding:20px}
+    .auth-card{width:min(440px,100%);padding:26px 24px 23px;border-radius:28px;box-shadow:0 24px 72px rgba(21,70,128,.16)}
+    .auth-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 16px;color:var(--text-main);font-size:28px;line-height:1;font-weight:850;letter-spacing:-1px}
+    .auth-brand img{width:46px;height:46px;object-fit:contain;border-radius:13px;filter:drop-shadow(0 5px 10px rgba(0,80,170,.13))}
+    .auth-login-header .auth-heading,.auth-register-header .auth-heading{margin-top:14px}
+    .auth-subtitle{line-height:1.55}
+    .auth-register-visual{width:50px;height:50px;margin:11px auto 10px;border-radius:16px}
+    .auth-register-note{border-radius:15px}
+    .auth-card .input-group{margin-bottom:14px}
+    .auth-card input{min-height:50px;border-radius:14px}
+    .auth-card .primary-btn{min-height:51px}
+    .auth-mode-toggle{min-height:44px}
+    .entry-help{margin:0 2px 18px;line-height:1.55}
+    .history-month{animation:none}
+    @media (prefers-reduced-motion:no-preference){
+      .tab-content.active{animation:appPageIn .34s cubic-bezier(.2,.75,.25,1) both}
+      @keyframes appPageIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+      .tab-content.active .stat-box{animation:appCardIn .34s cubic-bezier(.2,.75,.25,1) both}
+      .tab-content.active .stat-box:nth-child(2){animation-delay:.045s}
+      .tab-content.active .stat-box:nth-child(3){animation-delay:.09s}
+      .tab-content.active .stat-box:nth-child(4){animation-delay:.135s}
+      .tab-content.active .total-card,.tab-content.active>.card,.tab-content.active .overview-details{animation:appCardIn .38s .07s cubic-bezier(.2,.75,.25,1) both}
+      #history-list .history-month{animation:appCardIn .32s cubic-bezier(.2,.75,.25,1) both}
+      @keyframes appCardIn{from{opacity:0;transform:translateY(8px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+      button.primary-btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 11px 25px rgba(8,120,249,.22)}
+      button.primary-btn:active,button.sec-btn:active,.tab-item:active{transform:scale(.975)}
+      .history-item,.preset-item{animation:none!important}
+    }
+    @media (hover:hover) and (prefers-reduced-motion:no-preference){
+      .stat-box:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(26,68,116,.10)}
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg-color:#101318;
+        --card-bg:#1B2028;
+        --text-main:#F4F7FA;
+        --text-muted:#A0AAB8;
+        --primary-soft:rgba(35,137,255,.18);
+        --border-color:rgba(232,237,243,.10);
+        --tab-bar-bg:rgba(27,32,40,.90);
+        --shadow:0 12px 34px rgba(0,0,0,.24);
+      }
+      body{background:radial-gradient(ellipse at 50% 0,rgba(35,137,255,.12),transparent 48%),var(--bg-color)}
+      .app-shell-header{background:rgba(16,19,24,.88)}
+      .auth-overlay{background:rgba(10,13,18,.88)}
+    }
+    @media (max-width:520px){
+      .app-shell-header{padding:7px 16px}
+      .app-shell-header-inner{min-height:40px}
+      .app-shell-brand{font-size:17px}
+      .app-shell-brand img{width:32px;height:32px}
+      .app-shell-note{font-size:11px}
+      .tab-content{padding:20px 16px 30px}
+      .dashboard-intro{gap:12px;margin-bottom:19px}
+      .dashboard-intro p{font-size:14px}
+      .stats-grid{gap:9px}
+      .stat-box{padding:13px;border-radius:17px}
+      .total-card{padding:19px;border-radius:20px}
+      .card{padding:17px;border-radius:19px}
+      .auth-card{padding:24px 20px 21px;border-radius:24px}
+      .tab-bar{left:9px;right:9px}
+      .tab-item{min-height:56px}
+      .history-item,.preset-item{padding:15px 14px}
+    }
+    @media (max-width:380px){
+      .app-shell-note{font-size:10px}
+      .tab-content{padding-right:14px;padding-left:14px}
+      .grid-2{grid-template-columns:1fr;gap:0}
+      .history-month-header{align-items:flex-start;flex-direction:column;gap:5px}
+      .history-month-meta{text-align:left}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .tab-content.active{animation:none}
+      .tab-content.active .stat-box,.tab-content.active .total-card,.tab-content.active>.card,.tab-content.active .overview-details,#history-list .history-month{animation:none}
+      button.primary-btn,.stat-box,.tab-item .tab-icon svg{transition:none}
+    }
+</style>
+</head>
+<body>
+  <div id="auth-overlay" class="auth-overlay">
+    <div id="auth-card" class="auth-card">
+      <div class="auth-brand"><img src="stundera-mark.svg" alt="" width="46" height="46"><span>Stundera</span></div>
+      <div class="auth-login-header" id="auth-login-header">
+        <h1 class="auth-heading" id="auth-heading" tabindex="-1">Anmelden</h1>
+        <div class="auth-subtitle" id="auth-subtitle">Deine Arbeitszeiten – überall synchronisiert.</div>
+      </div>
+      <div class="auth-register-header" id="auth-register-header" hidden>
+        <button class="auth-back-button" type="button" onclick="setAuthMode('login')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Zur Anmeldung</span></button>
+        <div class="auth-register-visual" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        <div class="auth-register-kicker">DEIN START MIT STUNDERA</div>
+        <h1 class="auth-heading" id="auth-register-heading" tabindex="-1">Konto erstellen</h1>
+        <p class="auth-subtitle">Speichere deine Schichten sicher und greife überall darauf zu.</p>
+        <div class="auth-register-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>Deine Einträge bleiben mit deinem Konto synchronisiert.</span></div>
+      </div>
+      <div class="input-group"><label for="auth-email">E-Mail-Adresse</label><input id="auth-email" type="email" autocomplete="email" placeholder="name@beispiel.de"></div>
+      <div class="input-group"><label for="auth-password">Passwort</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="Passwort"></div>
+      <div class="auth-password-hint" id="auth-password-hint" hidden>Mindestens 6 Zeichen</div>
+      <button id="auth-submit-btn" class="primary-btn" type="button" onclick="submitAuth()">Anmelden</button>
+      <button id="auth-mode-toggle" class="auth-mode-toggle" type="button" onclick="toggleAuthMode()">Noch kein Konto? Kostenlos erstellen</button>
+      <div id="auth-message" class="auth-message" role="status" aria-live="polite"></div>
+      <div class="auth-legal-links"><a href="https://stundera.de/datenschutz.html">Datenschutz</a><span aria-hidden="true">·</span><a href="https://stundera.de/impressum.html">Impressum</a></div>
+    </div>
+  </div>
+  <header class="app-shell-header"><div class="app-shell-header-inner"><div class="app-shell-brand"><img src="stundera-mark.svg" alt="" width="34" height="34"><span>Stundera</span></div><span class="app-shell-note">Arbeitszeit im Blick</span></div></header>
+
+  <div id="tab-dashboard" class="tab-content active">
+    <h1>Übersicht</h1>
+    <div class="dashboard-intro"><p>Arbeitszeit und Verdienst auf einen Blick.</p><button type="button" class="primary-btn" onclick="switchTab('add',document.getElementById('nav-add'))">Schicht eintragen</button></div>
+    <div class="filter-container"><label class="dashboard-filter-label" for="dashboard-month-filter">Monat anzeigen</label><select id="dashboard-month-filter" class="ios-select" onchange="updateDashboard()"></select></div>
+    <div class="section-title">Dein Monat</div><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="m-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="m-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="m-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="m-shifts">0</p></div></div><div class="total-card"><div class="total-label">Gesamtverdienst</div><div class="total-value" id="m-total">0,00 €</div><div class="total-sub">Arbeitslohn + Trinkgeld</div></div><div class="card"><div class="chart-heading">Verdienst im Monat (€)</div><canvas id="monthChart" role="img" aria-label="Verdienst je Schicht im ausgewählten Monat"></canvas></div>
+    <details class="overview-details"><summary><span>Insgesamt</span><small>Alle bisherigen Schichten</small></summary><div class="overview-details-content"><div class="stats-grid"><div class="stat-box orange"><h3>Stunden</h3><p id="a-hours">0.00 h</p></div><div class="stat-box blue"><h3>Arbeitslohn</h3><p id="a-wage">0 €</p></div><div class="stat-box green"><h3>Trinkgeld</h3><p id="a-tip">0 €</p></div><div class="stat-box purple"><h3>Schichten</h3><p id="a-shifts">0</p></div></div><div class="card"><div class="chart-heading">Verdienst pro Monat</div><canvas id="allTimeChart" role="img" aria-label="Verdienst pro Monat insgesamt"></canvas></div></div></details>
+  </div>
+  <div id="tab-add" class="tab-content"><h1>Schicht eintragen</h1><p class="entry-help">Wähle „Nach Stunden“ für Zeiten und Stundenlohn oder „Fester Betrag“ für eine direkte Eingabe.</p><div class="card">
+    <div class="input-group"><label for="entry-mode">Art der Schicht</label><select id="entry-mode" class="ios-select" onchange="toggleEntryMode()"><option value="normal">Nach Stunden</option><option value="pauschal">Fester Betrag</option></select></div>
+    <div class="input-group"><label for="shift-date">Arbeitstag</label><input type="date" id="shift-date"></div>
+    <div id="preset-container" class="input-group"><label for="preset-select">Vorlage (optional)</label><select id="preset-select" class="ios-select" onchange="applyPreset()"><option value="">Keine Vorlage</option></select></div>
+    <div id="normal-fields"><div class="grid-2"><div class="input-group"><label for="time-start">Startzeit</label><input type="time" id="time-start"></div><div class="input-group"><label for="time-end">Endzeit</label><input type="time" id="time-end"></div></div><div class="grid-2"><div class="input-group"><label for="shift-break">Pause (Minuten)</label><input type="number" id="shift-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="hourly-wage">Stundenlohn (€)</label><input type="number" id="hourly-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div></div>
+    <div id="pauschal-fields" style="display:none;"><div class="input-group"><label for="flat-amount">Fester Verdienst (€)</label><input type="number" id="flat-amount" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 100,00"></div></div><div class="input-group"><label for="shift-tip">Trinkgeld (€)</label><input type="number" id="shift-tip" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div><div id="entry-message" class="entry-message" role="status" aria-live="polite"></div><button id="save-shift-btn" class="primary-btn" type="button" onclick="saveShift()">Schicht speichern</button>
+  </div></div>
+  <div id="tab-presets" class="tab-content"><h1>Mehr</h1><div class="card account-card"><div><div class="section-title" style="margin-top:0">Konto</div><strong id="account-email"></strong><div class="auth-small">Cloud-Synchronisierung aktiv</div></div><button class="sec-btn" style="width:auto" onclick="logoutUser()">ABMELDEN</button></div><div class="section-title">Neue Schichtvorlage</div><div class="card"><div class="input-group"><label for="p-name">Name der Vorlage</label><input type="text" id="p-name" placeholder="z. B. Spätschicht"></div><div class="grid-2"><div class="input-group"><label for="p-start">Startzeit</label><input type="time" id="p-start"></div><div class="input-group"><label for="p-end">Endzeit</label><input type="time" id="p-end"></div></div><div class="grid-2"><div class="input-group"><label for="p-break">Pause (Minuten)</label><input type="number" id="p-break" inputmode="numeric" min="0" step="1" placeholder="z. B. 30"></div><div class="input-group"><label for="p-wage">Stundenlohn (€)</label><input type="number" id="p-wage" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 14,00"></div></div><button class="primary-btn" type="button" onclick="savePreset()">Vorlage speichern</button></div><div class="section-title">Meine Vorlagen</div><div id="preset-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:30px;"></div><div class="section-title">Daten sichern</div><div class="card"><div class="grid-2"><button class="sec-btn" type="button" onclick="exportData()">Backup herunterladen</button><button class="sec-btn" type="button" onclick="document.getElementById('importFile').click()">Backup importieren</button></div><input type="file" id="importFile" style="display:none" onchange="importData(event)"></div></div>
+  <div id="tab-history" class="tab-content"><h1>Verlauf</h1><div class="filter-container"><label class="dashboard-filter-label" for="history-month-filter">Monat filtern</label><select id="history-month-filter" class="ios-select" onchange="renderHistory()"></select></div><div id="history-list" style="border-radius:24px;overflow:hidden;background:var(--card-bg);border:1px solid var(--border-color);"></div></div>
+  <nav class="tab-bar" aria-label="Hauptnavigation"><button class="tab-item active" id="nav-dashboard" type="button" aria-current="page" onclick="switchTab('dashboard',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>Übersicht</button><button class="tab-item" id="nav-add" type="button" onclick="switchTab('add',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Eintragen</button><button class="tab-item" id="nav-history" type="button" onclick="switchTab('history',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></span>Verlauf</button><button class="tab-item" id="nav-presets" type="button" onclick="switchTab('presets',this)"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span>Mehr</button></nav>
+  <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
+  <!-- Supabase: client-side browser library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://ejjferwujxxqfxnobexg.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NVgNJZpGHviK15YnNFzqjg_J_OqpXdT';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    let shifts = JSON.parse(localStorage.getItem('myShifts')) || [];
+    let presets = JSON.parse(localStorage.getItem('myPresets')) || [];
+    let mChart=null,aChart=null;
+    let currentUser=null;
+    let migrationRunning=false;
+
+    function localDataExists(){
+      return shifts.length>0 || presets.length>0;
+    }
+
+    function showAuth(show=true){
+      document.getElementById('auth-overlay').style.display=show?'flex':'none';
+      document.body.classList.toggle('auth-locked',show);
+    }
+
+    let authMode='login';
+
+    function setAuthMode(mode){
+      authMode=mode==='register'?'register':'login';
+      const registering=authMode==='register';
+      document.getElementById('auth-card').classList.toggle('is-registering',registering);
+      document.getElementById('auth-login-header').hidden=registering;
+      document.getElementById('auth-register-header').hidden=!registering;
+      document.getElementById('auth-submit-btn').textContent=registering?'Konto erstellen':'Anmelden';
+      document.getElementById('auth-mode-toggle').hidden=registering;
+      const password=document.getElementById('auth-password');
+      password.autocomplete=registering?'new-password':'current-password';
+      document.getElementById('auth-password-hint').hidden=!registering;
+      const heading=document.getElementById(registering?'auth-register-heading':'auth-heading');
+      if(document.getElementById('auth-overlay').style.display!=='none') heading.focus({preventScroll:true});
+      setAuthMessage('');
+    }
+
+    function toggleAuthMode(){
+      setAuthMode(authMode==='login'?'register':'login');
+    }
+
+    function submitAuth(){
+      if(authMode==='register') registerUser();
+      else loginUser();
+    }
+
+    function setAuthMessage(message,type='info'){
+      const el=document.getElementById('auth-message');
+      el.textContent=message||'';
+      el.className='auth-message '+type;
+    }
+
+    async function registerUser(){
+      const email=document.getElementById('auth-email').value.trim();
+      const password=document.getElementById('auth-password').value;
+      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
+      if(password.length<6){setAuthMessage('Das Passwort muss mindestens 6 Zeichen haben.','error');return;}
+      setAuthMessage('Konto wird erstellt …');
+      const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin}});
+      if(error){setAuthMessage(error.message,'error');return;}
+      if(data.session){
+        await finishLogin(data.session.user);
+      }else{
+        setAuthMode('login');
+        setAuthMessage('Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.','success');
+      }
+    }
+
+    async function loginUser(){
+      const email=document.getElementById('auth-email').value.trim();
+      const password=document.getElementById('auth-password').value;
+      if(!email||!password){setAuthMessage('Bitte E-Mail und Passwort eingeben.','error');return;}
+      setAuthMessage('Anmeldung läuft …');
+      const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+      if(error){setAuthMessage(error.message,'error');return;}
+      await finishLogin(data.user);
+    }
+
+    async function logoutUser(){
+      await supabaseClient.auth.signOut();
+      currentUser=null;
+      setAuthMode('login');
+      showAuth(true);
+      setAuthMessage('Abgemeldet.','info');
+    }
+
+    async function finishLogin(user){
+      currentUser=user;
+      setAuthMessage('');
+
+      // Erst lokale Daten sicher in die Cloud übertragen. Erst danach darf die Cloud
+      // die lokale Anzeige ersetzen. So gehen bestehende localStorage-Daten nicht verloren.
+      const migrationResult=await migrateLocalDataIfNeeded();
+      if(migrationResult==='cancelled'){
+        // Bei Abbruch bleiben die lokalen Daten sichtbar und unangetastet.
+        showAuth(false);
+      }else if(migrationResult==='error'){
+        // Bei einem Fehler ebenfalls niemals lokale Daten durch einen leeren Cloud-Stand ersetzen.
+        showAuth(false);
+      }else{
+        showAuth(false);
+        await loadCloudData();
+      }
+
+      updateMonthDropdowns();
+      updateDashboard();
+      renderPresets();
+      renderHistory();
+      updateAccountUI();
+    }
+
+    async function loadCloudData(){
+      if(!currentUser)return false;
+      const [shiftResult,presetResult]=await Promise.all([
+        supabaseClient.from('shifts').select('*').eq('user_id',currentUser.id).order('date',{ascending:true}),
+        supabaseClient.from('presets').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:true})
+      ]);
+
+      if(shiftResult.error || presetResult.error){
+        console.error(shiftResult.error||presetResult.error);
+        alert('Die Cloud-Daten konnten nicht geladen werden. Deine lokalen Daten bleiben erhalten.');
+        return false;
+      }
+
+      // Erst wenn BEIDE Abfragen erfolgreich waren, ersetzen wir den lokalen Cache.
+      shifts=(shiftResult.data||[]).map(row=>({
+        id:row.id,legacyId:row.legacy_id,date:row.date,tip:Number(row.tip)||0,hours:Number(row.hours)||0,
+        wageEarned:Number(row.wage_earned)||0,type:row.type||'normal',start:row.start?String(row.start).slice(0,5):'',
+        end:row.end?String(row.end).slice(0,5):'',break:Number(row.break)||0,wage:Number(row.wage)||0
+      }));
+      presets=(presetResult.data||[]).map(row=>({
+        id:row.id,legacyId:row.legacy_id,name:row.name,start:row.start?String(row.start).slice(0,5):'',end:row.end?String(row.end).slice(0,5):'',
+        break:Number(row.break)||0,wage:Number(row.wage)||0
+      }));
+      localStorage.setItem('myShifts',JSON.stringify(shifts));
+      localStorage.setItem('myPresets',JSON.stringify(presets));
+      return true;
+    }
+
+    async function migrateLocalDataIfNeeded(){
+      if(!currentUser||migrationRunning)return 'ok';
+      const migrationKey='stundenheldMigration_'+currentUser.id;
+      if(localStorage.getItem(migrationKey)==='done')return 'ok';
+
+      const localShifts=JSON.parse(localStorage.getItem('myShifts'))||[];
+      const localPresets=JSON.parse(localStorage.getItem('myPresets'))||[];
+      if(!localShifts.length&&!localPresets.length){
+        localStorage.setItem(migrationKey,'done');
+        return 'ok';
+      }
+
+      migrationRunning=true;
+      const ok=confirm(`Auf diesem Gerät wurden ${localShifts.length} Schichten und ${localPresets.length} Vorlagen gefunden.\n\nSollen diese jetzt in deinen Stundera-Account übertragen werden? Deine lokalen Daten werden dabei nicht gelöscht.`);
+      if(!ok){migrationRunning=false;return 'cancelled';}
+
+      try{
+        // Bereits übertragene Datensätze anhand der alten localStorage-ID erkennen.
+        const [existingShiftsResult,existingPresetsResult]=await Promise.all([
+          supabaseClient.from('shifts').select('legacy_id').eq('user_id',currentUser.id),
+          supabaseClient.from('presets').select('legacy_id').eq('user_id',currentUser.id)
+        ]);
+        if(existingShiftsResult.error)throw existingShiftsResult.error;
+        if(existingPresetsResult.error)throw existingPresetsResult.error;
+
+        const existingShiftIds=new Set((existingShiftsResult.data||[]).map(r=>String(r.legacy_id)).filter(Boolean));
+        const existingPresetIds=new Set((existingPresetsResult.data||[]).map(r=>String(r.legacy_id)).filter(Boolean));
+
+        const shiftRows=localShifts.map((s,index)=>{
+          const legacyId=s.id ?? Date.now()+index;
+          if(s.id==null)s.id=legacyId;
+          return {
+            user_id:currentUser.id,legacy_id:legacyId,date:s.date,start:s.start||null,end:s.end||null,
+            break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,
+            wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type||'normal'
+          };
+        }).filter(row=>!existingShiftIds.has(String(row.legacy_id)));
+
+        const presetRows=localPresets.map((p,index)=>{
+          const legacyId=p.id ?? Date.now()+index;
+          if(p.id==null)p.id=legacyId;
+          return {
+            user_id:currentUser.id,legacy_id:legacyId,name:p.name,start:p.start||null,end:p.end||null,
+            break:Number(p.break)||0,wage:Number(p.wage)||0
+          };
+        }).filter(row=>!existingPresetIds.has(String(row.legacy_id)));
+
+        if(shiftRows.length){
+          const {error}=await supabaseClient.from('shifts').insert(shiftRows);
+          if(error)throw error;
+        }
+        if(presetRows.length){
+          const {error}=await supabaseClient.from('presets').insert(presetRows);
+          if(error)throw error;
+        }
+
+        // Lokale Daten erst jetzt aktualisieren – niemals vorher löschen.
+        localStorage.setItem('myShifts',JSON.stringify(localShifts));
+        localStorage.setItem('myPresets',JSON.stringify(localPresets));
+        localStorage.setItem(migrationKey,'done');
+        alert('Migration erfolgreich. Deine bisherigen Daten sind jetzt in der Cloud gespeichert.');
+        return 'ok';
+      }catch(error){
+        console.error(error);
+        alert('Die Übertragung konnte nicht vollständig abgeschlossen werden. Deine lokalen Daten wurden NICHT gelöscht.');
+        return 'error';
+      }finally{migrationRunning=false;}
+    }
+
+    function updateAccountUI(){
+      const el=document.getElementById('account-email');
+      if(el)el.textContent=currentUser?currentUser.email:'';
+    }
+
+    let toastTimeout;
+    function showToast(message){
+      const toast=document.getElementById('app-toast');
+      toast.textContent=message;
+      toast.classList.add('visible');
+      window.clearTimeout(toastTimeout);
+      toastTimeout=window.setTimeout(()=>toast.classList.remove('visible'),2600);
+    }
+
+    function setEntryMessage(message,type='info'){
+      const el=document.getElementById('entry-message');
+      el.textContent=message||'';
+      el.className='entry-message'+(type==='error'?' error':type==='success'?' success':'');
+    }
+
+    async function saveShift(){
+      const mode=document.getElementById('entry-mode').value;
+      const dateInput=document.getElementById('shift-date');
+      const date=dateInput.value;
+      const tipInput=document.getElementById('shift-tip');
+      const tip=tipInput.value===''?0:Number(tipInput.value);
+      document.querySelectorAll('#tab-add [aria-invalid="true"]').forEach(input=>input.removeAttribute('aria-invalid'));
+      setEntryMessage('');
+
+      function showFieldError(input,message){
+        input.setAttribute('aria-invalid','true');
+        setEntryMessage(message,'error');
+        input.focus();
+      }
+
+      if(!date){showFieldError(dateInput,'Bitte wähle den Arbeitstag aus.');return;}
+      if(!Number.isFinite(tip)||tip<0){showFieldError(tipInput,'Bitte gib ein Trinkgeld ab 0 € ein.');return;}
+
+      let s={id:Date.now(),date,tip,hours:0,wageEarned:0,type:mode};
+      if(mode==='normal'){
+        const startInput=document.getElementById('time-start');
+        const endInput=document.getElementById('time-end');
+        const breakInput=document.getElementById('shift-break');
+        const wageInput=document.getElementById('hourly-wage');
+        const st=startInput.value,en=endInput.value;
+        if(!st){showFieldError(startInput,'Bitte gib eine Startzeit ein.');return;}
+        if(!en){showFieldError(endInput,'Bitte gib eine Endzeit ein.');return;}
+        if(st===en){showFieldError(endInput,'Startzeit und Endzeit dürfen nicht gleich sein.');return;}
+        if(wageInput.value===''||!Number.isFinite(Number(wageInput.value))||Number(wageInput.value)<0){showFieldError(wageInput,'Bitte gib einen Stundenlohn ab 0 € ein.');return;}
+        if(breakInput.value!==''&&(!Number.isFinite(Number(breakInput.value))||Number(breakInput.value)<0)){showFieldError(breakInput,'Die Pause muss 0 Minuten oder länger sein.');return;}
+        calculateNormalShift(s,st,en,breakInput.value,wageInput.value);
+      }else{
+        const amountInput=document.getElementById('flat-amount');
+        if(amountInput.value===''||!Number.isFinite(Number(amountInput.value))||Number(amountInput.value)<0){showFieldError(amountInput,'Bitte gib einen festen Verdienst ab 0 € ein.');return;}
+        s.wageEarned=Number(amountInput.value);
+      }
+
+      const saveButton=document.getElementById('save-shift-btn');
+      saveButton.disabled=true;
+      saveButton.textContent='Wird gespeichert …';
+      try{
+        if(currentUser){
+          const {data,error}=await supabaseClient.from('shifts').insert({user_id:currentUser.id,legacy_id:s.id,date:s.date,start:s.start||null,end:s.end||null,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0,type:s.type}).select().single();
+          if(error)throw error;
+          s.id=data.id;
+        }
+        shifts.push(s);shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));
+        localStorage.setItem('myShifts',JSON.stringify(shifts));
+        document.getElementById('shift-tip').value='';
+        updateMonthDropdowns();
+        showToast('Schicht gespeichert.');
+        switchTab('dashboard',document.getElementById('nav-dashboard'));
+      }catch(error){
+        console.error(error);
+        setEntryMessage('Die Schicht konnte nicht gespeichert werden. Prüfe deine Verbindung und versuche es erneut.','error');
+      }finally{
+        saveButton.disabled=false;
+        saveButton.textContent='Schicht speichern';
+      }
+    }
+
+    async function saveEditedShift(id){
+      const s=shifts.find(x=>x.id===id),start=document.getElementById(`edit-start-${id}`).value,end=document.getElementById(`edit-end-${id}`).value,br=document.getElementById(`edit-break-${id}`).value,wg=document.getElementById(`edit-wage-${id}`).value,tip=document.getElementById(`edit-tip-${id}`).value;
+      if(!s||!start||!end)return;
+      calculateNormalShift(s,start,end,br,wg);s.tip=parseFloat(tip)||0;
+      if(currentUser){
+        const {error}=await supabaseClient.from('shifts').update({start:s.start,end:s.end,break:Number(s.break)||0,wage:Number(s.wage)||0,hours:Number(s.hours)||0,wage_earned:Number(s.wageEarned)||0,tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);
+        if(error){alert('Änderung konnte nicht gespeichert werden: '+error.message);return;}
+      }
+      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
+    }
+
+    async function editTip(id){
+      const s=shifts.find(x=>x.id===id);if(!s)return;
+      const n=prompt('Neues Trinkgeld (€):',s.tip);
+      if(n===null)return;
+      s.tip=parseFloat(n)||0;
+      if(currentUser){const {error}=await supabaseClient.from('shifts').update({tip:Number(s.tip)||0}).eq('id',id).eq('user_id',currentUser.id);if(error){alert('Trinkgeld konnte nicht gespeichert werden: '+error.message);return;}}
+      localStorage.setItem('myShifts',JSON.stringify(shifts));renderHistory();updateDashboard();
+    }
+
+    async function savePreset(){
+      const n=document.getElementById('p-name').value;if(!n)return;
+      const p={id:Date.now(),name:n,start:document.getElementById('p-start').value,end:document.getElementById('p-end').value,break:document.getElementById('p-break').value,wage:document.getElementById('p-wage').value};
+      if(currentUser){
+        const {data,error}=await supabaseClient.from('presets').insert({user_id:currentUser.id,legacy_id:p.id,name:p.name,start:p.start||null,end:p.end||null,break:Number(p.break)||0,wage:Number(p.wage)||0}).select().single();
+        if(error){alert('Vorlage konnte nicht gespeichert werden: '+error.message);return;}
+        p.id=data.id;
+      }
+      presets.push(p);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();document.getElementById('p-name').value='';
+    }
+
+    async function deletePreset(id){
+      if(currentUser){const {error}=await supabaseClient.from('presets').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Vorlage konnte nicht gelöscht werden: '+error.message);return;}}
+      presets=presets.filter(p=>p.id!==id);localStorage.setItem('myPresets',JSON.stringify(presets));renderPresets();
+    }
+
+    async function deleteShift(id){
+      if(!confirm('Löschen?'))return;
+      if(currentUser){const {error}=await supabaseClient.from('shifts').delete().eq('id',id).eq('user_id',currentUser.id);if(error){alert('Schicht konnte nicht gelöscht werden: '+error.message);return;}}
+      shifts=shifts.filter(s=>s.id!==id);localStorage.setItem('myShifts',JSON.stringify(shifts));updateMonthDropdowns();renderHistory();updateDashboard();
+    }
+
+    // Existing UI / calculation functions
+    document.getElementById('shift-date').valueAsDate=new Date();
+    document.querySelectorAll('#tab-add input,#tab-add select').forEach(input=>input.addEventListener('input',()=>{input.removeAttribute('aria-invalid');setEntryMessage('');}));
+    updateMonthDropdowns(); updateDashboard(); renderPresets();
+    function switchTab(t,el){document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab-item').forEach(i=>{i.classList.remove('active');i.removeAttribute('aria-current');});document.getElementById(`tab-${t}`).classList.add('active');if(el){el.classList.add('active');el.setAttribute('aria-current','page');}if(t==='dashboard')updateDashboard();if(t==='history')renderHistory();}
+    function toggleEntryMode(){const m=document.getElementById('entry-mode').value;document.getElementById('normal-fields').style.display=m==='normal'?'block':'none';document.getElementById('pauschal-fields').style.display=m==='pauschal'?'block':'none';document.getElementById('preset-container').style.display=m==='normal'?'block':'none';}
+    function calculateNormalShift(s,start,end,breakMinutes,wage){const startDate=new Date(`1970-01-01T${start}`),endDate=new Date(`1970-01-01T${end}`);if(endDate<startDate)endDate.setDate(endDate.getDate()+1);s.start=start;s.end=end;s.break=parseFloat(breakMinutes)||0;s.wage=parseFloat(wage)||0;s.hours=Math.max(0,(endDate-startDate)/3600000-s.break/60);s.wageEarned=s.hours*s.wage;}
+    function editShift(id){const s=shifts.find(x=>x.id===id);if(!s||s.type==='pauschal')return;document.getElementById(`history-edit-${id}`).style.display='block';}
+    function cancelEdit(id){document.getElementById(`history-edit-${id}`).style.display='none';}
+    function applyPreset(){const p=presets.find(x=>x.id==document.getElementById('preset-select').value);if(p){document.getElementById('time-start').value=p.start;document.getElementById('time-end').value=p.end;document.getElementById('shift-break').value=p.break;document.getElementById('hourly-wage').value=p.wage;}}
+    function renderPresets(){document.getElementById('preset-list').innerHTML=presets.map(p=>`<div class="preset-item"><div><strong>${p.name}</strong><br><small>${p.start}-${p.end} Uhr</small></div><button type="button" class="delete-link" onclick="deletePreset(${p.id})">Vorlage entfernen</button></div>`).join('');document.getElementById('preset-select').innerHTML='<option value="">Keine Vorlage</option>'+presets.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
+    function monthLabel(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());}
+    function updateMonthDropdowns(){const mths=[...new Set(shifts.map(s=>s.date.substring(0,7)))].sort().reverse(),d=document.getElementById('dashboard-month-filter'),h=document.getElementById('history-month-filter'),o=mths.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');const cur=new Date().toISOString().substring(0,7);d.innerHTML=o||`<option value="${cur}">${monthLabel(cur)}</option>`;h.innerHTML='<option value="all">Alle Monate</option>'+o;}
+    function animateValue(id,target,formatter,duration=420){const el=document.getElementById(id);if(!el)return;const startValue=parseFloat((el.dataset.value||'0').replace(',','.'))||0,endValue=Number(target)||0;el.dataset.value=endValue;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerText=formatter(endValue);return;}const start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.innerText=formatter(startValue+(endValue-startValue)*eased);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
+    function updateDashboard(){const sel=document.getElementById('dashboard-month-filter').value,ms=shifts.filter(s=>s.date.startsWith(sel)),mst=ms.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});animateValue('m-hours',mst.h,v=>v.toFixed(2)+' h');animateValue('m-wage',mst.w,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-tip',mst.t,v=>v.toFixed(2).replace('.',',')+' €');animateValue('m-shifts',ms.length,v=>Math.round(v));const ast=shifts.reduce((a,s)=>{a.h+=s.hours;a.w+=s.wageEarned;a.t+=s.tip;return a;},{h:0,w:0,t:0});document.getElementById('a-hours').innerText=ast.h.toFixed(2)+' h';document.getElementById('a-wage').innerText=ast.w.toFixed(2).replace('.',',')+' €';document.getElementById('a-tip').innerText=ast.t.toFixed(2).replace('.',',')+' €';document.getElementById('a-shifts').innerText=shifts.length;animateValue('m-total',mst.w+mst.t,v=>v.toFixed(2).replace('.',',')+' €',520);renderCharts(ms);}
+    function renderCharts(ms){const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches,textColor=isDark?'#98989D':'#8A8A91',gridColor=isDark?'rgba(255,255,255,.08)':'rgba(60,60,67,.07)',blue='#007AFF',blueMid='#0A84FF',blueLight='#5AC8FA',blueSoft='rgba(0,122,255,.16)',money=v=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(v);const ctxM=document.getElementById('monthChart').getContext('2d');if(mChart)mChart.destroy();const monthLabels=ms.map(s=>new Date(s.date+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})),monthValues=ms.map(s=>s.wageEarned+s.tip);mChart=new Chart(ctxM,{type:'line',data:{labels:monthLabels,datasets:[{label:'Verdienst',data:monthValues,borderColor:blue,backgroundColor:blueSoft,borderWidth:3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:blue,pointBorderColor:isDark?'#1C1C1E':'#FFFFFF',pointBorderWidth:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:520,easing:'easeOutQuart'},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,maxTicksLimit:6,maxRotation:0,font:{size:11,weight:'600'},padding:8}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,maxTicksLimit:4,padding:8,font:{size:11,weight:'600'},callback:value=>new Intl.NumberFormat('de-DE',{notation:'compact',maximumFractionDigits:1}).format(value)}}}}});const ctxA=document.getElementById('allTimeChart').getContext('2d');if(aChart)aChart.destroy();const grp=shifts.reduce((a,s)=>{const m=s.date.substring(0,7);a[m]=(a[m]||0)+s.wageEarned+s.tip;return a;},{}),lbs=Object.keys(grp).sort().map(monthLabel),rawLabels=Object.keys(grp).sort();aChart=new Chart(ctxA,{type:'bar',data:{labels:lbs,datasets:[{label:'Verdienst',data:rawLabels.map(l=>grp[l]),backgroundColor:rawLabels.map((_,i)=>i%3===0?blue:i%3===1?blueMid:blueLight),borderRadius:10,borderSkipped:false,barPercentage:.58,categoryPercentage:.72}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:520,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{displayColors:false,backgroundColor:isDark?'#2C2C2E':'#111113',titleColor:'#fff',bodyColor:'#fff',padding:12,cornerRadius:12,callbacks:{label:ctx=>' '+money(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{color:textColor,maxTicksLimit:6,maxRotation:0,font:{size:11,weight:'600'},padding:8}},y:{beginAtZero:true,grid:{color:gridColor},border:{display:false},ticks:{color:textColor,maxTicksLimit:4,padding:8,font:{size:11,weight:'600'},callback:value=>new Intl.NumberFormat('de-DE',{notation:'compact',maximumFractionDigits:1}).format(value)}}}}});}
+    function renderHistory(){
+      const filter=document.getElementById('history-month-filter').value;
+      const records=(filter==='all'?[...shifts]:shifts.filter(shift=>shift.date.startsWith(filter))).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const list=document.getElementById('history-list');
+      if(!records.length){
+        list.innerHTML='<p class="empty-state">Für diesen Zeitraum sind noch keine Schichten eingetragen.</p>';
+        return;
+      }
+
+      const formatMoney=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(value)||0);
+      const groups=new Map();
+      records.forEach(shift=>{
+        const month=shift.date.slice(0,7);
+        if(!groups.has(month))groups.set(month,[]);
+        groups.get(month).push(shift);
+      });
+
+      list.innerHTML=[...groups.entries()].map(([month,monthShifts])=>{
+        const total=monthShifts.reduce((sum,shift)=>sum+Number(shift.wageEarned||0)+Number(shift.tip||0),0);
+        const count=monthShifts.length;
+        const monthRows=monthShifts.map(shift=>{
+          const normal=shift.type!=='pauschal',start=shift.start||'',end=shift.end||'',pause=shift.break??0,wage=shift.wage??(shift.hours?shift.wageEarned/shift.hours:0);
+          return `<div class="history-item"><div><strong>${new Date(shift.date).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}</strong><br><small>${normal?shift.hours.toFixed(2)+' Std.':'Pauschalbetrag'} | Trinkgeld: ${formatMoney(shift.tip)}</small></div><div style="text-align:right"><strong>${formatMoney(Number(shift.wageEarned||0)+Number(shift.tip||0))}</strong><br><div class="action-links">${normal?`<button type="button" class="edit-link" onclick="editShift(${shift.id})">Bearbeiten</button>`:`<button type="button" class="edit-link" onclick="editTip(${shift.id})">Trinkgeld ändern</button>`}<button type="button" class="delete-link" onclick="deleteShift(${shift.id})">Löschen</button></div></div>${normal?`<div id="history-edit-${shift.id}" class="history-edit" style="display:none"><div class="grid-2"><div class="input-group"><label for="edit-start-${shift.id}">Startzeit</label><input id="edit-start-${shift.id}" type="time" value="${start}"></div><div class="input-group"><label for="edit-end-${shift.id}">Endzeit</label><input id="edit-end-${shift.id}" type="time" value="${end}"></div></div><div class="grid-2"><div class="input-group"><label for="edit-break-${shift.id}">Pause (Minuten)</label><input id="edit-break-${shift.id}" type="number" min="0" step="1" value="${pause}"></div><div class="input-group"><label for="edit-wage-${shift.id}">Stundenlohn (€)</label><input id="edit-wage-${shift.id}" type="number" min="0" step="0.01" value="${wage}"></div></div><div class="input-group"><label for="edit-tip-${shift.id}">Trinkgeld (€)</label><input id="edit-tip-${shift.id}" type="number" min="0" step="0.01" value="${shift.tip}"></div><button type="button" class="sec-btn" onclick="saveEditedShift(${shift.id})">Änderungen speichern</button><button type="button" class="sec-btn cancel-btn" onclick="cancelEdit(${shift.id})">Abbrechen</button></div>`:''}</div>`;
+        }).join('');
+        return `<section class="history-month" aria-label="${monthLabel(month)}"><header class="history-month-header"><h2>${monthLabel(month)}</h2><div class="history-month-meta"><strong class="history-month-total">${formatMoney(total)}</strong><span class="history-month-count">${count} ${count===1?'Schicht':'Schichten'}</span></div></header>${monthRows}</section>`;
+      }).join('');
+    }
+    function exportData(){const blob=new Blob([JSON.stringify({shifts,presets})],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`stundera_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();}
+    function importData(event){const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(data.shifts){shifts=data.shifts;shifts.sort((a,b)=>new Date(a.date)-new Date(b.date));}if(data.presets)presets=data.presets;localStorage.setItem('myShifts',JSON.stringify(shifts));localStorage.setItem('myPresets',JSON.stringify(presets));alert('Backup lokal geladen. Bitte danach erneut anmelden bzw. die Datenmigration ausführen.');location.reload();}catch(err){alert('Datei ungültig!');}};reader.readAsText(event.target.files[0]);}
+
+    supabaseClient.auth.getSession().then(async ({data})=>{
+      if(data.session) await finishLogin(data.session.user);
+      else showAuth(true);
+    });
+    supabaseClient.auth.onAuthStateChange(async (event,session)=>{
+      if(session && event==='SIGNED_IN' && !currentUser) await finishLogin(session.user);
+      if(event==='SIGNED_OUT'){currentUser=null;showAuth(true);}
+    });
+  </script>
+</body>
+</html>
